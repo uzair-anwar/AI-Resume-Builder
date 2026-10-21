@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "person": {
+    "name": "Example User",
+    "defaultHeadline": "Software Engineer",
+    "location": "Remote",
+    "email": "user@example.com",
+    "github": "https://github.com/example",
+    "linkedin": "https://www.linkedin.com/in/example/"
+  },
+  "summaryFacts": [{ "id": "summary-1", "text": "Example summary fact." }],
+  "skillCategories": [{ "id": "cat-languages", "label": "Languages" }],
+  "skills": [{ "id": "skill-js", "name": "JavaScript", "categoryId": "cat-languages", "aliases": [] }],
+  "experience": [],
+  "projects": [],
+  "education": [],
+  "certifications": []
+}

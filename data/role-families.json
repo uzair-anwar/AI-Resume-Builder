@@ -1,0 +1,108 @@
+{
+  "families": [
+    {
+      "id": "java",
+      "label": "Java / JVM Backend",
+      "detectionKeywords": ["java", "spring boot", "spring", "jvm", "hibernate", "maven", "gradle", "kotlin"],
+      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-databases", "cat-cloud"],
+      "headlinePattern": "Senior Software Engineer (Backend & Cloud)",
+      "summaryEmphasis": "backend services, REST APIs, distributed systems, cloud-native delivery"
+    },
+    {
+      "id": "python",
+      "label": "Python Backend / Data",
+      "detectionKeywords": ["python", "django", "fastapi", "flask", "pandas", "data engineering"],
+      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-databases", "cat-ai"],
+      "headlinePattern": "Senior Software Engineer (Python & Cloud)",
+      "summaryEmphasis": "Python services, APIs, automation, and scalable backends"
+    },
+    {
+      "id": "dotnet",
+      "label": ".NET / C#",
+      "detectionKeywords": [".net", "c#", "asp.net", "entity framework", "blazor", "azure"],
+      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-cloud", "cat-databases"],
+      "headlinePattern": "Senior Software Engineer (.NET & Cloud)",
+      "summaryEmphasis": "enterprise APIs, cloud services, and full-stack delivery"
+    },
+    {
+      "id": "mern",
+      "label": "MERN / JS Full Stack",
+      "detectionKeywords": ["mern", "react", "node.js", "node", "mongodb", "express", "next.js", "typescript", "javascript"],
+      "priorityCategoryIds": ["cat-frameworks", "cat-languages", "cat-api", "cat-databases", "cat-architecture"],
+      "headlinePattern": "Senior Software Engineer (Full Stack)",
+      "summaryEmphasis": "React, Next.js, Node.js, and end-to-end product delivery"
+    },
+    {
+      "id": "frontend",
+      "label": "Frontend",
+      "detectionKeywords": ["frontend", "react", "next.js", "ui", "ux", "tailwind", "typescript"],
+      "priorityCategoryIds": ["cat-frameworks", "cat-languages", "cat-architecture"],
+      "headlinePattern": "Senior Software Engineer (Frontend)",
+      "summaryEmphasis": "modern UI, component architecture, and performance"
+    },
+    {
+      "id": "node-backend",
+      "label": "Node.js Backend",
+      "detectionKeywords": ["node", "express", "nestjs", "backend", "api", "microservices"],
+      "priorityCategoryIds": ["cat-api", "cat-frameworks", "cat-databases", "cat-cloud"],
+      "headlinePattern": "Senior Software Engineer (Node.js Backend)",
+      "summaryEmphasis": "Node.js APIs, integrations, and scalable services"
+    },
+    {
+      "id": "cloud",
+      "label": "Cloud / AWS Serverless",
+      "detectionKeywords": ["aws", "lambda", "serverless", "cloud", "devops", "infrastructure", "cdk", "terraform"],
+      "priorityCategoryIds": ["cat-cloud", "cat-devops", "cat-architecture", "cat-api"],
+      "headlinePattern": "Senior Software Engineer (Cloud & Serverless)",
+      "summaryEmphasis": "AWS serverless, CI/CD, and reliable deployments"
+    },
+    {
+      "id": "ai",
+      "label": "AI / LLM Engineering",
+      "detectionKeywords": ["llm", "openai", "machine learning", "ai", "rag", "langchain", "agent"],
+      "priorityCategoryIds": ["cat-ai", "cat-api", "cat-languages", "cat-cloud"],
+      "headlinePattern": "Senior Software Engineer (AI & Full Stack)",
+      "summaryEmphasis": "AI integrations, automation, and production workflows"
+    },
+    {
+      "id": "go",
+      "label": "Go",
+      "detectionKeywords": ["golang", " go ", "go language"],
+      "priorityCategoryIds": ["cat-languages", "cat-api", "cat-cloud"],
+      "headlinePattern": "Senior Software Engineer (Backend)",
+      "summaryEmphasis": "backend services and cloud-native systems"
+    },
+    {
+      "id": "ruby",
+      "label": "Ruby / Rails",
+      "detectionKeywords": ["ruby", "rails", "ruby on rails"],
+      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-databases"],
+      "headlinePattern": "Senior Software Engineer (Full Stack)",
+      "summaryEmphasis": "web applications and API development"
+    },
+    {
+      "id": "php",
+      "label": "PHP / Laravel",
+      "detectionKeywords": ["php", "laravel", "symfony"],
+      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api"],
+      "headlinePattern": "Senior Software Engineer (Full Stack)",
+      "summaryEmphasis": "web platforms and integrations"
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / Platform",
+      "detectionKeywords": ["devops", "sre", "kubernetes", "docker", "ci/cd", "terraform"],
+      "priorityCategoryIds": ["cat-devops", "cat-cloud", "cat-vcs"],
+      "headlinePattern": "Senior Software Engineer (Platform & Cloud)",
+      "summaryEmphasis": "CI/CD, reliability, and cloud operations"
+    },
+    {
+      "id": "generic",
+      "label": "General Software Engineering",
+      "detectionKeywords": [],
+      "priorityCategoryIds": ["cat-frameworks", "cat-languages", "cat-api", "cat-cloud"],
+      "headlinePattern": "Senior Software Engineer",
+      "summaryEmphasis": "full-stack delivery across healthcare, fintech, and SaaS"
+    }
+  ]
+}

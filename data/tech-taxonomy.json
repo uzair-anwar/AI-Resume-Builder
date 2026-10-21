@@ -1,0 +1,83 @@
+{
+  "terms": [
+    { "id": "java", "canonical": "Java", "aliases": [], "family": "jvm" },
+    { "id": "spring-boot", "canonical": "Spring Boot", "aliases": ["springboot"], "family": "jvm" },
+    { "id": "spring", "canonical": "Spring", "aliases": ["spring framework"], "family": "jvm" },
+    { "id": "hibernate", "canonical": "Hibernate", "aliases": [], "family": "jvm" },
+    { "id": "kotlin", "canonical": "Kotlin", "aliases": [], "family": "jvm" },
+    { "id": "csharp", "canonical": "C#", "aliases": ["c sharp"], "family": "dotnet" },
+    { "id": "dotnet", "canonical": ".NET", "aliases": [".net core", "asp.net", "asp.net core"], "family": "dotnet" },
+    { "id": "blazor", "canonical": "Blazor", "aliases": [], "family": "dotnet" },
+    { "id": "entity-framework", "canonical": "Entity Framework", "aliases": ["ef core"], "family": "dotnet" },
+    { "id": "python", "canonical": "Python", "aliases": [], "family": "python" },
+    { "id": "django", "canonical": "Django", "aliases": [], "family": "python" },
+    { "id": "fastapi", "canonical": "FastAPI", "aliases": [], "family": "python" },
+    { "id": "flask", "canonical": "Flask", "aliases": [], "family": "python" },
+    { "id": "javascript", "canonical": "JavaScript", "aliases": ["js"], "family": "js" },
+    { "id": "typescript", "canonical": "TypeScript", "aliases": ["ts"], "family": "js" },
+    { "id": "react", "canonical": "React", "aliases": ["react.js", "reactjs"], "family": "js" },
+    { "id": "nextjs", "canonical": "Next.js", "aliases": ["next"], "family": "js" },
+    { "id": "nodejs", "canonical": "Node.js", "aliases": ["node", "nodejs"], "family": "js" },
+    { "id": "express", "canonical": "Express", "aliases": ["express.js"], "family": "js" },
+    { "id": "nestjs", "canonical": "NestJS", "aliases": [], "family": "js" },
+    { "id": "angular", "canonical": "Angular", "aliases": [], "family": "js" },
+    { "id": "vue", "canonical": "Vue", "aliases": ["vue.js"], "family": "js" },
+    { "id": "tailwind", "canonical": "Tailwind CSS", "aliases": ["tailwind"], "family": "js" },
+    { "id": "graphql", "canonical": "GraphQL", "aliases": [], "family": "api" },
+    { "id": "rest", "canonical": "REST APIs", "aliases": ["rest", "restful", "rest api", "rest apis"], "family": "api" },
+    { "id": "microservices", "canonical": "Microservices", "aliases": ["microservice"], "family": "api" },
+    { "id": "postgresql", "canonical": "PostgreSQL", "aliases": ["postgres"], "family": "data" },
+    { "id": "mongodb", "canonical": "MongoDB", "aliases": ["mongo"], "family": "data" },
+    { "id": "mysql", "canonical": "MySQL", "aliases": [], "family": "data" },
+    { "id": "redis", "canonical": "Redis", "aliases": [], "family": "data" },
+    { "id": "dynamodb", "canonical": "DynamoDB", "aliases": [], "family": "data" },
+    { "id": "sql", "canonical": "SQL", "aliases": [], "family": "data" },
+    { "id": "aws", "canonical": "AWS", "aliases": ["amazon web services"], "family": "cloud" },
+    { "id": "lambda", "canonical": "AWS Lambda", "aliases": ["lambda"], "family": "cloud" },
+    { "id": "serverless", "canonical": "Serverless", "aliases": ["serverless architecture"], "family": "cloud" },
+    { "id": "azure", "canonical": "Azure", "aliases": ["microsoft azure"], "family": "cloud" },
+    { "id": "gcp", "canonical": "Google Cloud", "aliases": ["gcp"], "family": "cloud" },
+    { "id": "docker", "canonical": "Docker", "aliases": [], "family": "devops" },
+    { "id": "kubernetes", "canonical": "Kubernetes", "aliases": ["k8s"], "family": "devops" },
+    { "id": "terraform", "canonical": "Terraform", "aliases": [], "family": "devops" },
+    { "id": "cicd", "canonical": "CI/CD", "aliases": ["ci/cd", "continuous integration"], "family": "devops" },
+    { "id": "github-actions", "canonical": "GitHub Actions", "aliases": [], "family": "devops" },
+    { "id": "kafka", "canonical": "Apache Kafka", "aliases": ["kafka"], "family": "messaging" },
+    { "id": "rabbitmq", "canonical": "RabbitMQ", "aliases": [], "family": "messaging" },
+    { "id": "sqs", "canonical": "AWS SQS", "aliases": ["sqs"], "family": "messaging" },
+    { "id": "openai", "canonical": "OpenAI", "aliases": ["openai api", "gpt"], "family": "ai" },
+    { "id": "llm", "canonical": "LLM", "aliases": ["large language model"], "family": "ai" },
+    { "id": "langchain", "canonical": "LangChain", "aliases": [], "family": "ai" },
+    { "id": "rag", "canonical": "RAG", "aliases": ["retrieval augmented generation"], "family": "ai" },
+    { "id": "go", "canonical": "Go", "aliases": ["golang"], "family": "go" },
+    { "id": "ruby", "canonical": "Ruby", "aliases": [], "family": "ruby" },
+    { "id": "rails", "canonical": "Ruby on Rails", "aliases": ["rails"], "family": "ruby" },
+    { "id": "php", "canonical": "PHP", "aliases": [], "family": "php" },
+    { "id": "laravel", "canonical": "Laravel", "aliases": [], "family": "php" },
+    { "id": "agile", "canonical": "Agile", "aliases": ["scrum"], "family": "process" },
+    { "id": "mern", "canonical": "MERN", "aliases": ["mern stack"], "family": "js" }
+  ],
+  "transferableGroups": [
+    {
+      "id": "backend-web-framework",
+      "terms": ["spring-boot", "dotnet", "django", "fastapi", "flask", "express", "nestjs", "laravel", "rails"]
+    },
+    {
+      "id": "frontend-framework",
+      "terms": ["react", "nextjs", "angular", "vue", "blazor"]
+    },
+    {
+      "id": "relational-db",
+      "terms": ["postgresql", "mysql", "sql"]
+    },
+    {
+      "id": "nosql-db",
+      "terms": ["mongodb", "dynamodb", "redis"]
+    },
+    {
+      "id": "cloud-provider",
+      "terms": ["aws", "azure", "gcp"]
+    },
+    { "id": "api-style", "terms": ["rest", "graphql"] }
+  ]
+}

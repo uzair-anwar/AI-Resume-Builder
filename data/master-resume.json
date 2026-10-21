@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "person": {
+    "name": "Uzair Anwar",
+    "defaultHeadline": "Senior Software Engineer (Full Stack)",
+    "location": "Pakistan",
+    "email": "uzairanwar.online@gmail.com",
+    "github": "https://github.com/uzair-anwar",
+    "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
+  },
+  "summaryFacts": [
+    {
+      "id": "summary-1",
+      "text": "Building AI-powered platforms, financial systems, and cloud-native applications for the last 5+ years across healthcare, fintech, mortgage, and SaaS domains."
+    },
+    {
+      "id": "summary-2",
+      "text": "Experienced in developing end-to-end solutions using React, Next.js, Node.js, Python, and AWS serverless technologies, with a focus on scalable architectures, business-critical workflows, and modern user experiences."
+    },
+    {
+      "id": "summary-3",
+      "text": "Proven ability to own features from design to deployment, mentor engineers, and deliver products in distributed teams."
+    }
+  ],
+  "skillCategories": [
+    { "id": "cat-languages", "label": "Programming Languages" },
+    { "id": "cat-frameworks", "label": "Frameworks & Libraries" },
+    { "id": "cat-architecture", "label": "State Management & Architecture" },
+    { "id": "cat-api", "label": "API Development & Integrations" },
+    { "id": "cat-databases", "label": "Databases" },
+    { "id": "cat-cloud", "label": "Clouds" },
+    { "id": "cat-devops", "label": "DevOps & Testing Coverage" },
+    { "id": "cat-vcs", "label": "Version Control & Project MGMT" },
+    { "id": "cat-ai", "label": "AI & Automation" }
+  ],
+  "skills": [
+    { "id": "skill-javascript", "name": "JavaScript", "categoryId": "cat-languages", "aliases": ["JS"] },
+    { "id": "skill-typescript", "name": "TypeScript", "categoryId": "cat-languages", "aliases": ["TS"] },
+    { "id": "skill-python", "name": "Python", "categoryId": "cat-languages", "aliases": [] },
+    { "id": "skill-react", "name": "React.js", "categoryId": "cat-frameworks", "aliases": ["React"] },
+    { "id": "skill-nextjs", "name": "Next.js", "categoryId": "cat-frameworks", "aliases": [] },
+    { "id": "skill-node", "name": "Node.js", "categoryId": "cat-frameworks", "aliases": ["Node"] },
+    { "id": "skill-express", "name": "Express.js", "categoryId": "cat-frameworks", "aliases": ["Express"] },
+    { "id": "skill-tailwind", "name": "Tailwind CSS", "categoryId": "cat-frameworks", "aliases": [] },
+    { "id": "skill-django", "name": "Django", "categoryId": "cat-frameworks", "aliases": [] },
+    { "id": "skill-redux", "name": "Redux Toolkit", "categoryId": "cat-architecture", "aliases": ["Redux"] },
+    { "id": "skill-context", "name": "Context API", "categoryId": "cat-architecture", "aliases": [] },
+    { "id": "skill-rest-arch", "name": "RESTful Architecture", "categoryId": "cat-architecture", "aliases": [] },
+    { "id": "skill-serverless", "name": "Serverless Architecture", "categoryId": "cat-architecture", "aliases": [] },
+    { "id": "skill-event-driven", "name": "Event-Driven Systems", "categoryId": "cat-architecture", "aliases": [] },
+    { "id": "skill-rest", "name": "REST APIs", "categoryId": "cat-api", "aliases": ["REST"] },
+    { "id": "skill-graphql", "name": "GraphQL", "categoryId": "cat-api", "aliases": [] },
+    { "id": "skill-openai-api", "name": "OpenAI APIs", "categoryId": "cat-api", "aliases": [] },
+    { "id": "skill-integrations", "name": "Third-Party Integrations", "categoryId": "cat-api", "aliases": [] },
+    { "id": "skill-apigw", "name": "API Gateway", "categoryId": "cat-api", "aliases": [] },
+    { "id": "skill-postgres", "name": "PostgreSQL", "categoryId": "cat-databases", "aliases": [] },
+    { "id": "skill-mongo", "name": "MongoDB", "categoryId": "cat-databases", "aliases": [] },
+    { "id": "skill-mysql", "name": "MySQL", "categoryId": "cat-databases", "aliases": [] },
+    { "id": "skill-redis", "name": "Redis", "categoryId": "cat-databases", "aliases": [] },
+    { "id": "skill-azure", "name": "Azure", "categoryId": "cat-cloud", "aliases": [] },
+    { "id": "skill-aws", "name": "AWS", "categoryId": "cat-cloud", "aliases": [] },
+    { "id": "skill-amplify", "name": "AWS Amplify Gen 2", "categoryId": "cat-cloud", "aliases": ["Amplify Gen 2"] },
+    { "id": "skill-appsync", "name": "AWS AppSync", "categoryId": "cat-cloud", "aliases": ["AppSync"] },
+    { "id": "skill-cognito", "name": "AWS Cognito", "categoryId": "cat-cloud", "aliases": ["Cognito"] },
+    { "id": "skill-dynamodb", "name": "DynamoDB", "categoryId": "cat-cloud", "aliases": [] },
+    { "id": "skill-lambda", "name": "AWS Lambda", "categoryId": "cat-cloud", "aliases": ["Lambda"] },
+    { "id": "skill-s3", "name": "S3", "categoryId": "cat-cloud", "aliases": [] },
+    { "id": "skill-cloudfront", "name": "CloudFront", "categoryId": "cat-cloud", "aliases": [] },
+    { "id": "skill-cdk", "name": "AWS CDK", "categoryId": "cat-cloud", "aliases": ["CDK"] },
+    { "id": "skill-docker", "name": "Docker", "categoryId": "cat-devops", "aliases": [] },
+    { "id": "skill-gha", "name": "GitHub Actions", "categoryId": "cat-devops", "aliases": [] },
+    { "id": "skill-cicd", "name": "CI/CD", "categoryId": "cat-devops", "aliases": ["CI/ CD"] },
+    { "id": "skill-testing", "name": "Automated Testing", "categoryId": "cat-devops", "aliases": [] },
+    { "id": "skill-github", "name": "GitHub", "categoryId": "cat-vcs", "aliases": [] },
+    { "id": "skill-gitlab", "name": "GitLab", "categoryId": "cat-vcs", "aliases": [] },
+    { "id": "skill-jira", "name": "Jira", "categoryId": "cat-vcs", "aliases": [] },
+    { "id": "skill-agile", "name": "Agile (Scrum)", "categoryId": "cat-vcs", "aliases": ["Scrum", "Agile"] },
+    { "id": "skill-openai", "name": "OpenAI", "categoryId": "cat-ai", "aliases": [] },
+    { "id": "skill-deepai", "name": "DeepAI", "categoryId": "cat-ai", "aliases": [] },
+    { "id": "skill-agentic", "name": "Agentic Workflows", "categoryId": "cat-ai", "aliases": [] },
+    { "id": "skill-ai-int", "name": "AI Integrations", "categoryId": "cat-ai", "aliases": [] },
+    { "id": "skill-heygen", "name": "HeyGen", "categoryId": "cat-ai", "aliases": [] },
+    { "id": "skill-ai-auto", "name": "AI-Powered Automation", "categoryId": "cat-ai", "aliases": [] }
+  ],
+  "experience": [
+    {
+      "id": "exp-micro1",
+      "company": "Micro1",
+      "title": "Senior Software Engineer",
+      "location": "",
+      "startDate": "2025-05",
+      "endDate": null,
+      "facts": [
+        {
+          "id": "fact-m1-1",
+          "text": "Built AI-assisted mortgage workflows using AWS serverless technologies.",
+          "skills": ["AWS", "Serverless Architecture", "AI Integrations"]
+        },
+        {
+          "id": "fact-m1-2",
+          "text": "Developed loan analytics and reporting dashboards for operational teams.",
+          "skills": ["React.js", "REST APIs"]
+        },
+        {
+          "id": "fact-m1-3",
+          "text": "Integrated Encompass APIs to automate data exchange and reporting.",
+          "skills": ["REST APIs", "Third-Party Integrations"]
+        },
+        {
+          "id": "fact-m1-4",
+          "text": "Created AI-powered training experiences using HeyGen workflows.",
+          "skills": ["HeyGen", "AI Integrations"]
+        },
+        {
+          "id": "fact-m1-5",
+          "text": "Developed financial management modules supporting loan operations.",
+          "skills": ["Node.js"]
+        },
+        {
+          "id": "fact-m1-6",
+          "text": "Built backend services with Node.js and Python for workflow automation.",
+          "skills": ["Node.js", "Python"]
+        },
+        {
+          "id": "fact-m1-7",
+          "text": "Mentored engineers through reviews, pairing sessions, and implementation guidance.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsorb",
+      "company": "Devsorb",
+      "title": "Full Stack Software Engineer",
+      "location": "",
+      "startDate": "2024-01",
+      "endDate": "2025-05",
+      "facts": [
+        {
+          "id": "fact-ds-1",
+          "text": "Built fintech applications for asset, liability, and market data management.",
+          "skills": ["React.js", "Node.js"]
+        },
+        {
+          "id": "fact-ds-2",
+          "text": "Developed analytics dashboards used for operational reporting.",
+          "skills": ["React.js"]
+        },
+        {
+          "id": "fact-ds-3",
+          "text": "Designed Node.js APIs powering reporting and business workflows.",
+          "skills": ["Node.js", "REST APIs"]
+        },
+        {
+          "id": "fact-ds-4",
+          "text": "Integrated external financial data sources into centralized platforms.",
+          "skills": ["Third-Party Integrations", "REST APIs"]
+        },
+        {
+          "id": "fact-ds-5",
+          "text": "Built client management systems for projects, milestones, and analytics.",
+          "skills": ["React.js", "Node.js"]
+        },
+        {
+          "id": "fact-ds-6",
+          "text": "Improved reporting visibility through automated business intelligence tools.",
+          "skills": []
+        },
+        {
+          "id": "fact-ds-7",
+          "text": "Contributed to architecture decisions and performance improvements.",
+          "skills": ["RESTful Architecture"]
+        }
+      ]
+    },
+    {
+      "id": "exp-devsinc",
+      "company": "Devsinc",
+      "title": "Software Engineer",
+      "location": "",
+      "startDate": "2021-05",
+      "endDate": "2024-01",
+      "facts": [
+        {
+          "id": "fact-di-1",
+          "text": "Built healthcare and enterprise applications using React and Node.js.",
+          "skills": ["React.js", "Node.js"]
+        },
+        {
+          "id": "fact-di-2",
+          "text": "Developed reusable frontend components adopted across projects.",
+          "skills": ["React.js"]
+        },
+        {
+          "id": "fact-di-3",
+          "text": "Created REST APIs supporting reporting and workflow automation.",
+          "skills": ["REST APIs", "Node.js"]
+        },
+        {
+          "id": "fact-di-4",
+          "text": "Worked with PostgreSQL, MongoDB, and Redis for scalable solutions.",
+          "skills": ["PostgreSQL", "MongoDB", "Redis"]
+        },
+        {
+          "id": "fact-di-5",
+          "text": "Contributed to cloud deployments and CI/CD pipelines.",
+          "skills": ["CI/CD", "AWS"]
+        },
+        {
+          "id": "fact-di-6",
+          "text": "Collaborated with cross-functional teams on product delivery.",
+          "skills": ["Agile (Scrum)"]
+        },
+        {
+          "id": "fact-di-7",
+          "text": "Supported onboarding and mentoring of junior developers.",
+          "skills": []
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-monte",
+      "name": "Monte Carlo Analytics",
+      "link": "https://main.d1wxfdobtmq35e.amplifyapp.com/",
+      "facts": [
+        {
+          "id": "fact-pm-1",
+          "text": "Financial analytics platform providing business intelligence, reporting, and operational visibility.",
+          "skills": ["React.js", "AWS"]
+        },
+        {
+          "id": "fact-pm-2",
+          "text": "Built interactive dashboards, analytics workflows, and data visualization solutions that enabled stakeholders to make informed business decisions across multiple business units.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "proj-navitus",
+      "name": "Navitus",
+      "link": "https://www.navitus.com/",
+      "facts": [
+        {
+          "id": "fact-pn-1",
+          "text": "Healthcare platform supporting pharmacy benefit management and provider workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-pn-2",
+          "text": "Developed customer-facing features, API integrations, reporting capabilities, and cloud-based solutions that enhanced operational efficiency and user experience.",
+          "skills": ["REST APIs", "AWS"]
+        }
+      ]
+    },
+    {
+      "id": "proj-ehata",
+      "name": "Ehata",
+      "link": "https://ehataview.com/",
+      "facts": [
+        {
+          "id": "fact-pe-1",
+          "text": "Property management and real estate platform designed to streamline property operations, customer engagement, and business workflows.",
+          "skills": []
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-punjab",
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "University of the Punjab",
+      "startDate": null,
+      "endDate": null
+    }
+  ],
+  "certifications": []
+}
