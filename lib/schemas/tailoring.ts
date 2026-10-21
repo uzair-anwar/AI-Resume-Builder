@@ -40,6 +40,7 @@ export const JdTermChipSchema = z.object({
   term: z.string(),
   status: z.enum(["matched", "related", "missing"]),
   relatedVia: z.string().optional(),
+  inTailoredResume: z.boolean().optional(),
 });
 
 export const LineBudgetsSchema = z.object({
@@ -48,6 +49,18 @@ export const LineBudgetsSchema = z.object({
   bullets: z.record(z.string(), z.number()),
   projects: z.record(z.string(), z.number()),
 });
+
+export const AtsScorecardSchema = z.object({
+  baselineScore: z.number(),
+  tailoredScore: z.number(),
+  keywordsInContextScore: z.number(),
+  skillCoverageScore: z.number(),
+  titleAlignmentScore: z.number(),
+  structuralScore: z.number(),
+  wovenTerms: z.array(z.string()),
+});
+
+export type AtsScorecard = z.infer<typeof AtsScorecardSchema>;
 
 export const JobAnalysisSchema = z.object({
   detectedTitle: z.string().optional(),
@@ -62,6 +75,7 @@ export const JobAnalysisSchema = z.object({
   lineBudgets: LineBudgetsSchema,
   profileVocabulary: z.array(z.string()).optional(),
   missingTerms: z.array(z.string()).optional(),
+  atsScorecard: AtsScorecardSchema.optional(),
 });
 
 export type JobAnalysis = z.infer<typeof JobAnalysisSchema>;

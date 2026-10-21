@@ -1,5 +1,6 @@
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
+import type { CoverLetterVariants } from "@/lib/schemas/cover-letter";
 import type { LineBudgets } from "@/lib/layout/budgets";
 
 const KEY = "resume_tailor_last_result";
@@ -12,6 +13,7 @@ export type StoredTailorSession = {
   budgets?: LineBudgets;
   warnings: string[];
   aiUsage?: TailorResponse["aiUsage"];
+  coverLetter?: CoverLetterVariants | null;
 };
 
 export function loadStoredTailorSession(): StoredTailorSession | null {

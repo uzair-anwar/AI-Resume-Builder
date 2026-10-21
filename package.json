@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --import tsx --test lib/**/*.test.ts"
+    "test": "node --import tsx --test 'lib/**/*.test.ts' 'lib/server/**/*.test.ts'"
   },
   "dependencies": {
     "@fontsource/pt-serif": "^5.3.0",

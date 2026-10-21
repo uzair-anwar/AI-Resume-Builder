@@ -70,6 +70,14 @@ export function assembleResumeView(resume: MasterResume, tailored: TailoringResu
 
 export function buildChanges(resume: MasterResume, tailored: TailoringResult) {
   const changes: { factId: string; original: string; tailored: string }[] = [];
+  const defaultSummary = resume.summaryFacts.map((f) => f.text).join(" ");
+  if (tailored.summary.trim() !== defaultSummary.trim()) {
+    changes.push({
+      factId: "summary",
+      original: defaultSummary.slice(0, 200),
+      tailored: tailored.summary.slice(0, 200),
+    });
+  }
   for (const exp of tailored.experience) {
     for (const b of exp.bullets) {
       for (const fid of b.sourceFactIds) {

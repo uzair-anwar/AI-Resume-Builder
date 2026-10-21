@@ -1,96 +1,274 @@
 {
   "terms": [
-    { "id": "java", "canonical": "Java", "aliases": [], "family": "jvm" },
-    { "id": "spring-boot", "canonical": "Spring Boot", "aliases": ["springboot"], "family": "jvm" },
-    { "id": "spring", "canonical": "Spring", "aliases": ["spring framework"], "family": "jvm" },
-    { "id": "hibernate", "canonical": "Hibernate", "aliases": [], "family": "jvm" },
-    { "id": "kotlin", "canonical": "Kotlin", "aliases": [], "family": "jvm" },
-    { "id": "csharp", "canonical": "C#", "aliases": ["c sharp"], "family": "dotnet" },
+    { "id": "java", "canonical": "Java", "aliases": [], "family": "jvm", "kind": "tool" },
+    { "id": "spring-boot", "canonical": "Spring Boot", "aliases": ["springboot"], "family": "jvm", "kind": "tool" },
+    { "id": "spring", "canonical": "Spring", "aliases": ["spring framework"], "family": "jvm", "kind": "tool" },
+    { "id": "hibernate", "canonical": "Hibernate", "aliases": [], "family": "jvm", "kind": "tool" },
+    { "id": "kotlin", "canonical": "Kotlin", "aliases": [], "family": "jvm", "kind": "tool" },
+    { "id": "csharp", "canonical": "C#", "aliases": ["c sharp"], "family": "dotnet", "kind": "tool" },
     {
       "id": "dotnet",
       "canonical": ".NET",
       "aliases": [".net core", "asp.net", "asp.net core"],
-      "family": "dotnet"
+      "family": "dotnet",
+      "kind": "tool"
     },
-    { "id": "blazor", "canonical": "Blazor", "aliases": [], "family": "dotnet" },
+    { "id": "blazor", "canonical": "Blazor", "aliases": [], "family": "dotnet", "kind": "tool" },
     {
       "id": "entity-framework",
       "canonical": "Entity Framework",
       "aliases": ["ef core"],
-      "family": "dotnet"
+      "family": "dotnet",
+      "kind": "tool"
     },
-    { "id": "python", "canonical": "Python", "aliases": [], "family": "python" },
-    { "id": "django", "canonical": "Django", "aliases": [], "family": "python" },
-    { "id": "fastapi", "canonical": "FastAPI", "aliases": [], "family": "python" },
-    { "id": "flask", "canonical": "Flask", "aliases": [], "family": "python" },
-    { "id": "javascript", "canonical": "JavaScript", "aliases": ["js"], "family": "js" },
-    { "id": "typescript", "canonical": "TypeScript", "aliases": ["ts"], "family": "js" },
-    { "id": "react", "canonical": "React", "aliases": ["react.js", "reactjs"], "family": "js" },
-    { "id": "nextjs", "canonical": "Next.js", "aliases": ["next"], "family": "js" },
-    { "id": "nodejs", "canonical": "Node.js", "aliases": ["node", "nodejs"], "family": "js" },
-    { "id": "express", "canonical": "Express", "aliases": ["express.js"], "family": "js" },
-    { "id": "nestjs", "canonical": "NestJS", "aliases": [], "family": "js" },
-    { "id": "angular", "canonical": "Angular", "aliases": [], "family": "js" },
-    { "id": "vue", "canonical": "Vue", "aliases": ["vue.js"], "family": "js" },
-    { "id": "tailwind", "canonical": "Tailwind CSS", "aliases": ["tailwind"], "family": "js" },
-    { "id": "graphql", "canonical": "GraphQL", "aliases": [], "family": "api" },
+    { "id": "python", "canonical": "Python", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "django", "canonical": "Django", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "fastapi", "canonical": "FastAPI", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "flask", "canonical": "Flask", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "javascript", "canonical": "JavaScript", "aliases": ["js"], "family": "js", "kind": "tool" },
+    { "id": "typescript", "canonical": "TypeScript", "aliases": ["ts"], "family": "js", "kind": "tool" },
+    { "id": "react", "canonical": "React", "aliases": ["react.js", "reactjs"], "family": "js", "kind": "tool" },
+    { "id": "nextjs", "canonical": "Next.js", "aliases": ["next", "nextjs"], "family": "js", "kind": "tool" },
+    { "id": "nodejs", "canonical": "Node.js", "aliases": ["node", "nodejs"], "family": "js", "kind": "tool" },
+    { "id": "express", "canonical": "Express", "aliases": ["express.js"], "family": "js", "kind": "tool" },
+    { "id": "nestjs", "canonical": "NestJS", "aliases": ["nest.js"], "family": "js", "kind": "tool" },
+    { "id": "angular", "canonical": "Angular", "aliases": [], "family": "js", "kind": "tool" },
+    { "id": "vue", "canonical": "Vue", "aliases": ["vue.js", "vuejs"], "family": "js", "kind": "tool" },
+    { "id": "tailwind", "canonical": "Tailwind CSS", "aliases": ["tailwind"], "family": "js", "kind": "tool" },
+    { "id": "graphql", "canonical": "GraphQL", "aliases": [], "family": "api", "kind": "tool" },
+    { "id": "grpc", "canonical": "gRPC", "aliases": ["grpc"], "family": "api", "kind": "tool" },
     {
       "id": "rest",
       "canonical": "REST APIs",
-      "aliases": ["rest", "restful", "rest api", "rest apis"],
-      "family": "api"
+      "aliases": ["rest", "restful", "rest api", "rest apis", "restful apis"],
+      "family": "api",
+      "kind": "concept"
     },
     {
       "id": "microservices",
       "canonical": "Microservices",
-      "aliases": ["microservice"],
-      "family": "api"
+      "aliases": ["microservice", "microservices architecture", "microservice architecture"],
+      "family": "api",
+      "kind": "concept"
     },
-    { "id": "postgresql", "canonical": "PostgreSQL", "aliases": ["postgres"], "family": "data" },
-    { "id": "mongodb", "canonical": "MongoDB", "aliases": ["mongo"], "family": "data" },
-    { "id": "mysql", "canonical": "MySQL", "aliases": [], "family": "data" },
-    { "id": "redis", "canonical": "Redis", "aliases": [], "family": "data" },
-    { "id": "dynamodb", "canonical": "DynamoDB", "aliases": [], "family": "data" },
-    { "id": "sql", "canonical": "SQL", "aliases": [], "family": "data" },
-    { "id": "aws", "canonical": "AWS", "aliases": ["amazon web services"], "family": "cloud" },
-    { "id": "lambda", "canonical": "AWS Lambda", "aliases": ["lambda"], "family": "cloud" },
+    {
+      "id": "distributed-systems",
+      "canonical": "Distributed Systems",
+      "aliases": ["distributed system", "distributed architecture", "distributed services"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "system-design",
+      "canonical": "System Design",
+      "aliases": ["systems design", "software architecture", "architectural design"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "event-driven",
+      "canonical": "Event-Driven Architecture",
+      "aliases": ["event-driven", "event driven", "asynchronous processing", "message-driven"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "scalability",
+      "canonical": "Scalability",
+      "aliases": ["scalable systems", "high scale", "horizontal scaling", "scalable backend"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "reliability",
+      "canonical": "Reliability",
+      "aliases": ["system reliability", "high availability", "fault tolerance", "99.9% uptime", "resilience"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "performance-optimization",
+      "canonical": "Performance Optimization",
+      "aliases": ["improve performance", "performance tuning", "latency reduction", "low latency", "optimization"],
+      "family": "architecture",
+      "kind": "concept"
+    },
+    {
+      "id": "observability",
+      "canonical": "Observability",
+      "aliases": ["monitoring", "telemetry", "logging and monitoring", "alerting"],
+      "family": "devops",
+      "kind": "concept"
+    },
+    {
+      "id": "cloud-infrastructure",
+      "canonical": "Cloud Infrastructure",
+      "aliases": ["cloud native", "cloud-native", "cloud architecture", "cloud services", "cloud platform"],
+      "family": "cloud",
+      "kind": "concept"
+    },
+    { "id": "postgresql", "canonical": "PostgreSQL", "aliases": ["postgres"], "family": "data", "kind": "tool" },
+    { "id": "mongodb", "canonical": "MongoDB", "aliases": ["mongo"], "family": "data", "kind": "tool" },
+    { "id": "mysql", "canonical": "MySQL", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "redis", "canonical": "Redis", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "dynamodb", "canonical": "DynamoDB", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "sql", "canonical": "SQL", "aliases": ["relational databases", "relational database"], "family": "data", "kind": "concept" },
+    { "id": "nosql", "canonical": "NoSQL", "aliases": ["nosql databases", "nosql database", "document database"], "family": "data", "kind": "concept" },
+    { "id": "aws", "canonical": "AWS", "aliases": ["amazon web services"], "family": "cloud", "kind": "tool" },
+    { "id": "lambda", "canonical": "AWS Lambda", "aliases": ["lambda"], "family": "cloud", "kind": "tool" },
     {
       "id": "serverless",
       "canonical": "Serverless",
       "aliases": ["serverless architecture"],
-      "family": "cloud"
+      "family": "cloud",
+      "kind": "concept"
     },
-    { "id": "azure", "canonical": "Azure", "aliases": ["microsoft azure"], "family": "cloud" },
-    { "id": "gcp", "canonical": "Google Cloud", "aliases": ["gcp"], "family": "cloud" },
-    { "id": "docker", "canonical": "Docker", "aliases": [], "family": "devops" },
-    { "id": "kubernetes", "canonical": "Kubernetes", "aliases": ["k8s"], "family": "devops" },
-    { "id": "terraform", "canonical": "Terraform", "aliases": [], "family": "devops" },
+    { "id": "azure", "canonical": "Azure", "aliases": ["microsoft azure"], "family": "cloud", "kind": "tool" },
+    { "id": "gcp", "canonical": "Google Cloud", "aliases": ["gcp", "google cloud platform"], "family": "cloud", "kind": "tool" },
+    { "id": "docker", "canonical": "Docker", "aliases": ["containerization", "containers"], "family": "devops", "kind": "tool" },
+    { "id": "kubernetes", "canonical": "Kubernetes", "aliases": ["k8s"], "family": "devops", "kind": "tool" },
+    { "id": "terraform", "canonical": "Terraform", "aliases": ["infrastructure as code", "iac"], "family": "devops", "kind": "tool" },
     {
       "id": "cicd",
       "canonical": "CI/CD",
-      "aliases": ["ci/cd", "continuous integration"],
-      "family": "devops"
+      "aliases": ["ci/cd", "continuous integration", "continuous delivery", "ci/cd pipelines", "deployment pipelines"],
+      "family": "devops",
+      "kind": "concept"
     },
-    { "id": "github-actions", "canonical": "GitHub Actions", "aliases": [], "family": "devops" },
-    { "id": "kafka", "canonical": "Apache Kafka", "aliases": ["kafka"], "family": "messaging" },
-    { "id": "rabbitmq", "canonical": "RabbitMQ", "aliases": [], "family": "messaging" },
-    { "id": "sqs", "canonical": "AWS SQS", "aliases": ["sqs"], "family": "messaging" },
-    { "id": "openai", "canonical": "OpenAI", "aliases": ["openai api", "gpt"], "family": "ai" },
-    { "id": "llm", "canonical": "LLM", "aliases": ["large language model"], "family": "ai" },
-    { "id": "langchain", "canonical": "LangChain", "aliases": [], "family": "ai" },
+    { "id": "github-actions", "canonical": "GitHub Actions", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "kafka", "canonical": "Apache Kafka", "aliases": ["kafka"], "family": "messaging", "kind": "tool" },
+    { "id": "rabbitmq", "canonical": "RabbitMQ", "aliases": [], "family": "messaging", "kind": "tool" },
+    { "id": "sqs", "canonical": "AWS SQS", "aliases": ["sqs"], "family": "messaging", "kind": "tool" },
+    { "id": "openai", "canonical": "OpenAI", "aliases": ["openai api", "gpt"], "family": "ai", "kind": "tool" },
+    { "id": "llm", "canonical": "LLM", "aliases": ["large language model", "large language models", "llms", "generative ai"], "family": "ai", "kind": "concept" },
+    { "id": "langchain", "canonical": "LangChain", "aliases": [], "family": "ai", "kind": "tool" },
     {
       "id": "rag",
       "canonical": "RAG",
-      "aliases": ["retrieval augmented generation"],
-      "family": "ai"
+      "aliases": ["retrieval augmented generation", "retrieval-augmented generation"],
+      "family": "ai",
+      "kind": "concept"
     },
-    { "id": "go", "canonical": "Go", "aliases": ["golang"], "family": "go" },
-    { "id": "ruby", "canonical": "Ruby", "aliases": [], "family": "ruby" },
-    { "id": "rails", "canonical": "Ruby on Rails", "aliases": ["rails"], "family": "ruby" },
-    { "id": "php", "canonical": "PHP", "aliases": [], "family": "php" },
-    { "id": "laravel", "canonical": "Laravel", "aliases": [], "family": "php" },
-    { "id": "agile", "canonical": "Agile", "aliases": ["scrum"], "family": "process" },
-    { "id": "mern", "canonical": "MERN", "aliases": ["mern stack"], "family": "js" }
+    { "id": "go", "canonical": "Go", "aliases": ["golang"], "family": "go", "kind": "tool" },
+    { "id": "ruby", "canonical": "Ruby", "aliases": [], "family": "ruby", "kind": "tool" },
+    { "id": "rails", "canonical": "Ruby on Rails", "aliases": ["rails"], "family": "ruby", "kind": "tool" },
+    { "id": "php", "canonical": "PHP", "aliases": [], "family": "php", "kind": "tool" },
+    { "id": "laravel", "canonical": "Laravel", "aliases": [], "family": "php", "kind": "tool" },
+    { "id": "agile", "canonical": "Agile", "aliases": ["scrum", "agile/scrum", "kanban"], "family": "process", "kind": "soft" },
+    { "id": "leadership", "canonical": "Leadership", "aliases": ["technical leadership", "team leadership", "mentoring", "mentorship"], "family": "process", "kind": "soft" },
+    { "id": "team-building", "canonical": "Team Building", "aliases": ["cross-functional collaboration", "stakeholder management", "code reviews"], "family": "process", "kind": "soft" },
+    { "id": "api-design", "canonical": "API Design", "aliases": ["api development", "api integration", "web apis"], "family": "api", "kind": "concept" },
+    { "id": "security-compliance", "canonical": "Security & Compliance", "aliases": ["authentication", "authorization", "oauth", "jwt", "rbac", "data security"], "family": "security", "kind": "concept" },
+    { "id": "automated-testing", "canonical": "Automated Testing", "aliases": ["unit testing", "integration testing", "test automation", "tdd"], "family": "quality", "kind": "concept" },
+    { "id": "mern", "canonical": "MERN", "aliases": ["mern stack"], "family": "js", "kind": "concept" },
+
+    { "id": "git", "canonical": "Git", "aliases": ["git version control", "version control"], "family": "vcs", "kind": "tool" },
+    { "id": "github", "canonical": "GitHub", "aliases": [], "family": "vcs", "kind": "tool" },
+    { "id": "gitlab", "canonical": "GitLab", "aliases": [], "family": "vcs", "kind": "tool" },
+    { "id": "bitbucket", "canonical": "Bitbucket", "aliases": [], "family": "vcs", "kind": "tool" },
+    { "id": "jira", "canonical": "Jira", "aliases": ["atlassian jira"], "family": "process", "kind": "tool" },
+    { "id": "jenkins", "canonical": "Jenkins", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "circleci", "canonical": "CircleCI", "aliases": ["circle ci"], "family": "devops", "kind": "tool" },
+    { "id": "gitlab-ci", "canonical": "GitLab CI", "aliases": ["gitlab ci/cd", "gitlab pipelines"], "family": "devops", "kind": "tool" },
+    { "id": "ansible", "canonical": "Ansible", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "helm", "canonical": "Helm", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "pulumi", "canonical": "Pulumi", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "cloudformation", "canonical": "AWS CloudFormation", "aliases": ["cloudformation"], "family": "devops", "kind": "tool" },
+    { "id": "aws-cdk", "canonical": "AWS CDK", "aliases": ["cdk", "aws cloud development kit"], "family": "devops", "kind": "tool" },
+    { "id": "nginx", "canonical": "Nginx", "aliases": [], "family": "devops", "kind": "tool" },
+    { "id": "linux", "canonical": "Linux", "aliases": ["unix"], "family": "devops", "kind": "tool" },
+    { "id": "bash", "canonical": "Bash", "aliases": ["shell scripting", "shell scripts"], "family": "devops", "kind": "tool" },
+
+    { "id": "prometheus", "canonical": "Prometheus", "aliases": [], "family": "observability", "kind": "tool" },
+    { "id": "grafana", "canonical": "Grafana", "aliases": [], "family": "observability", "kind": "tool" },
+    { "id": "datadog", "canonical": "Datadog", "aliases": [], "family": "observability", "kind": "tool" },
+    { "id": "new-relic", "canonical": "New Relic", "aliases": ["newrelic"], "family": "observability", "kind": "tool" },
+    { "id": "sentry", "canonical": "Sentry", "aliases": [], "family": "observability", "kind": "tool" },
+    { "id": "cloudwatch", "canonical": "AWS CloudWatch", "aliases": ["cloudwatch"], "family": "observability", "kind": "tool" },
+    { "id": "splunk", "canonical": "Splunk", "aliases": [], "family": "observability", "kind": "tool" },
+    { "id": "elasticsearch", "canonical": "Elasticsearch", "aliases": ["elastic search", "elk stack", "opensearch"], "family": "data", "kind": "tool" },
+
+    { "id": "s3", "canonical": "S3", "aliases": ["amazon s3", "aws s3"], "family": "cloud", "kind": "tool" },
+    { "id": "cloudfront", "canonical": "CloudFront", "aliases": ["aws cloudfront"], "family": "cloud", "kind": "tool" },
+    { "id": "api-gateway", "canonical": "API Gateway", "aliases": ["aws api gateway", "amazon api gateway"], "family": "cloud", "kind": "tool" },
+    { "id": "cognito", "canonical": "AWS Cognito", "aliases": ["cognito", "amazon cognito"], "family": "cloud", "kind": "tool" },
+    { "id": "appsync", "canonical": "AWS AppSync", "aliases": ["appsync"], "family": "cloud", "kind": "tool" },
+    { "id": "amplify", "canonical": "AWS Amplify", "aliases": ["amplify", "amplify gen 2"], "family": "cloud", "kind": "tool" },
+    { "id": "sns", "canonical": "AWS SNS", "aliases": ["sns", "amazon sns"], "family": "messaging", "kind": "tool" },
+    { "id": "eventbridge", "canonical": "AWS EventBridge", "aliases": ["eventbridge"], "family": "messaging", "kind": "tool" },
+    { "id": "kinesis", "canonical": "AWS Kinesis", "aliases": ["kinesis"], "family": "messaging", "kind": "tool" },
+    { "id": "step-functions", "canonical": "AWS Step Functions", "aliases": ["step functions"], "family": "cloud", "kind": "tool" },
+    { "id": "ec2", "canonical": "EC2", "aliases": ["amazon ec2", "aws ec2"], "family": "cloud", "kind": "tool" },
+    { "id": "ecs", "canonical": "Amazon ECS", "aliases": ["ecs", "aws ecs", "fargate"], "family": "cloud", "kind": "tool" },
+    { "id": "eks", "canonical": "Amazon EKS", "aliases": ["eks", "aws eks"], "family": "cloud", "kind": "tool" },
+    { "id": "rds", "canonical": "Amazon RDS", "aliases": ["rds", "aws rds", "aurora"], "family": "cloud", "kind": "tool" },
+    { "id": "vercel", "canonical": "Vercel", "aliases": [], "family": "cloud", "kind": "tool" },
+    { "id": "heroku", "canonical": "Heroku", "aliases": [], "family": "cloud", "kind": "tool" },
+
+    { "id": "prisma", "canonical": "Prisma", "aliases": [], "family": "orm", "kind": "tool" },
+    { "id": "sequelize", "canonical": "Sequelize", "aliases": [], "family": "orm", "kind": "tool" },
+    { "id": "typeorm", "canonical": "TypeORM", "aliases": [], "family": "orm", "kind": "tool" },
+    { "id": "mongoose", "canonical": "Mongoose", "aliases": [], "family": "orm", "kind": "tool" },
+    { "id": "sqlalchemy", "canonical": "SQLAlchemy", "aliases": [], "family": "orm", "kind": "tool" },
+    { "id": "celery", "canonical": "Celery", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "pandas", "canonical": "Pandas", "aliases": [], "family": "python", "kind": "tool" },
+    { "id": "airflow", "canonical": "Apache Airflow", "aliases": ["airflow"], "family": "data", "kind": "tool" },
+    { "id": "spark", "canonical": "Apache Spark", "aliases": ["pyspark"], "family": "data", "kind": "tool" },
+    { "id": "snowflake", "canonical": "Snowflake", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "bigquery", "canonical": "BigQuery", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "redshift", "canonical": "Amazon Redshift", "aliases": ["redshift"], "family": "data", "kind": "tool" },
+    { "id": "cassandra", "canonical": "Cassandra", "aliases": ["apache cassandra"], "family": "data", "kind": "tool" },
+    { "id": "sqlite", "canonical": "SQLite", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "oracle-db", "canonical": "Oracle Database", "aliases": ["oracle db", "oracle sql", "pl/sql"], "family": "data", "kind": "tool" },
+    { "id": "sql-server", "canonical": "SQL Server", "aliases": ["mssql", "microsoft sql server", "t-sql"], "family": "data", "kind": "tool" },
+    { "id": "firebase", "canonical": "Firebase", "aliases": [], "family": "data", "kind": "tool" },
+    { "id": "supabase", "canonical": "Supabase", "aliases": [], "family": "data", "kind": "tool" },
+
+    { "id": "redux", "canonical": "Redux", "aliases": ["redux toolkit"], "family": "js", "kind": "tool" },
+    { "id": "jest", "canonical": "Jest", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "mocha", "canonical": "Mocha", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "cypress", "canonical": "Cypress", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "playwright", "canonical": "Playwright", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "selenium", "canonical": "Selenium", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "pytest", "canonical": "Pytest", "aliases": [], "family": "quality", "kind": "tool" },
+    { "id": "postman", "canonical": "Postman", "aliases": [], "family": "api", "kind": "tool" },
+    { "id": "openapi", "canonical": "OpenAPI", "aliases": ["swagger"], "family": "api", "kind": "tool" },
+    { "id": "websockets", "canonical": "WebSockets", "aliases": ["websocket", "socket.io"], "family": "api", "kind": "tool" },
+    { "id": "stripe", "canonical": "Stripe", "aliases": [], "family": "integrations", "kind": "tool" },
+    { "id": "twilio", "canonical": "Twilio", "aliases": [], "family": "integrations", "kind": "tool" },
+    { "id": "webpack", "canonical": "Webpack", "aliases": [], "family": "js", "kind": "tool" },
+    { "id": "vite", "canonical": "Vite", "aliases": [], "family": "js", "kind": "tool" },
+    { "id": "storybook", "canonical": "Storybook", "aliases": [], "family": "js", "kind": "tool" },
+    { "id": "html", "canonical": "HTML", "aliases": ["html5"], "family": "js", "kind": "tool" },
+    { "id": "css", "canonical": "CSS", "aliases": ["css3", "sass", "scss"], "family": "js", "kind": "tool" },
+
+    { "id": "rust", "canonical": "Rust", "aliases": [], "family": "rust", "kind": "tool" },
+    { "id": "scala", "canonical": "Scala", "aliases": [], "family": "jvm", "kind": "tool" },
+    { "id": "elixir", "canonical": "Elixir", "aliases": [], "family": "elixir", "kind": "tool" },
+    { "id": "cpp", "canonical": "C++", "aliases": ["cpp"], "family": "cpp", "kind": "tool" },
+
+    { "id": "pytorch", "canonical": "PyTorch", "aliases": [], "family": "ai", "kind": "tool" },
+    { "id": "tensorflow", "canonical": "TensorFlow", "aliases": [], "family": "ai", "kind": "tool" },
+    { "id": "hugging-face", "canonical": "Hugging Face", "aliases": ["huggingface"], "family": "ai", "kind": "tool" },
+    { "id": "pinecone", "canonical": "Pinecone", "aliases": [], "family": "ai", "kind": "tool" },
+    { "id": "vector-database", "canonical": "Vector Databases", "aliases": ["vector database", "vector store", "vector stores", "embeddings"], "family": "ai", "kind": "concept" },
+    { "id": "prompt-engineering", "canonical": "Prompt Engineering", "aliases": ["prompt design", "prompting"], "family": "ai", "kind": "concept" },
+
+    { "id": "caching", "canonical": "Caching", "aliases": ["cache layer", "caching strategies", "distributed caching"], "family": "architecture", "kind": "concept" },
+    { "id": "message-queues", "canonical": "Message Queues", "aliases": ["message queue", "job queues", "background jobs", "asynchronous messaging", "pub/sub", "pubsub"], "family": "architecture", "kind": "concept" },
+    { "id": "multi-tenancy", "canonical": "Multi-Tenancy", "aliases": ["multi-tenant", "multitenant"], "family": "architecture", "kind": "concept" },
+    { "id": "real-time", "canonical": "Real-Time Systems", "aliases": ["real-time", "realtime", "real time processing", "streaming data"], "family": "architecture", "kind": "concept" },
+    { "id": "etl", "canonical": "ETL", "aliases": ["data pipelines", "data pipeline", "etl pipelines", "data integration"], "family": "data", "kind": "concept" },
+    { "id": "data-modeling", "canonical": "Data Modeling", "aliases": ["schema design", "database design", "database modeling"], "family": "data", "kind": "concept" },
+    { "id": "orm", "canonical": "ORM", "aliases": ["object-relational mapping", "object relational mapping"], "family": "data", "kind": "concept" },
+    { "id": "state-management", "canonical": "State Management", "aliases": ["application state", "client-side state"], "family": "js", "kind": "concept" },
+    { "id": "data-visualization", "canonical": "Data Visualization", "aliases": ["dashboards", "data viz", "analytics dashboards", "reporting dashboards"], "family": "data", "kind": "concept" },
+    { "id": "workflow-automation", "canonical": "Workflow Automation", "aliases": ["process automation", "business process automation", "workflow engine"], "family": "architecture", "kind": "concept" },
+    { "id": "third-party-integrations", "canonical": "Third-Party Integrations", "aliases": ["third party integrations", "external integrations", "api integrations", "webhooks"], "family": "api", "kind": "concept" },
+    { "id": "payments", "canonical": "Payment Systems", "aliases": ["payment processing", "payments platform", "financial systems", "fintech", "money movement"], "family": "domain", "kind": "concept" },
+    { "id": "healthcare", "canonical": "Healthcare Systems", "aliases": ["healthcare platform", "health tech", "healthtech", "hipaa"], "family": "domain", "kind": "concept" },
+    { "id": "code-quality", "canonical": "Code Quality", "aliases": ["clean code", "code quality standards", "maintainable code"], "family": "quality", "kind": "soft" },
+    { "id": "ownership", "canonical": "End-to-End Ownership", "aliases": ["end-to-end ownership", "own features", "full lifecycle", "sdlc", "software development lifecycle"], "family": "process", "kind": "soft" }
   ],
   "transferableGroups": [
     {
@@ -117,12 +295,79 @@
     },
     {
       "id": "nosql-db",
-      "terms": ["mongodb", "dynamodb", "redis"]
+      "terms": ["mongodb", "dynamodb", "redis", "nosql"]
     },
     {
       "id": "cloud-provider",
-      "terms": ["aws", "azure", "gcp"]
+      "terms": ["aws", "azure", "gcp", "cloud-infrastructure", "serverless"]
     },
-    { "id": "api-style", "terms": ["rest", "graphql"] }
+    {
+      "id": "api-style",
+      "terms": ["rest", "graphql", "grpc", "api-design"]
+    },
+    {
+      "id": "distributed-arch",
+      "terms": ["microservices", "distributed-systems", "event-driven", "scalability", "reliability", "system-design"]
+    },
+    {
+      "id": "messaging-queue",
+      "terms": ["kafka", "rabbitmq", "sqs", "sns", "eventbridge", "kinesis", "event-driven", "message-queues"]
+    },
+    {
+      "id": "vcs",
+      "terms": ["git", "github", "gitlab", "bitbucket"]
+    },
+    {
+      "id": "ci-tools",
+      "terms": ["github-actions", "jenkins", "circleci", "gitlab-ci", "cicd"]
+    },
+    {
+      "id": "iac",
+      "terms": ["terraform", "aws-cdk", "cloudformation", "pulumi"]
+    },
+    {
+      "id": "container-platform",
+      "terms": ["docker", "kubernetes", "ecs", "eks", "helm"]
+    },
+    {
+      "id": "observability-tools",
+      "terms": ["prometheus", "grafana", "datadog", "new-relic", "cloudwatch", "sentry", "splunk", "elasticsearch", "observability"]
+    },
+    {
+      "id": "aws-services",
+      "terms": ["aws", "lambda", "s3", "cloudfront", "api-gateway", "cognito", "appsync", "amplify", "dynamodb", "sqs", "sns", "eventbridge", "step-functions", "ec2", "ecs", "eks", "rds", "cloudwatch"]
+    },
+    {
+      "id": "orm-layer",
+      "terms": ["prisma", "sequelize", "typeorm", "mongoose", "sqlalchemy", "hibernate", "entity-framework", "orm"]
+    },
+    {
+      "id": "js-testing",
+      "terms": ["jest", "mocha", "cypress", "playwright", "selenium", "pytest", "automated-testing"]
+    },
+    {
+      "id": "data-warehouse",
+      "terms": ["snowflake", "bigquery", "redshift", "postgresql", "sql"]
+    },
+    {
+      "id": "data-pipelines",
+      "terms": ["airflow", "spark", "etl", "kinesis", "pandas", "celery"]
+    },
+    {
+      "id": "state-mgmt",
+      "terms": ["redux", "state-management", "react"]
+    },
+    {
+      "id": "realtime",
+      "terms": ["websockets", "real-time", "event-driven", "graphql"]
+    },
+    {
+      "id": "ai-stack",
+      "terms": ["openai", "llm", "langchain", "rag", "prompt-engineering", "pytorch", "tensorflow", "hugging-face", "pinecone", "vector-database"]
+    },
+    {
+      "id": "api-tooling",
+      "terms": ["postman", "openapi", "rest", "api-design", "graphql"]
+    }
   ]
 }

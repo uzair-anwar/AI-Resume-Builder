@@ -20,8 +20,13 @@ If you only want to **use** the app after someone else set it up, skip to [How t
 1. **Starts from your real profile** — name, jobs, projects, and facts stored in the app (see Profile in the menu).
 2. **Reads the job** — from a job board URL (Greenhouse, Lever, and others when possible) or from text you paste.
 3. **Analyzes the posting** — highlights terms that match, are related, or are missing from your background.
-4. **Uses AI to tailor** — picks skills, tightens bullets, and fits everything on **one page** with the same fonts and columns as your PDF template.
-5. **Shows a live preview** — edit text in the browser, then download a PDF named for the job (e.g. `Uzair_Anwar_Senior_Engineer.pdf`).
+4. **Uses AI in five focused steps** (you’ll see each one on the progress bar):
+   - **Summary** — job-aligned professional summary from your verified summary facts.
+   - **Work experience** — rewrites bullets per role (company titles and dates stay fixed).
+   - **Skills** — puts JD-matched skills first, keeps related skills from your profile, and fills the skills block (not just 4–6 items).
+   - **Projects** — tailors each project description to the posting.
+   - **Headline** — adjusts the line under your name for the role stack (same seniority level; employer job titles are never changed).
+5. **Shows a live preview** — the PDF updates as steps finish; edit in the browser, then download (e.g. `Uzair_Anwar_Senior_Engineer.pdf`).
 
 The app **does not** automatically run AI when you type or change settings. You click one button when you are ready. After a successful run, results are **saved in your browser** so a refresh does not call the AI again—until you change the URL, description, AI company, model, or fallback setting.
 
@@ -138,7 +143,8 @@ npm test           # unit tests (provider config, etc.)
 
 - `data/master-resume.json` — default master resume on disk.
 - `components/HomeWorkspace.tsx` — main UI (URL, provider, model, generate button, preview).
-- `app/api/tailor`, `app/api/extract-job` — server routes for AI and job extraction.
+- `app/api/tailor/step`, `app/api/tailor/assemble`, `app/api/extract-job` — staged AI steps and final layout assembly.
+- `lib/server/tailor-steps/` — summary, experience, skills, projects, headline runners.
 - `lib/client/session-result.ts` — browser cache of last successful tailor run.
 
 ---

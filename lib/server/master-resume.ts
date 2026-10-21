@@ -4,6 +4,7 @@ import path from "path";
 import { MasterResume, MasterResumeSchema } from "@/lib/schemas/resume";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 import { ProfileOverrideSchema } from "@/lib/schemas/profile";
+import { dedupeSkills } from "@/lib/skills/dedupe-skills";
 
 let cached: MasterResume | null = null;
 
@@ -11,7 +12,7 @@ export function loadMasterResume(): MasterResume {
   if (cached) return cached;
   const file = path.join(process.cwd(), "data", "master-resume.json");
   const raw = JSON.parse(readFileSync(file, "utf8"));
-  cached = MasterResumeSchema.parse(raw);
+  cached = dedupeSkills(MasterResumeSchema.parse(raw));
   return cached;
 }
 
@@ -48,7 +49,7 @@ export function mergeProfileOverride(
     }
   }
 
-  return MasterResumeSchema.parse(merged);
+  return dedupeSkills(MasterResumeSchema.parse(merged));
 }
 
 export function getAllFactIds(resume: MasterResume): Set<string> {

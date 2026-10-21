@@ -1,4 +1,3 @@
-import "server-only";
 import { readFileSync } from "fs";
 import path from "path";
 import { normalizeText } from "./taxonomy";

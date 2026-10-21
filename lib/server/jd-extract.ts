@@ -1,5 +1,5 @@
 import "server-only";
-import { loadTaxonomy, findTermInText } from "./taxonomy";
+import { findTaxonomyTermByName, findTermInText, loadTaxonomy } from "./taxonomy";
 
 const STOPWORDS = new Set(
   (
@@ -15,9 +15,40 @@ const STOPWORDS = new Set(
     "platform platforms skills skill knowledge understanding familiarity background degree bachelor master related field " +
     "design build operate manage support improve collaborate ensure provide create develop maintain implement deliver drive lead " +
     "new high low large small best well high-quality across per etc one two three four five six seven eight nine ten first second " +
-    "senior junior mid lead principal staff intern internship candidate candidates person people customers customer clients client business"
+    "senior junior mid lead principal staff intern internship candidate candidates person people customers customer clients client business " +
+    "matters offer culture about computer science backend frontend fullstack full-stack software systems system service services product products " +
+    "environment fast-paced mission-critical real-time complex strict regulatory compliance financial money scale volume uptime " +
+    "usa u.s us uk eu canadaremote equal opportunity employer diversity inclusion equity location compensation bonus equity"
   ).split(/\s+/),
 );
+
+const NON_TECH_ACRONYMS = new Set([
+  "US",
+  "U.S",
+  "USA",
+  "UK",
+  "EU",
+  "CEO",
+  "CTO",
+  "CFO",
+  "COO",
+  "VP",
+  "HR",
+  "PTO",
+  "EOE",
+  "EEO",
+  "B2B",
+  "B2C",
+  "KPI",
+  "OKR",
+  "ROI",
+  "FAQ",
+  "TBD",
+  "PDF",
+  "FAQ",
+  "LLC",
+  "INC",
+]);
 
 export type ExtractedJdTerm = {
   term: string;
@@ -25,46 +56,80 @@ export type ExtractedJdTerm = {
   section: "required" | "preferred" | "general";
 };
 
-function isTechShape(token: string, sentenceStart: boolean): boolean {
+function isTechShape(token: string): boolean {
   if (token.length < 2 || token.length > 40) return false;
   if (!/[A-Za-z]/.test(token)) return false;
-  if (/[.+#/]/.test(token)) return /^[A-Za-z]/.test(token) && !/^\.|\.$/.test(token);
-  if (/^[A-Z]{2,}[0-9]*$/.test(token)) return true;
-  if (/[a-z][A-Z]/.test(token)) return true;
-  if (/\d/.test(token)) return true;
-  if (/^[A-Z][a-z]{2,}$/.test(token) && !sentenceStart) return true;
+  const upper = token.toUpperCase().replace(/\./g, "");
+  if (NON_TECH_ACRONYMS.has(token.toUpperCase()) || NON_TECH_ACRONYMS.has(upper)) return false;
+
+  // Match known taxonomy term or alias directly
+  if (findTaxonomyTermByName(token)) return true;
+
+  // Punctuated tech tokens: Node.js, C#, C++, CI/CD, .NET
+  if (/[.+#/]/.test(token)) {
+    if (/^\d/.test(token)) return false;
+    return /^[A-Za-z.]/.test(token) && !/\.$/.test(token);
+  }
+  // All-caps technical acronyms: SQL, AWS, GCP, CQRS, JWT, RBAC, GRPC
+  if (/^[A-Z]{2,6}[0-9]*$/.test(token)) return true;
+  // CamelCase / PascalCase product or framework names: GraphQL, FastAPI, PostgreSQL, MongoDB, RabbitMQ
+  if (/[a-z][A-Z]/.test(token) || /^[A-Z]{2,}[a-z]+/.test(token)) return true;
+  // Alphanumeric tech tokens: EC2, S3, OAuth2, Web3, Vue3
+  if (/[A-Za-z]+\d+|\d+[A-Za-z]+/.test(token) && !/^\d+(st|nd|rd|th|k|m|b|yr|yrs)$/i.test(token)) {
+    return true;
+  }
   return false;
 }
 
 export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
   const map = new Map<string, ExtractedJdTerm>();
   const sections = splitSections(jobText);
+  const tax = loadTaxonomy();
 
+  // 1. Extract known taxonomy terms & concepts per section (highest precision)
   for (const { text, section } of sections) {
-    const weightBase = section === "required" ? 3 : section === "preferred" ? 2 : 1;
+    const weightBase = section === "required" ? 4 : section === "preferred" ? 2 : 1;
+    for (const t of tax.terms) {
+      if (findTermInText(text, t)) {
+        addTerm(map, t.canonical, weightBase + 1, section);
+      }
+    }
     for (const term of tokenizeTech(text)) addTerm(map, term, weightBase, section);
     for (const phrase of extractPhrases(text)) addTerm(map, phrase, weightBase + 1, section);
   }
 
-  // Known technologies (taxonomy) are always worth showing, even when lowercase.
-  for (const t of loadTaxonomy().terms) {
-    if (findTermInText(jobText, t)) addTerm(map, t.canonical, 3, "general");
-  }
-
-  const canonical = new Set(loadTaxonomy().terms.map((t) => t.canonical.toLowerCase()));
+  const canonical = new Set(tax.terms.map((t) => t.canonical.toLowerCase()));
   return dropFragmentTerms(
-    [...map.values()].filter((t) => t.term.length >= 2 && !STOPWORDS.has(t.term.toLowerCase())),
+    [...map.values()].filter(
+      (t) =>
+        t.term.length >= 2 &&
+        !STOPWORDS.has(t.term.toLowerCase()) &&
+        !NON_TECH_ACRONYMS.has(t.term.toUpperCase()),
+    ),
     canonical,
   )
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 35);
+    .slice(0, 32);
 }
 
-/** Missing terms the model must not claim. Extraction already keeps only stack/product-like terms. */
+/**
+ * Missing terms the model must not falsely claim.
+ * Only enforce hard blocks on concrete tools/platforms/languages — never block architectural concepts,
+ * soft skills, or general engineering nouns.
+ */
 export function isEnforceableMissingTerm(term: string): boolean {
   const t = term.trim();
-  if (t.length < 3) return false;
-  return !STOPWORDS.has(t.toLowerCase());
+  if (t.length < 2) return false;
+  const lower = t.toLowerCase();
+  if (STOPWORDS.has(lower)) return false;
+
+  const taxTerm = findTaxonomyTermByName(t);
+  if (taxTerm) {
+    return (taxTerm.kind ?? "tool") === "tool";
+  }
+
+  // Only block non-taxonomy tokens if they clearly look like a specific tool/acronym (e.g., CQRS, WebRTC)
+  return isTechShape(t) && !t.includes(" ");
 }
 
 /** Drops fragments ("Code", "Actions") that only exist as part of a longer extracted term. */
@@ -103,11 +168,7 @@ function tokenizeTech(text: string): string[] {
   while ((m = re.exec(text))) {
     const t = m[0].replace(/[.\-/]+$/, "");
     if (STOPWORDS.has(t.toLowerCase())) continue;
-    const before = text.slice(0, m.index).trimEnd();
-    const prev = before.slice(-1);
-    const sentenceStart =
-      !before || /[.!?:;•*\u2022\-–—\n]/.test(prev) || text[m.index - 1] === "\n";
-    if (isTechShape(t, sentenceStart)) tokens.push(t);
+    if (isTechShape(t)) tokens.push(t);
   }
   return tokens;
 }
@@ -125,7 +186,7 @@ function extractPhrases(text: string): string[] {
       const words = p.split(/\s+/);
       if (p.length < 2 || p.length >= 40 || words.length > 3) continue;
       if (STOPWORDS.has(p.toLowerCase())) continue;
-      if (words.some((w, i) => isTechShape(w, i === 0 && false))) phrases.push(p);
+      if (words.some((w) => isTechShape(w))) phrases.push(p);
     }
   }
   return phrases;
@@ -137,26 +198,41 @@ function addTerm(
   weight: number,
   section: "required" | "preferred" | "general",
 ) {
-  const key = term.toLowerCase();
+  const taxTerm = findTaxonomyTermByName(term);
+  const canonicalTerm = taxTerm ? taxTerm.canonical : term.trim();
+  const key = canonicalTerm.toLowerCase();
   const existing = map.get(key);
   if (existing) {
     existing.weight += weight;
   } else {
-    map.set(key, { term: term.trim(), weight, section });
+    map.set(key, { term: canonicalTerm, weight, section });
   }
 }
 
 export function detectJobTitle(jobText: string): string | undefined {
   const labeled =
     /(?:position\s*title|job\s*title|role)\s*:\s*(.+)/i.exec(jobText)?.[1]?.trim() ??
-    /(?:hiring|opening)[:\s]+(.+)/i.exec(jobText)?.[1]?.trim();
+    /(?:hiring|opening)[:\s]+(.+)/i.exec(jobText)?.[1]?.trim() ??
+    /looking for (?:a|an)\s+([A-Z][A-Za-z0-9\s/-]{3,55}?)\s+to\s+(?:build|join|lead|help|design|develop|work)/i.exec(
+      jobText,
+    )?.[1]?.trim();
   if (labeled && labeled.length > 3 && labeled.length < 120) return labeled.split("\n")[0];
 
-  const line = jobText
+  const lines = jobText
     .split("\n")
     .map((l) => l.trim())
-    .find((l) => l.length > 4 && l.length < 100 && !/^https?:/i.test(l));
-  return line;
+    .filter((l) => l.length > 4 && l.length < 90 && !/^https?:/i.test(l));
+
+  const roleLine = lines.find(
+    (l) =>
+      /\b(engineer|developer|architect|lead|manager|scientist|specialist|consultant|analyst|designer)\b/i.test(
+        l,
+      ) && !/^about\s+/i.test(l) && !/^the\s+role$/i.test(l),
+  );
+  if (roleLine && roleLine.length <= 70) return roleLine;
+
+  const first = lines.find((l) => !/^about\s+/i.test(l) && !/^the\s+role$/i.test(l));
+  return first ?? lines[0];
 }
 
 export function missingJdTermsForOutput(
@@ -170,6 +246,7 @@ export function missingJdTermsForOutput(
     if (profileVocabulary.has(key)) continue;
     if (relatedMatchers(t.term)) continue;
     if ([...profileVocabulary].some((v) => key.includes(v) || v.includes(key))) continue;
+    if (!isEnforceableMissingTerm(t.term)) continue;
     missing.push(t.term);
   }
   return missing.slice(0, 25);

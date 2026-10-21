@@ -110,12 +110,6 @@
       "aliases": []
     },
     {
-      "id": "skill-python-fw",
-      "name": "Python",
-      "categoryId": "cat-frameworks",
-      "aliases": []
-    },
-    {
       "id": "skill-django",
       "name": "Django",
       "categoryId": "cat-frameworks",
@@ -172,12 +166,6 @@
     {
       "id": "skill-integrations",
       "name": "Third-Party Integrations",
-      "categoryId": "cat-api",
-      "aliases": []
-    },
-    {
-      "id": "skill-apigw",
-      "name": "API Gateway",
       "categoryId": "cat-api",
       "aliases": []
     },

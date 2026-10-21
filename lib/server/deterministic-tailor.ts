@@ -2,6 +2,7 @@ import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import { buildDefaultResumeView } from "@/lib/build-default-resume";
+import { attachAtsScorecard } from "./ats-score";
 import { scoreFactRelevance } from "./select-facts";
 
 export function deterministicTailor(
@@ -44,13 +45,15 @@ export function deterministicTailor(
       sourceFactIds: p.facts.map((f) => f.id),
     }));
 
+  const tailoredResume = {
+    ...base,
+    experience,
+    projects,
+  };
+
   return {
-    resume: {
-      ...base,
-      experience,
-      projects,
-    },
-    analysis,
+    resume: tailoredResume,
+    analysis: attachAtsScorecard(analysis, resume, tailoredResume),
     changes: [],
     warnings: [
       "Used deterministic reordering (AI unavailable or validation failed). Wording unchanged.",

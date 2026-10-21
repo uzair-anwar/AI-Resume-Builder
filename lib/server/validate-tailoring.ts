@@ -4,10 +4,16 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
 import { TailoringResultSchema } from "@/lib/schemas/tailoring";
 import { countBulletLines, countWrappedLines } from "@/lib/layout/measure";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
+import { COLUMN_WIDTH, SIZE_BODY, SUMMARY_MAX_LINES } from "@/lib/layout/constants";
 import { countSkillLines } from "@/lib/layout/budgets";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
 import { getAllFactIds, getFactById } from "./master-resume";
+import {
+  fitToMaxBulletLines,
+  fitToMaxWrappedLines,
+  stripDisallowedNumbers,
+  stripForbiddenTerms,
+} from "./text-sanitize";
 
 export type ValidationIssue = { code: string; message: string };
 
@@ -22,29 +28,9 @@ function containsForbiddenTerm(text: string, term: string): boolean {
   return new RegExp(`(?<![A-Za-z0-9])${esc}(?![A-Za-z0-9])`, "i").test(text);
 }
 
-function norm(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
+import { buildSkillResolver } from "@/lib/skills/skill-resolver";
 
-/** Maps whatever id/name the model produced onto a real skill id (e.g. "skill-ci-cd" -> "skill-cicd"). */
-function buildSkillResolver(resume: MasterResume) {
-  const byId = new Map(resume.skills.map((s) => [s.id, s.id]));
-  const byNorm = new Map<string, string>();
-  for (const s of resume.skills) {
-    const idKey = norm(s.id.replace(/^skill[-_]?/, ""));
-    if (!byNorm.has(idKey)) byNorm.set(idKey, s.id);
-    const nameKey = norm(s.name);
-    if (!byNorm.has(nameKey)) byNorm.set(nameKey, s.id);
-    for (const a of s.aliases ?? []) {
-      const k = norm(a);
-      if (k && !byNorm.has(k)) byNorm.set(k, s.id);
-    }
-  }
-  return (raw: string): string | undefined => {
-    if (byId.has(raw)) return raw;
-    return byNorm.get(norm(raw.replace(/^skill[-_]?/i, ""))) ?? byNorm.get(norm(raw));
-  };
-}
+export { buildSkillResolver };
 
 export type RepairReport = { count: number; notes: string[] };
 
@@ -71,17 +57,17 @@ export function repairTailoring(
   const resolveSkill = buildSkillResolver(resume);
 
   // headline & summary
-  let headline = data.headline;
+  let headline = stripForbiddenTerms(data.headline, analysis);
   if (hasForeign(headline)) {
     headline = resume.person.defaultHeadline;
     note("headline");
   }
   const defaultSummary = resume.summaryFacts.map((f) => f.text).join(" ");
-  let summary = data.summary;
-  if (
-    hasForeign(summary) ||
-    countWrappedLines(summary, COLUMN_WIDTH, SIZE_BODY) > budgets.summaryMaxLines
-  ) {
+  const summaryAllowedNums = resume.summaryFacts.flatMap((f) => extractNumbers(f.text));
+  let summary = stripForbiddenTerms(data.summary, analysis);
+  summary = stripDisallowedNumbers(summary, summaryAllowedNums);
+  summary = fitToMaxWrappedLines(summary, SUMMARY_MAX_LINES, COLUMN_WIDTH, SIZE_BODY);
+  if (!summary.trim() || hasForeign(summary)) {
     summary = defaultSummary;
     note("summary");
   }
@@ -144,7 +130,7 @@ export function repairTailoring(
 
   // A very sparse skills block looks broken next to the template: top it up with the
   // most JD-relevant remaining skills (then profile order) until it is ~70% of the budget.
-  const target = Math.ceil(budgets.skillsMaxLines * 0.7);
+  const target = budgets.skillsMaxLines;
   if (linesFor(selected) < target) {
     const rest = resume.skills
       .map((s) => s.id)
@@ -175,10 +161,14 @@ export function repairTailoring(
         const f = allFacts.find((x) => x.id === id);
         return f ? extractNumbers(f.text) : [];
       });
+      let text = stripForbiddenTerms(b.text, analysis);
+      text = stripDisallowedNumbers(text, srcNums);
+      text = fitToMaxBulletLines(text, max);
       const bad =
-        hasForeign(b.text) ||
-        countBulletLines(b.text) > max ||
-        extractNumbers(b.text).some((n) => !srcNums.includes(n));
+        !text.trim() ||
+        hasForeign(text) ||
+        countBulletLines(text) > max ||
+        extractNumbers(text).some((n) => !srcNums.includes(n));
       if (bad) {
         const original = ids
           .map((id) => getFactById(resume, id) ?? "")
@@ -187,7 +177,7 @@ export function repairTailoring(
         note(`bullet ${ids[0]}`);
         bullets.push({ text: original || b.text, sourceFactIds: ids });
       } else {
-        bullets.push({ text: b.text, sourceFactIds: ids });
+        bullets.push({ text, sourceFactIds: ids });
       }
     }
     if (!bullets.length) {
@@ -210,15 +200,25 @@ export function repairTailoring(
     const srcIds = src.facts.map((f) => f.id);
     const max = budgets.projects[projectId] ?? 5;
     const srcNums = extractNumbers(original);
+    let sanitized =
+      description !== null
+        ? fitToMaxWrappedLines(
+            stripDisallowedNumbers(stripForbiddenTerms(description, analysis), srcNums),
+            max,
+            COLUMN_WIDTH,
+            SIZE_BODY,
+          )
+        : null;
     const ok =
-      description !== null &&
-      !hasForeign(description) &&
-      countWrappedLines(description, COLUMN_WIDTH, SIZE_BODY) <= max &&
-      extractNumbers(description).every((n) => srcNums.includes(n));
+      sanitized !== null &&
+      sanitized.trim() &&
+      !hasForeign(sanitized) &&
+      countWrappedLines(sanitized, COLUMN_WIDTH, SIZE_BODY) <= max &&
+      extractNumbers(sanitized).every((n) => srcNums.includes(n));
     if (description !== null && !ok) note(`project ${projectId}`);
     projects.push({
       projectId,
-      description: ok ? description! : original,
+      description: ok ? sanitized! : original,
       sourceFactIds: ids.length ? ids.filter((id) => factIds.has(id)) : srcIds,
     });
   };

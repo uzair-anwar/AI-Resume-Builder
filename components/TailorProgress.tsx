@@ -1,22 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { TailorStepId } from "@/lib/schemas/tailoring-steps";
 
-export type TailorStage = "idle" | "fetching" | "tailoring" | "done";
+export type TailorStage = "idle" | "fetching" | "working" | "done";
+
+export type TailorProgressStepId =
+  | "fetch"
+  | TailorStepId
+  | "assemble"
+  | "preview";
 
 type Props = {
   stage: TailorStage;
-  /** true when the description came from a job URL (shows the fetch step) */
   viaUrl: boolean;
+  /** Step currently running, or null when between steps */
+  activeStep: TailorProgressStepId | null;
+  /** Steps finished in this run */
+  completedSteps: TailorProgressStepId[];
 };
 
-const STEPS = [
-  { id: "fetch", label: "Fetch job" },
-  { id: "tailor", label: "Tailor resume" },
-  { id: "done", label: "Preview ready" },
-] as const;
+const STEP_DEFS: { id: TailorProgressStepId; label: string; skipWithoutUrl?: boolean }[] = [
+  { id: "fetch", label: "Fetch job", skipWithoutUrl: true },
+  { id: "summary", label: "Summary" },
+  { id: "experience", label: "Work experience" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "headline", label: "Headline" },
+  { id: "assemble", label: "Finalize layout" },
+  { id: "preview", label: "Preview ready" },
+];
 
-/** Slowly creeps towards `ceiling` while a step is running, so the bar never looks frozen. */
 function useCreep(active: boolean, start: number, ceiling: number): number {
   const [value, setValue] = useState(start);
   useEffect(() => {
@@ -29,34 +43,33 @@ function useCreep(active: boolean, start: number, ceiling: number): number {
   return value;
 }
 
-export function TailorProgress({ stage, viaUrl }: Props) {
-  const fetching = stage === "fetching";
-  const tailoring = stage === "tailoring";
-  const creepFetch = useCreep(fetching, 8, 32);
-  const creepTailor = useCreep(tailoring, 40, 92);
+export function TailorProgress({ stage, viaUrl, activeStep, completedSteps }: Props) {
+  const visibleSteps = STEP_DEFS.filter((s) => viaUrl || !s.skipWithoutUrl);
+  const completedSet = useMemo(() => new Set(completedSteps), [completedSteps]);
+
+  const doneCount = completedSteps.length;
+  const total = visibleSteps.length;
+  const basePercent = stage === "done" ? 100 : (doneCount / total) * 100;
+  const creeping = useCreep(stage === "working" && activeStep !== null, basePercent, basePercent + 12);
+  const percent = stage === "done" ? 100 : stage === "fetching" ? creeping : creeping;
 
   if (stage === "idle") return null;
-
-  const percent = stage === "done" ? 100 : tailoring ? creepTailor : creepFetch;
-
-  const stepState = (id: (typeof STEPS)[number]["id"]): "done" | "active" | "todo" => {
-    if (stage === "done") return "done";
-    if (id === "fetch") {
-      if (!viaUrl) return "done";
-      return fetching ? "active" : "done";
-    }
-    if (id === "tailor") return tailoring ? "active" : "todo";
-    return "todo";
-  };
 
   const message =
     stage === "fetching"
       ? "Fetching the job description…"
-      : stage === "tailoring"
-        ? viaUrl
-          ? "Job fetched — tailoring your resume…"
-          : "Tailoring your resume…"
-        : "Resume tailored to this job.";
+      : stage === "done"
+        ? "Resume tailored to this job."
+        : activeStep
+          ? `Working on ${STEP_DEFS.find((s) => s.id === activeStep)?.label ?? activeStep}…`
+          : "Tailoring your resume…";
+
+  const stepState = (id: TailorProgressStepId): "done" | "active" | "todo" => {
+    if (stage === "done") return "done";
+    if (completedSet.has(id)) return "done";
+    if (activeStep === id) return "active";
+    return "todo";
+  };
 
   return (
     <div
@@ -82,8 +95,8 @@ export function TailorProgress({ stage, viaUrl }: Props) {
           style={{ width: `${percent}%` }}
         />
       </div>
-      <ol className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs">
-        {STEPS.filter((s) => viaUrl || s.id !== "fetch").map((s) => {
+      <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+        {visibleSteps.map((s) => {
           const state = stepState(s.id);
           return (
             <li

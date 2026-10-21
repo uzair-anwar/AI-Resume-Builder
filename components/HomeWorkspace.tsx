@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
+import type { CoverLetterResponse, CoverLetterVariants } from "@/lib/schemas/cover-letter";
 import type { LineBudgets } from "@/lib/layout/budgets";
 import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai/provider-types";
 import { resolveModelPickerProvider } from "@/lib/ai/ui-helpers";
@@ -27,7 +28,14 @@ import { shortJobTitleForFilename } from "@/lib/job-title";
 import { ResumeEditor } from "./ResumeEditor";
 import { ResumePdfPanel } from "./ResumePdfPanel";
 import { JdTermChips } from "./JdTermChips";
-import { TailorProgress, type TailorStage } from "./TailorProgress";
+import { CoverLetterPanel } from "./CoverLetterPanel";
+import {
+  TailorProgress,
+  type TailorProgressStepId,
+  type TailorStage,
+} from "./TailorProgress";
+import { runStagedTailorClient } from "@/lib/client/staged-tailor";
+import type { TailorStepId, TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
 import { useLayoutFonts } from "@/lib/client/use-layout-fonts";
 import Link from "next/link";
 
@@ -49,12 +57,16 @@ export default function HomeWorkspace() {
   const [aiUsage, setAiUsage] = useState<TailorResponse["aiUsage"]>(undefined);
   const [resume, setResume] = useState<ResumeView | null>(null);
   const [analysis, setAnalysis] = useState<JobAnalysis | null>(null);
+  const [coverLetter, setCoverLetter] = useState<CoverLetterVariants | null>(null);
+  const [coverLetterLoading, setCoverLetterLoading] = useState(false);
   const [budgets, setBudgets] = useState<LineBudgets | undefined>();
   const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState<TailorStage>("idle");
+  const [activeProgressStep, setActiveProgressStep] = useState<TailorProgressStepId | null>(null);
+  const [completedProgressSteps, setCompletedProgressSteps] = useState<TailorProgressStepId[]>([]);
   const [viaUrl, setViaUrl] = useState(false);
   const [runId, setRunId] = useState(0);
   const [completedPipelineKey, setCompletedPipelineKey] = useState<string | null>(null);
@@ -119,6 +131,7 @@ export default function HomeWorkspace() {
           setJobTitle(stored.jobTitle);
           setResume(stored.resume);
           setAnalysis(stored.analysis);
+          setCoverLetter(stored.coverLetter ?? null);
           setBudgets(stored.budgets ?? stored.analysis.lineBudgets);
           setWarnings(stored.warnings);
           setAiUsage(stored.aiUsage);
@@ -156,26 +169,66 @@ export default function HomeWorkspace() {
       setError(null);
       setErrorCode(null);
       setLoading(true);
-      setStage("tailoring");
-      try {
-        const override = loadProfileOverride();
-        const res = await fetch("/api/tailor", {
+      setStage("working");
+      setCompletedProgressSteps(viaUrl ? ["fetch"] : []);
+      const override = loadProfileOverride();
+
+      const refreshPreview = async (previous: TailorStepPrevious, stepWarnings: string[]) => {
+        const res = await fetch("/api/tailor/assemble", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             jobDescription: description,
-            jobTitle: title || undefined,
-            provider,
-            allowProviderFallback: allowFallback,
-            providerModels,
+            previous,
+            warnings: stepWarnings,
             ...(override ? { profileOverride: override } : {}),
           }),
         });
-        const data = (await res.json()) as TailorResponse & { error?: string };
+        const data = await res.json();
+        if (res.ok && requestId === tailorRequestId.current) {
+          setResume(data.resume);
+          setAnalysis(data.analysis);
+          setBudgets(data.analysis.lineBudgets);
+        }
+      };
+
+      try {
+        const staged = await runStagedTailorClient({
+          jobDescription: description,
+          provider,
+          allowProviderFallback: allowFallback,
+          providerModels,
+          ...(override ? { profileOverride: override } : {}),
+          onStepStart: (step: TailorStepId) => setActiveProgressStep(step),
+          onStepComplete: async (step, _response, accumulated) => {
+            setCompletedProgressSteps((prev) =>
+              prev.includes(step) ? prev : [...prev, step],
+            );
+            await refreshPreview(accumulated, _response.warnings ?? []);
+          },
+        });
+
+        const accumulated = staged.previous;
+        const stepWarnings = [...staged.warnings];
+        setActiveProgressStep("assemble");
+        const assembleRes = await fetch("/api/tailor/assemble", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jobDescription: description,
+            previous: accumulated,
+            warnings: stepWarnings,
+            aiUsage: staged.lastAiUsage,
+            ...(override ? { profileOverride: override } : {}),
+          }),
+        });
+        const data = (await assembleRes.json()) as TailorResponse & { error?: string };
         if (requestId !== tailorRequestId.current) return;
-        if (!res.ok) throw new Error(data.error ?? "Tailoring failed");
+        if (!assembleRes.ok) throw new Error(data.error ?? "Tailoring failed");
+
         setResume(data.resume);
         setAnalysis(data.analysis);
+        setCoverLetter(null);
         setBudgets(data.analysis.lineBudgets);
         setWarnings(data.warnings ?? []);
         setAiUsage(data.aiUsage);
@@ -183,6 +236,8 @@ export default function HomeWorkspace() {
         const nextTitle = detected ? shortJobTitleForFilename(detected) : title;
         if (detected) setJobTitle(nextTitle);
         setCompletedPipelineKey(pipelineKey);
+        setCompletedProgressSteps((prev) => [...prev, "assemble", "preview"]);
+        setActiveProgressStep(null);
         saveStoredTailorSession({
           pipelineKey,
           jobTitle: nextTitle,
@@ -197,12 +252,14 @@ export default function HomeWorkspace() {
         if (requestId === tailorRequestId.current) {
           setError((e as Error).message);
           setStage("idle");
+          setActiveProgressStep(null);
+          setCompletedProgressSteps([]);
         }
       } finally {
         if (requestId === tailorRequestId.current) setLoading(false);
       }
     },
-    [provider, allowFallback, modelsByProvider, serverProviders],
+    [provider, allowFallback, modelsByProvider, serverProviders, viaUrl],
   );
 
   const runGenerate = useCallback(async () => {
@@ -217,6 +274,8 @@ export default function HomeWorkspace() {
     setError(null);
     setErrorCode(null);
     setRunId((n) => n + 1);
+    setCompletedProgressSteps([]);
+    setActiveProgressStep(null);
 
     let description = jobDescription;
     let title = jobTitle;
@@ -258,6 +317,66 @@ export default function HomeWorkspace() {
 
     await tailor({ description, title, pipelineKey: keyAfterExtract });
   }, [currentPipelineKey, jobUrl, jobDescription, jobTitle, pipelineKeyInput, tailor]);
+
+  const runGenerateCoverLetter = useCallback(async () => {
+    if (jobDescription.length < 50) {
+      setError("Paste or extract a job description (50+ characters) before generating a cover letter.");
+      return;
+    }
+    setCoverLetterLoading(true);
+    setError(null);
+    try {
+      const providerModels = Object.fromEntries(
+        serverProviders.map((p) => [p.id, modelsByProvider[p.id] ?? p.defaultModelId]),
+      ) as Partial<Record<AiProviderId, string>>;
+      const override = loadProfileOverride();
+
+      const res = await fetch("/api/cover-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobDescription,
+          jobTitle,
+          ...(resume ? { tailoredResume: resume } : {}),
+          provider,
+          allowProviderFallback: allowFallback,
+          providerModels,
+          ...(override ? { profileOverride: override } : {}),
+        }),
+      });
+      const data = (await res.json()) as CoverLetterResponse & { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Cover letter generation failed");
+      setCoverLetter(data.coverLetter);
+
+      const stored = loadStoredTailorSession();
+      if (stored) {
+        saveStoredTailorSession({
+          ...stored,
+          coverLetter: data.coverLetter,
+        });
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setCoverLetterLoading(false);
+    }
+  }, [
+    jobDescription,
+    jobTitle,
+    resume,
+    provider,
+    allowFallback,
+    modelsByProvider,
+    serverProviders,
+  ]);
+
+  const handleCoverLetterChange = useCallback((next: CoverLetterVariants) => {
+    setCoverLetter(next);
+    const stored = loadStoredTailorSession();
+    if (stored) {
+      saveStoredTailorSession({ ...stored, coverLetter: next });
+    }
+  }, []);
 
   const canGenerate =
     Boolean(currentPipelineKey) &&
@@ -412,7 +531,13 @@ export default function HomeWorkspace() {
           />
         </label>
 
-        <TailorProgress key={runId} stage={stage} viaUrl={viaUrl} />
+        <TailorProgress
+          key={runId}
+          stage={stage}
+          viaUrl={viaUrl}
+          activeStep={activeProgressStep}
+          completedSteps={completedProgressSteps}
+        />
 
         {jobTitle ? (
           <p className="text-xs text-zinc-500">
@@ -434,6 +559,16 @@ export default function HomeWorkspace() {
               <li key={w}>• {w}</li>
             ))}
           </ul>
+        ) : null}
+
+        {jobDescription.length >= 50 || coverLetter ? (
+          <CoverLetterPanel
+            coverLetter={coverLetter}
+            loading={coverLetterLoading}
+            onGenerate={() => void runGenerateCoverLetter()}
+            onChange={handleCoverLetterChange}
+            canGenerate={!loading && jobDescription.length >= 50}
+          />
         ) : null}
 
         {resume && fontsReady ? (

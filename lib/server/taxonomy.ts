@@ -1,4 +1,3 @@
-import "server-only";
 import { readFileSync } from "fs";
 import path from "path";
 import type { MasterResume } from "@/lib/schemas/resume";
@@ -8,6 +7,7 @@ export type TaxonomyTerm = {
   canonical: string;
   aliases: string[];
   family: string;
+  kind?: "tool" | "concept" | "soft";
 };
 
 type TaxonomyFile = {
@@ -33,13 +33,42 @@ export function findTermInText(text: string, term: TaxonomyTerm): boolean {
   const needles = [term.canonical, ...term.aliases].map(normalizeText);
   return needles.some((n) => {
     if (n.length < 2) return false;
-    const re = new RegExp(`\\b${escapeRegExp(n)}\\b`, "i");
+    const re = new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(n)}(?![A-Za-z0-9])`, "i");
     return re.test(hay);
   });
 }
 
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function findTaxonomyTermByName(termOrAlias: string): TaxonomyTerm | undefined {
+  const hay = normalizeText(termOrAlias);
+  const tax = loadTaxonomy();
+  return tax.terms.find(
+    (t) =>
+      normalizeText(t.canonical) === hay ||
+      t.aliases.some((a) => normalizeText(a) === hay),
+  );
+}
+
+export function collectResumeCorpus(resume: MasterResume): string {
+  const parts: string[] = [
+    resume.person.defaultHeadline,
+    ...resume.skills.flatMap((s) => [s.name, ...(s.aliases ?? [])]),
+    ...resume.skillCategories.map((c) => c.label),
+    ...resume.summaryFacts.flatMap((f) => [f.text, ...(f.skills ?? [])]),
+    ...resume.experience.flatMap((e) => [
+      e.title,
+      e.company,
+      ...e.facts.flatMap((f) => [f.text, ...(f.skills ?? [])]),
+    ]),
+    ...resume.projects.flatMap((p) => [
+      p.name,
+      ...p.facts.flatMap((f) => [f.text, ...(f.skills ?? [])]),
+    ]),
+  ];
+  return parts.join(" \n ");
 }
 
 export function buildVerifiedVocabulary(resume: MasterResume): Map<string, string> {
@@ -50,18 +79,13 @@ export function buildVerifiedVocabulary(resume: MasterResume): Map<string, strin
       map.set(normalizeText(a), skill.name);
     }
   }
+  const corpus = collectResumeCorpus(resume);
   const tax = loadTaxonomy();
   for (const term of tax.terms) {
-    if (findTermInText(resume.skills.map((s) => s.name).join(" "), term)) {
+    if (findTermInText(corpus, term)) {
       map.set(normalizeText(term.canonical), term.canonical);
-    }
-  }
-  for (const exp of resume.experience) {
-    for (const f of exp.facts) {
-      for (const t of tax.terms) {
-        if (findTermInText(f.text, t)) {
-          map.set(normalizeText(t.canonical), t.canonical);
-        }
+      for (const a of term.aliases) {
+        map.set(normalizeText(a), term.canonical);
       }
     }
   }
@@ -73,15 +97,26 @@ export function getTransferableTerm(
   verifiedTermIds: Set<string>,
 ): string | undefined {
   const tax = loadTaxonomy();
-  const group = tax.transferableGroups.find((g) => g.terms.includes(requiredTermId));
-  if (!group) return undefined;
-  for (const t of group.terms) {
-    if (verifiedTermIds.has(t) && t !== requiredTermId) {
-      const term = tax.terms.find((x) => x.id === t);
-      return term?.canonical;
+  const groups = tax.transferableGroups.filter((g) => g.terms.includes(requiredTermId));
+  for (const group of groups) {
+    for (const t of group.terms) {
+      if (verifiedTermIds.has(t) && t !== requiredTermId) {
+        const term = tax.terms.find((x) => x.id === t);
+        if (term) return term.canonical;
+      }
     }
   }
   return undefined;
+}
+
+export function getVerifiedTaxonomyIds(resume: MasterResume): Set<string> {
+  const verifiedIds = new Set<string>();
+  const corpus = collectResumeCorpus(resume);
+  const tax = loadTaxonomy();
+  for (const t of tax.terms) {
+    if (findTermInText(corpus, t)) verifiedIds.add(t.id);
+  }
+  return verifiedIds;
 }
 
 export function matchResumeToTerm(
@@ -91,24 +126,27 @@ export function matchResumeToTerm(
   const factIds: string[] = [];
   const skillHit = resume.skills.some((s) => {
     const names = [s.name, ...(s.aliases ?? [])];
-    return names.some((n) => normalizeText(n) === normalizeText(term.canonical));
+    return names.some(
+      (n) =>
+        normalizeText(n) === normalizeText(term.canonical) ||
+        term.aliases.some((a) => normalizeText(a) === normalizeText(n)),
+    );
   });
-  if (skillHit) return { status: "matched", factIds };
 
-  for (const exp of resume.experience) {
-    for (const f of exp.facts) {
-      if (findTermInText(f.text, term)) factIds.push(f.id);
+  const allFacts = [
+    ...resume.summaryFacts,
+    ...resume.experience.flatMap((e) => e.facts),
+    ...resume.projects.flatMap((p) => p.facts),
+  ];
+
+  for (const f of allFacts) {
+    if (findTermInText(f.text, term) || (f.skills ?? []).some((sk) => findTermInText(sk, term))) {
+      factIds.push(f.id);
     }
   }
-  if (factIds.length) return { status: "matched", factIds };
+  if (skillHit || factIds.length) return { status: "matched", factIds };
 
-  const verifiedIds = new Set<string>();
-  for (const s of resume.skills) {
-    const tax = loadTaxonomy();
-    for (const t of tax.terms) {
-      if (findTermInText(s.name, t)) verifiedIds.add(t.id);
-    }
-  }
+  const verifiedIds = getVerifiedTaxonomyIds(resume);
   const via = getTransferableTerm(term.id, verifiedIds);
   if (via) return { status: "transferable", via, factIds: [] };
 
