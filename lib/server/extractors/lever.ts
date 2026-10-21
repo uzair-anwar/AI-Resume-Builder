@@ -6,7 +6,10 @@ export function parseLeverUrl(url: URL): { company: string; jobId: string } | nu
   return { company: m[1], jobId: m[2] };
 }
 
-export async function fetchLever(company: string, jobId: string): Promise<{ title: string; description: string } | null> {
+export async function fetchLever(
+  company: string,
+  jobId: string,
+): Promise<{ title: string; description: string } | null> {
   const api = `https://api.lever.co/v0/postings/${company}/${jobId}`;
   const res = await fetch(api, { headers: { Accept: "application/json" } });
   if (!res.ok) return null;

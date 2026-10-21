@@ -5,12 +5,11 @@ export function buildDefaultResumeView(resume: MasterResume): ResumeView {
   const byCat = new Map<string, ResumeView["skills"][0]>();
 
   for (const s of resume.skills) {
-    const bucket =
-      byCat.get(s.categoryId) ?? {
-        categoryId: s.categoryId,
-        categoryLabel: catMap.get(s.categoryId) ?? s.categoryId,
-        items: [],
-      };
+    const bucket = byCat.get(s.categoryId) ?? {
+      categoryId: s.categoryId,
+      categoryLabel: catMap.get(s.categoryId) ?? s.categoryId,
+      items: [],
+    };
     bucket.items.push({ id: s.id, name: s.name, userAttested: s.userAttested });
     byCat.set(s.categoryId, bucket);
   }

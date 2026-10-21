@@ -29,7 +29,8 @@ export async function extractJobFromUrl(urlString: string): Promise<ExtractResul
     const lv = parseLeverUrl(url);
     if (lv) {
       const data = await fetchLever(lv.company, lv.jobId);
-      if (data) return { title: data.title, description: data.description, source: "lever", warnings };
+      if (data)
+        return { title: data.title, description: data.description, source: "lever", warnings };
     }
   }
 
@@ -37,7 +38,8 @@ export async function extractJobFromUrl(urlString: string): Promise<ExtractResul
     const ab = parseAshbyUrl(url);
     if (ab) {
       const data = await fetchAshby(ab.org, ab.jobId);
-      if (data) return { title: data.title, description: data.description, source: "ashby", warnings };
+      if (data)
+        return { title: data.title, description: data.description, source: "ashby", warnings };
     }
   }
 
@@ -67,5 +69,8 @@ export async function extractJobFromUrl(urlString: string): Promise<ExtractResul
     return { title: heuristic.title, description: heuristic.description, source: "html", warnings };
   }
 
-  throw new SafeFetchError("Could not extract job description; paste it manually", "EXTRACT_FAILED");
+  throw new SafeFetchError(
+    "Could not extract job description; paste it manually",
+    "EXTRACT_FAILED",
+  );
 }

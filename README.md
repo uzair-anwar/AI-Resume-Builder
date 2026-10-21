@@ -1,6 +1,6 @@
 # Resume Tailor
 
-Personal AI resume tailoring app built with Next.js App Router. Uses a verified master profile (`data/master-resume.json`, seeded from `Uzair_FullStack.pdf`), deterministic gap analysis for any stack (Java, Python, .NET, MERN, etc.), Groq structured outputs, SSRF-safe job URL extraction, and client-side PDF generation.
+Personal one-page resume tailoring app. Paste or extract a job description, pick a Groq model in the UI, and get a tailored resume that keeps the same layout as `Uzair_FullStack.pdf`.
 
 ## Setup
 
@@ -9,59 +9,40 @@ npm install
 cp .env.example .env.local
 ```
 
-### Groq API key
-
-1. Sign in at [console.groq.com](https://console.groq.com).
-2. Create an API key at [console.groq.com/keys](https://console.groq.com/keys) (starts with `gsk_`).
-3. Add to `.env.local`:
+Add your Groq API key to `.env.local`:
 
 ```env
 GROQ_API_KEY=gsk_...
-AI_PROVIDER=groq
-AI_MODEL=openai/gpt-oss-20b
-AI_FALLBACK_MODEL=openai/gpt-oss-120b
 ```
 
-Enable **Zero Data Retention** under Groq Settings → Data Controls.
+Get a key at [console.groq.com/keys](https://console.groq.com/keys). Enable Zero Data Retention under Groq Data Controls for personal resume data.
 
-For local UI/tests without a key:
+## Run
 
-```env
-AI_PROVIDER=mock
+```bash
+npm run dev
 ```
 
-Optional access gate (required in production when set):
-
-```env
-ACCESS_PASSPHRASE=your-long-passphrase
-AUTH_SECRET=random-string-at-least-32-chars
-```
+Open http://localhost:3000
 
 ## Commands
 
 ```bash
-npm run dev          # http://localhost:3000
+npm run dev
 npm run build
-npm run test         # Vitest unit tests
-npm run test:e2e     # Playwright (uses AI_PROVIDER=mock)
 npm run lint
 npm run typecheck
+npm run format
+npm run format:check
 ```
+
+## Notes
+
+- No login or auth — personal use only.
+- AI model is chosen in the UI (saved in your browser), not in `.env`.
+- Verified profile lives in `data/master-resume.json`. Browser overrides on the Profile page.
+- PDF uses bundled PT Serif to match your template.
 
 ## Deploy (Vercel)
 
-1. Push this repo to GitHub (private recommended).
-2. Import project in Vercel.
-3. Add the same environment variables as `.env.local`.
-4. Do **not** use static export — API routes are required.
-
-## Data
-
-- Edit verified facts in `data/master-resume.json` or use the Profile page for browser-stored overrides and user-attested skills.
-- See `resume-sources/unverified-claims-from-other-pdfs.md` for claims not imported from variant PDFs.
-
-## Security
-
-- Job URL fetching uses SSRF protections (`lib/server/safe-fetch.ts`).
-- Private API responses use `Cache-Control: no-store`.
-- Resume and job text are not logged.
+Import the repo, set `GROQ_API_KEY` in environment variables, deploy (server routes required).

@@ -14,7 +14,7 @@ export const ExtractJobResponseSchema = z.object({
 export const TailorRequestSchema = z.object({
   jobDescription: z.string().min(50).max(20000),
   jobTitle: z.string().max(200).optional(),
-  roleFamilyId: z.string().optional(),
+  model: z.string().max(120).optional(),
   profileOverride: z.record(z.string(), z.unknown()).optional(),
 });
 

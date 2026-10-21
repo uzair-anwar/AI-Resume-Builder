@@ -3,8 +3,23 @@
     {
       "id": "java",
       "label": "Java / JVM Backend",
-      "detectionKeywords": ["java", "spring boot", "spring", "jvm", "hibernate", "maven", "gradle", "kotlin"],
-      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-databases", "cat-cloud"],
+      "detectionKeywords": [
+        "java",
+        "spring boot",
+        "spring",
+        "jvm",
+        "hibernate",
+        "maven",
+        "gradle",
+        "kotlin"
+      ],
+      "priorityCategoryIds": [
+        "cat-languages",
+        "cat-frameworks",
+        "cat-api",
+        "cat-databases",
+        "cat-cloud"
+      ],
       "headlinePattern": "Senior Software Engineer (Backend & Cloud)",
       "summaryEmphasis": "backend services, REST APIs, distributed systems, cloud-native delivery"
     },
@@ -12,7 +27,13 @@
       "id": "python",
       "label": "Python Backend / Data",
       "detectionKeywords": ["python", "django", "fastapi", "flask", "pandas", "data engineering"],
-      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-databases", "cat-ai"],
+      "priorityCategoryIds": [
+        "cat-languages",
+        "cat-frameworks",
+        "cat-api",
+        "cat-databases",
+        "cat-ai"
+      ],
       "headlinePattern": "Senior Software Engineer (Python & Cloud)",
       "summaryEmphasis": "Python services, APIs, automation, and scalable backends"
     },
@@ -20,15 +41,37 @@
       "id": "dotnet",
       "label": ".NET / C#",
       "detectionKeywords": [".net", "c#", "asp.net", "entity framework", "blazor", "azure"],
-      "priorityCategoryIds": ["cat-languages", "cat-frameworks", "cat-api", "cat-cloud", "cat-databases"],
+      "priorityCategoryIds": [
+        "cat-languages",
+        "cat-frameworks",
+        "cat-api",
+        "cat-cloud",
+        "cat-databases"
+      ],
       "headlinePattern": "Senior Software Engineer (.NET & Cloud)",
       "summaryEmphasis": "enterprise APIs, cloud services, and full-stack delivery"
     },
     {
       "id": "mern",
       "label": "MERN / JS Full Stack",
-      "detectionKeywords": ["mern", "react", "node.js", "node", "mongodb", "express", "next.js", "typescript", "javascript"],
-      "priorityCategoryIds": ["cat-frameworks", "cat-languages", "cat-api", "cat-databases", "cat-architecture"],
+      "detectionKeywords": [
+        "mern",
+        "react",
+        "node.js",
+        "node",
+        "mongodb",
+        "express",
+        "next.js",
+        "typescript",
+        "javascript"
+      ],
+      "priorityCategoryIds": [
+        "cat-frameworks",
+        "cat-languages",
+        "cat-api",
+        "cat-databases",
+        "cat-architecture"
+      ],
       "headlinePattern": "Senior Software Engineer (Full Stack)",
       "summaryEmphasis": "React, Next.js, Node.js, and end-to-end product delivery"
     },
@@ -51,7 +94,16 @@
     {
       "id": "cloud",
       "label": "Cloud / AWS Serverless",
-      "detectionKeywords": ["aws", "lambda", "serverless", "cloud", "devops", "infrastructure", "cdk", "terraform"],
+      "detectionKeywords": [
+        "aws",
+        "lambda",
+        "serverless",
+        "cloud",
+        "devops",
+        "infrastructure",
+        "cdk",
+        "terraform"
+      ],
       "priorityCategoryIds": ["cat-cloud", "cat-devops", "cat-architecture", "cat-api"],
       "headlinePattern": "Senior Software Engineer (Cloud & Serverless)",
       "summaryEmphasis": "AWS serverless, CI/CD, and reliable deployments"

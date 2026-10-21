@@ -36,27 +36,32 @@ export const TailoringResultSchema = z.object({
 
 export type TailoringResult = z.infer<typeof TailoringResultSchema>;
 
-export const GapItemSchema = z.object({
-  requirement: z.string(),
-  status: z.enum(["matched", "transferable", "missing"]),
-  evidenceSkillIds: z.array(z.string()).optional(),
-  evidenceFactIds: z.array(z.string()).optional(),
-  transferableVia: z.string().optional(),
+export const JdTermChipSchema = z.object({
+  term: z.string(),
+  status: z.enum(["matched", "related", "missing"]),
+  relatedVia: z.string().optional(),
+});
+
+export const LineBudgetsSchema = z.object({
+  summaryMaxLines: z.number(),
+  skillsMaxLines: z.number(),
+  bullets: z.record(z.string(), z.number()),
+  projects: z.record(z.string(), z.number()),
 });
 
 export const JobAnalysisSchema = z.object({
   detectedTitle: z.string().optional(),
-  seniority: z.string().optional(),
-  roleFamilyId: z.string(),
-  roleFamilyLabel: z.string(),
-  requirements: z.array(z.string()),
-  gapAnalysis: z.array(GapItemSchema),
+  focusLabel: z.string(),
+  terms: z.array(JdTermChipSchema),
   coverage: z.object({
     matched: z.number(),
-    transferable: z.number(),
+    related: z.number(),
     missing: z.number(),
     total: z.number(),
   }),
+  lineBudgets: LineBudgetsSchema,
+  profileVocabulary: z.array(z.string()).optional(),
+  missingTerms: z.array(z.string()).optional(),
 });
 
 export type JobAnalysis = z.infer<typeof JobAnalysisSchema>;
@@ -72,6 +77,7 @@ export const TailorResponseSchema = z.object({
     }),
   ),
   warnings: z.array(z.string()),
+  usedFallback: z.boolean().optional(),
 });
 
 export type TailorResponse = z.infer<typeof TailorResponseSchema>;

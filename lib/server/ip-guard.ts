@@ -1,10 +1,7 @@
 import "server-only";
 import ipaddr from "ipaddr.js";
 
-const BLOCKED_HOSTNAMES = new Set([
-  "localhost",
-  "metadata.google.internal",
-]);
+const BLOCKED_HOSTNAMES = new Set(["localhost", "metadata.google.internal"]);
 
 export function isBlockedHostname(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/\.$/, "");

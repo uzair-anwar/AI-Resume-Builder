@@ -10,7 +10,9 @@ const SELECTORS = [
   "main",
 ];
 
-export function extractHtmlJobDescription(html: string): { title?: string; description: string } | null {
+export function extractHtmlJobDescription(
+  html: string,
+): { title?: string; description: string } | null {
   const $ = cheerio.load(html);
   const title =
     $("h1").first().text().trim() ||
@@ -20,7 +22,11 @@ export function extractHtmlJobDescription(html: string): { title?: string; descr
   for (const sel of SELECTORS) {
     const el = $(sel).first();
     if (el.length) {
-      const text = el.text().replace(/\s+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+      const text = el
+        .text()
+        .replace(/\s+\n/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
       if (text.length > 200) {
         return { title, description: text.slice(0, 15000) };
       }

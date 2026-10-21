@@ -64,7 +64,10 @@ export const MasterResumeSchema = z.object({
   experience: z.array(ExperienceSchema),
   projects: z.array(ProjectSchema),
   education: z.array(EducationSchema),
-  certifications: z.array(z.object({ id: z.string(), name: z.string() })).optional().default([]),
+  certifications: z
+    .array(z.object({ id: z.string(), name: z.string() }))
+    .optional()
+    .default([]),
 });
 
 export type MasterResume = z.infer<typeof MasterResumeSchema>;
@@ -78,7 +81,9 @@ export const ResumeViewSchema = z.object({
     z.object({
       categoryId: z.string(),
       categoryLabel: z.string(),
-      items: z.array(z.object({ id: z.string(), name: z.string(), userAttested: z.boolean().optional() })),
+      items: z.array(
+        z.object({ id: z.string(), name: z.string(), userAttested: z.boolean().optional() }),
+      ),
     }),
   ),
   experience: z.array(

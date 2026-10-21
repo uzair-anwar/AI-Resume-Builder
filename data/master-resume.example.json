@@ -10,7 +10,9 @@
   },
   "summaryFacts": [{ "id": "summary-1", "text": "Example summary fact." }],
   "skillCategories": [{ "id": "cat-languages", "label": "Languages" }],
-  "skills": [{ "id": "skill-js", "name": "JavaScript", "categoryId": "cat-languages", "aliases": [] }],
+  "skills": [
+    { "id": "skill-js", "name": "JavaScript", "categoryId": "cat-languages", "aliases": [] }
+  ],
   "experience": [],
   "projects": [],
   "education": [],

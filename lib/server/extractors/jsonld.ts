@@ -1,7 +1,9 @@
 import "server-only";
 import * as cheerio from "cheerio";
 
-export function extractJsonLdJobPosting(html: string): { title?: string; description: string } | null {
+export function extractJsonLdJobPosting(
+  html: string,
+): { title?: string; description: string } | null {
   const $ = cheerio.load(html);
   const scripts = $('script[type="application/ld+json"]');
   for (const el of scripts.toArray()) {

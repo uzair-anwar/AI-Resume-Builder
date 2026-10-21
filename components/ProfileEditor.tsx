@@ -10,7 +10,9 @@ export function ProfileEditor() {
   const [jsonText, setJsonText] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [attestName, setAttestName] = useState("");
-  const [attestLevel, setAttestLevel] = useState<"familiar" | "proficient" | "expert">("proficient");
+  const [attestLevel, setAttestLevel] = useState<"familiar" | "proficient" | "expert">(
+    "proficient",
+  );
 
   useEffect(() => {
     fetch("/api/profile")
@@ -35,7 +37,9 @@ export function ProfileEditor() {
   function addAttestedSkill() {
     if (!attestName.trim()) return;
     try {
-      const parsed = JSON.parse(jsonText) as { attestedSkills?: { id: string; name: string; categoryId: string; level: string }[] };
+      const parsed = JSON.parse(jsonText) as {
+        attestedSkills?: { id: string; name: string; categoryId: string; level: string }[];
+      };
       const list = parsed.attestedSkills ?? [];
       const id = `attest-${attestName.toLowerCase().replace(/\s+/g, "-")}`;
       list.push({
@@ -57,12 +61,15 @@ export function ProfileEditor() {
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <h1 className="text-2xl font-semibold">Profile</h1>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Master resume is server-side from <code>Uzair_FullStack.pdf</code>. Overrides are stored in your browser only.
+        Master resume is server-side from <code>Uzair_FullStack.pdf</code>. Overrides are stored in
+        your browser only.
       </p>
 
       <section className="rounded border border-zinc-200 p-4 dark:border-zinc-700">
         <h2 className="font-medium">Add user-attested skill</h2>
-        <p className="text-xs text-zinc-500">Appears in skills only; bullets still need verified facts.</p>
+        <p className="text-xs text-zinc-500">
+          Appears in skills only; bullets still need verified facts.
+        </p>
         <div className="mt-2 flex flex-wrap gap-2">
           <input
             className="rounded border px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
@@ -79,7 +86,11 @@ export function ProfileEditor() {
             <option value="proficient">Proficient</option>
             <option value="expert">Expert</option>
           </select>
-          <button type="button" className="rounded bg-zinc-900 px-3 py-1 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900" onClick={addAttestedSkill}>
+          <button
+            type="button"
+            className="rounded bg-zinc-900 px-3 py-1 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+            onClick={addAttestedSkill}
+          >
             Add
           </button>
         </div>
@@ -95,7 +106,11 @@ export function ProfileEditor() {
         />
       </label>
       <div className="flex gap-3">
-        <button type="button" onClick={save} className="rounded-md bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900">
+        <button
+          type="button"
+          onClick={save}
+          className="rounded-md bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+        >
           Save override
         </button>
         <button
@@ -111,7 +126,9 @@ export function ProfileEditor() {
         </button>
       </div>
       {message ? <p className="text-sm text-emerald-600">{message}</p> : null}
-      <Link href="/" className="text-sm underline">Back to tailor</Link>
+      <Link href="/" className="text-sm underline">
+        Back to tailor
+      </Link>
     </div>
   );
 }

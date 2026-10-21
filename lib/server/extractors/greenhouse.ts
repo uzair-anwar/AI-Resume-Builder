@@ -6,7 +6,10 @@ export function parseGreenhouseUrl(url: URL): { board: string; jobId: string } |
   return { board: m[1], jobId: m[2] };
 }
 
-export async function fetchGreenhouse(board: string, jobId: string): Promise<{ title: string; description: string } | null> {
+export async function fetchGreenhouse(
+  board: string,
+  jobId: string,
+): Promise<{ title: string; description: string } | null> {
   const api = `https://boards-api.greenhouse.io/v1/boards/${board}/jobs/${jobId}`;
   const res = await fetch(api, { headers: { Accept: "application/json" } });
   if (!res.ok) return null;

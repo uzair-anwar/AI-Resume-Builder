@@ -1,25 +1,19 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
-import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
+import type { TailorResponse } from "@/lib/schemas/tailoring";
+import { fallbackChain, sanitizeGroqModel } from "@/lib/groq-models";
 import { analyzeJob } from "./analyze-job";
 import { assembleResumeView, buildChanges } from "./assemble-resume";
+import { deterministicTailor } from "./deterministic-tailor";
 import { getAiProvider, AiProviderError } from "./ai/provider";
 import { buildTailoringSystemPrompt, buildTailoringUserPrompt, GROQ_JSON_SCHEMA } from "./prompts";
 import { selectFactsForPrompt } from "./select-facts";
 import { validateTailoring, type ValidationIssue } from "./validate-tailoring";
 
-function defaultModel(): string {
-  return process.env.AI_MODEL ?? "openai/gpt-oss-20b";
-}
-
-function fallbackModel(): string {
-  return process.env.AI_FALLBACK_MODEL ?? "openai/gpt-oss-120b";
-}
-
 async function callWithValidation(
   resume: MasterResume,
   jobText: string,
-  analysis: JobAnalysis,
+  analysis: ReturnType<typeof analyzeJob>,
   model: string,
   extraUser?: string,
 ) {
@@ -29,49 +23,67 @@ async function callWithValidation(
     { role: "system" as const, content: buildTailoringSystemPrompt() },
     {
       role: "user" as const,
-      content: buildTailoringUserPrompt(jobText, ctx, analysis) + (extraUser ? `\n\nFix these issues:\n${extraUser}` : ""),
+      content:
+        buildTailoringUserPrompt(jobText, ctx, analysis) +
+        (extraUser ? `\n\nFix:\n${extraUser}` : ""),
     },
   ];
 
-  const { raw } = await provider.completeStructured({
-    messages,
-    model,
-    jsonSchema: GROQ_JSON_SCHEMA,
-    maxTokens: 1800,
-  });
-
-  return validateTailoring(raw, resume, analysis);
+  try {
+    const { raw } = await provider.completeStructured({
+      messages,
+      model,
+      jsonSchema: GROQ_JSON_SCHEMA,
+      maxTokens: 1800,
+    });
+    return validateTailoring(raw, resume, analysis);
+  } catch (e) {
+    if (e instanceof AiProviderError) throw e;
+    return { ok: false as const, issues: [{ code: "API", message: "AI call failed" }] };
+  }
 }
 
 export async function tailorResume(
   resume: MasterResume,
   jobText: string,
-  roleFamilyId?: string,
+  requestedModel?: string,
 ): Promise<TailorResponse> {
-  const analysis = analyzeJob(jobText, resume, roleFamilyId);
+  const analysis = analyzeJob(jobText, resume);
+  const models = fallbackChain(sanitizeGroqModel(requestedModel));
 
-  let result = await callWithValidation(resume, jobText, analysis, defaultModel());
-  if (!result.ok) {
-    const issues = result.issues.map((i: ValidationIssue) => `${i.code}: ${i.message}`).join("\n");
-    result = await callWithValidation(resume, jobText, analysis, defaultModel(), issues);
-  }
-  if (!result.ok) {
-    result = await callWithValidation(resume, jobText, analysis, fallbackModel(), result.issues.map((i) => i.message).join("\n"));
-  }
-  if (!result.ok) {
-    throw new AiProviderError(
-      `Tailoring validation failed: ${result.issues[0]?.message ?? "unknown"}`,
-      "PARSE",
-    );
+  let lastIssues: ValidationIssue[] = [];
+  try {
+    for (const model of models) {
+      let result = await callWithValidation(resume, jobText, analysis, model);
+      if (!result.ok) {
+        lastIssues = result.issues;
+        const msg = result.issues.map((i) => `${i.code}: ${i.message}`).join("\n");
+        result = await callWithValidation(resume, jobText, analysis, model, msg);
+      }
+      if (result.ok) {
+        const resumeView = assembleResumeView(resume, result.data);
+        return {
+          resume: resumeView,
+          analysis,
+          changes: buildChanges(resume, result.data),
+          warnings: result.data.warnings,
+          usedFallback: false,
+        };
+      }
+      lastIssues = result.issues;
+    }
+  } catch (e) {
+    if (e instanceof AiProviderError) {
+      const fallback = deterministicTailor(resume, jobText, analysis);
+      fallback.warnings.push(e.message);
+      return fallback;
+    }
+    throw e;
   }
 
-  const resumeView = assembleResumeView(resume, result.data);
-  const changes = buildChanges(resume, result.data);
-
-  return {
-    resume: resumeView,
-    analysis,
-    changes,
-    warnings: result.data.warnings,
-  };
+  const fallback = deterministicTailor(resume, jobText, analysis);
+  fallback.warnings.push(
+    `AI validation failed: ${lastIssues[0]?.message ?? "unknown"}. Showing reordered original wording.`,
+  );
+  return fallback;
 }

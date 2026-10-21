@@ -26,12 +26,6 @@ export class SafeFetchError extends Error {
   }
 }
 
-function parseAllowlist(): Set<string> | null {
-  const raw = process.env.JOB_HOST_ALLOWLIST?.trim();
-  if (!raw) return null;
-  return new Set(raw.split(",").map((h) => h.trim().toLowerCase()).filter(Boolean));
-}
-
 function validateUrl(url: URL): void {
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     throw new SafeFetchError("Only HTTP/HTTPS URLs are allowed", "INVALID_PROTOCOL");
@@ -46,10 +40,6 @@ function validateUrl(url: URL): void {
   const host = url.hostname.toLowerCase();
   if (isBlockedHostname(host)) {
     throw new SafeFetchError("Hostname is not allowed", "BLOCKED_HOST");
-  }
-  const allowlist = parseAllowlist();
-  if (allowlist && !allowlist.has(host)) {
-    throw new SafeFetchError("Host is not on the allowlist", "NOT_ALLOWLISTED");
   }
   for (const blocked of BLOCKED_JOB_HOSTS) {
     if (host === blocked || host.endsWith(`.${blocked}`)) {

@@ -4,7 +4,6 @@ export type SessionDraft = {
   jobUrl?: string;
   jobDescription?: string;
   jobTitle?: string;
-  roleFamilyId?: string;
 };
 
 export function loadDraft(): SessionDraft {

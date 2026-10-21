@@ -1,4 +1,5 @@
 import "server-only";
+import { groqProvider } from "./groq";
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -26,11 +27,6 @@ export class AiProviderError extends Error {
   }
 }
 
-import { groqProvider } from "./groq";
-import { mockProvider } from "./mock";
-
 export function getAiProvider(): AiProvider {
-  const kind = (process.env.AI_PROVIDER ?? "mock").toLowerCase();
-  if (kind === "groq") return groqProvider;
-  return mockProvider;
+  return groqProvider;
 }
