@@ -66,7 +66,14 @@ export async function tailorResume(
           resume: resumeView,
           analysis,
           changes: buildChanges(resume, result.data),
-          warnings: result.data.warnings,
+          warnings: [
+            ...result.data.warnings,
+            ...(result.repairs.count
+              ? [
+                  `Kept your original wording for ${result.repairs.count} item(s) that broke layout or accuracy rules.`,
+                ]
+              : []),
+          ],
           usedFallback: false,
         };
       }

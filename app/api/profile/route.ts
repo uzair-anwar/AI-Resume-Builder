@@ -1,3 +1,4 @@
+import "@/lib/server/layout-fonts";
 import { NextResponse } from "next/server";
 import { loadMasterResume } from "@/lib/server/master-resume";
 import { buildDefaultResumeView } from "@/lib/build-default-resume";

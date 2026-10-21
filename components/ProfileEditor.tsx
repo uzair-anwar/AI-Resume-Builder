@@ -58,7 +58,7 @@ export function ProfileEditor() {
   if (!master) return <p className="p-8 text-sm">Loading profile…</p>;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+    <div className="w-full space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-semibold">Profile</h1>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
         Master resume is server-side from <code>Uzair_FullStack.pdf</code>. Overrides are stored in

@@ -6,6 +6,7 @@ import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { ResumeDocument } from "./ResumeDocument";
 import { slugifyFilename } from "@/lib/format";
+import { shortJobTitleForFilename } from "@/lib/job-title";
 import { PDFDocument } from "pdf-lib";
 import { autoFitToOnePage } from "@/lib/layout/autofit";
 
@@ -15,6 +16,11 @@ type Props = {
   analysis?: JobAnalysis | null;
   onResumeChange?: (resume: ResumeView) => void;
 };
+
+/** Chrome / Edge PDF viewer: hide thumbnails, fit page to width. */
+function pdfPreviewSrc(blobUrl: string): string {
+  return `${blobUrl}#navpanes=0&toolbar=0&view=FitH&zoom=page-width`;
+}
 
 async function countPages(resume: ResumeView): Promise<number> {
   const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
@@ -75,7 +81,8 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${slugifyFilename([resume.person.name.replace(/\s+/g, "_"), jobTitle ?? "Resume"])}.pdf`;
+    const role = shortJobTitleForFilename(jobTitle);
+    a.download = `${slugifyFilename([resume.person.name.replace(/\s+/g, "_"), role])}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
   }, [resume, jobTitle]);
@@ -91,8 +98,10 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
       </span>
     );
 
+  const previewUrl = blobUrl ? pdfPreviewSrc(blobUrl) : null;
+
   return (
-    <div className="sticky top-4 flex flex-col gap-3">
+    <div className="flex w-full flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold">PDF preview</h2>
         <div className="flex items-center gap-2">
@@ -100,9 +109,17 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
           {generating ? <span className="text-xs text-zinc-500">Updating…</span> : null}
         </div>
       </div>
-      <div className="h-[min(80vh,820px)] overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-zinc-700">
-        {blobUrl ? (
-          <iframe title="Resume PDF preview" src={blobUrl} className="h-full w-full border-0" />
+      <div
+        className="w-full overflow-hidden bg-white dark:bg-zinc-900"
+        style={{ minHeight: "min(92vh, 1056px)" }}
+      >
+        {previewUrl ? (
+          <embed
+            type="application/pdf"
+            title="Resume PDF preview"
+            src={previewUrl}
+            className="block h-[min(92vh,1056px)] w-full border-0"
+          />
         ) : (
           <p className="p-4 text-sm text-zinc-500">Generating preview…</p>
         )}

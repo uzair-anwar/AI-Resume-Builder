@@ -23,15 +23,42 @@
     }
   ],
   "skillCategories": [
-    { "id": "cat-languages", "label": "Programming Languages" },
-    { "id": "cat-frameworks", "label": "Frameworks & Libraries" },
-    { "id": "cat-architecture", "label": "State Management & Architecture" },
-    { "id": "cat-api", "label": "API Development & Integrations" },
-    { "id": "cat-databases", "label": "Databases" },
-    { "id": "cat-cloud", "label": "Clouds" },
-    { "id": "cat-devops", "label": "DevOps & Testing Coverage" },
-    { "id": "cat-vcs", "label": "Version Control & Project MGMT" },
-    { "id": "cat-ai", "label": "AI & Automation" }
+    {
+      "id": "cat-languages",
+      "label": "Programming Languages"
+    },
+    {
+      "id": "cat-frameworks",
+      "label": "Frameworks & Libraries"
+    },
+    {
+      "id": "cat-architecture",
+      "label": "State Management & Architecture"
+    },
+    {
+      "id": "cat-api",
+      "label": "API Development & Integrations"
+    },
+    {
+      "id": "cat-databases",
+      "label": "Databases"
+    },
+    {
+      "id": "cat-cloud",
+      "label": "Clouds"
+    },
+    {
+      "id": "cat-devops",
+      "label": "DevOps & Testing Coverage"
+    },
+    {
+      "id": "cat-vcs",
+      "label": "Version Control & Project MGMT"
+    },
+    {
+      "id": "cat-ai",
+      "label": "AI & Automation"
+    }
   ],
   "skills": [
     {
@@ -46,15 +73,30 @@
       "categoryId": "cat-languages",
       "aliases": ["TS"]
     },
-    { "id": "skill-python", "name": "Python", "categoryId": "cat-languages", "aliases": [] },
+    {
+      "id": "skill-python",
+      "name": "Python",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
     {
       "id": "skill-react",
       "name": "React.js",
       "categoryId": "cat-frameworks",
       "aliases": ["React"]
     },
-    { "id": "skill-nextjs", "name": "Next.js", "categoryId": "cat-frameworks", "aliases": [] },
-    { "id": "skill-node", "name": "Node.js", "categoryId": "cat-frameworks", "aliases": ["Node"] },
+    {
+      "id": "skill-nextjs",
+      "name": "Next.js",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-node",
+      "name": "Node.js",
+      "categoryId": "cat-frameworks",
+      "aliases": ["Node"]
+    },
     {
       "id": "skill-express",
       "name": "Express.js",
@@ -67,7 +109,18 @@
       "categoryId": "cat-frameworks",
       "aliases": []
     },
-    { "id": "skill-django", "name": "Django", "categoryId": "cat-frameworks", "aliases": [] },
+    {
+      "id": "skill-python-fw",
+      "name": "Python",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-django",
+      "name": "Django",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
     {
       "id": "skill-redux",
       "name": "Redux Toolkit",
@@ -98,22 +151,72 @@
       "categoryId": "cat-architecture",
       "aliases": []
     },
-    { "id": "skill-rest", "name": "REST APIs", "categoryId": "cat-api", "aliases": ["REST"] },
-    { "id": "skill-graphql", "name": "GraphQL", "categoryId": "cat-api", "aliases": [] },
-    { "id": "skill-openai-api", "name": "OpenAI APIs", "categoryId": "cat-api", "aliases": [] },
+    {
+      "id": "skill-rest",
+      "name": "REST APIs",
+      "categoryId": "cat-api",
+      "aliases": ["REST"]
+    },
+    {
+      "id": "skill-graphql",
+      "name": "GraphQL",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-openai-api",
+      "name": "OpenAI APIs",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
     {
       "id": "skill-integrations",
       "name": "Third-Party Integrations",
       "categoryId": "cat-api",
       "aliases": []
     },
-    { "id": "skill-apigw", "name": "API Gateway", "categoryId": "cat-api", "aliases": [] },
-    { "id": "skill-postgres", "name": "PostgreSQL", "categoryId": "cat-databases", "aliases": [] },
-    { "id": "skill-mongo", "name": "MongoDB", "categoryId": "cat-databases", "aliases": [] },
-    { "id": "skill-mysql", "name": "MySQL", "categoryId": "cat-databases", "aliases": [] },
-    { "id": "skill-redis", "name": "Redis", "categoryId": "cat-databases", "aliases": [] },
-    { "id": "skill-azure", "name": "Azure", "categoryId": "cat-cloud", "aliases": [] },
-    { "id": "skill-aws", "name": "AWS", "categoryId": "cat-cloud", "aliases": [] },
+    {
+      "id": "skill-apigw",
+      "name": "API Gateway",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-postgres",
+      "name": "PostgreSQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-mongo",
+      "name": "MongoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-mysql",
+      "name": "MySQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-redis",
+      "name": "Redis",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-azure",
+      "name": "Azure",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-aws",
+      "name": "AWS",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
     {
       "id": "skill-amplify",
       "name": "AWS Amplify Gen 2",
@@ -132,39 +235,120 @@
       "categoryId": "cat-cloud",
       "aliases": ["Cognito"]
     },
-    { "id": "skill-dynamodb", "name": "DynamoDB", "categoryId": "cat-cloud", "aliases": [] },
+    {
+      "id": "skill-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
     {
       "id": "skill-lambda",
       "name": "AWS Lambda",
       "categoryId": "cat-cloud",
       "aliases": ["Lambda"]
     },
-    { "id": "skill-s3", "name": "S3", "categoryId": "cat-cloud", "aliases": [] },
-    { "id": "skill-cloudfront", "name": "CloudFront", "categoryId": "cat-cloud", "aliases": [] },
-    { "id": "skill-cdk", "name": "AWS CDK", "categoryId": "cat-cloud", "aliases": ["CDK"] },
-    { "id": "skill-docker", "name": "Docker", "categoryId": "cat-devops", "aliases": [] },
-    { "id": "skill-gha", "name": "GitHub Actions", "categoryId": "cat-devops", "aliases": [] },
-    { "id": "skill-cicd", "name": "CI/CD", "categoryId": "cat-devops", "aliases": ["CI/ CD"] },
+    {
+      "id": "skill-s3",
+      "name": "S3",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloudfront",
+      "name": "CloudFront",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-apigw-cloud",
+      "name": "API Gateway",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cdk",
+      "name": "AWS CDK",
+      "categoryId": "cat-cloud",
+      "aliases": ["CDK"]
+    },
+    {
+      "id": "skill-docker",
+      "name": "Docker",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-gha",
+      "name": "GitHub Actions",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-cicd",
+      "name": "CI/CD",
+      "categoryId": "cat-devops",
+      "aliases": ["CI/ CD"]
+    },
     {
       "id": "skill-testing",
       "name": "Automated Testing",
       "categoryId": "cat-devops",
       "aliases": []
     },
-    { "id": "skill-github", "name": "GitHub", "categoryId": "cat-vcs", "aliases": [] },
-    { "id": "skill-gitlab", "name": "GitLab", "categoryId": "cat-vcs", "aliases": [] },
-    { "id": "skill-jira", "name": "Jira", "categoryId": "cat-vcs", "aliases": [] },
+    {
+      "id": "skill-github",
+      "name": "GitHub",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-gitlab",
+      "name": "GitLab",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-jira",
+      "name": "Jira",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
     {
       "id": "skill-agile",
       "name": "Agile (Scrum)",
       "categoryId": "cat-vcs",
       "aliases": ["Scrum", "Agile"]
     },
-    { "id": "skill-openai", "name": "OpenAI", "categoryId": "cat-ai", "aliases": [] },
-    { "id": "skill-deepai", "name": "DeepAI", "categoryId": "cat-ai", "aliases": [] },
-    { "id": "skill-agentic", "name": "Agentic Workflows", "categoryId": "cat-ai", "aliases": [] },
-    { "id": "skill-ai-int", "name": "AI Integrations", "categoryId": "cat-ai", "aliases": [] },
-    { "id": "skill-heygen", "name": "HeyGen", "categoryId": "cat-ai", "aliases": [] },
+    {
+      "id": "skill-openai",
+      "name": "OpenAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-deepai",
+      "name": "DeepAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-agentic",
+      "name": "Agentic Workflows",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-int",
+      "name": "AI Integrations",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-heygen",
+      "name": "HeyGen",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
     {
       "id": "skill-ai-auto",
       "name": "AI-Powered Automation",

@@ -1,8 +1,10 @@
 import "server-only";
+import "./layout-fonts";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { computeLineBudgets } from "@/lib/layout/budgets";
-import { detectJobTitle, extractJdTerms } from "./jd-extract";
+import { detectJobTitle, extractJdTerms, isEnforceableMissingTerm } from "./jd-extract";
+import { shortJobTitleForFilename } from "@/lib/job-title";
 import { buildProfileVocabulary, isTermMatched, relatedVia } from "./profile-vocab";
 
 export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
@@ -32,7 +34,7 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
       : (detectJobTitle(jobText) ?? "General engineering");
 
   return {
-    detectedTitle: detectJobTitle(jobText),
+    detectedTitle: shortJobTitleForFilename(detectJobTitle(jobText)),
     focusLabel,
     terms,
     coverage: {
@@ -43,6 +45,9 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
     },
     lineBudgets: computeLineBudgets(resume),
     profileVocabulary: [...buildProfileVocabulary(resume)],
-    missingTerms: terms.filter((t) => t.status === "missing").map((t) => t.term),
+    missingTerms: terms
+      .filter((t) => t.status === "missing")
+      .map((t) => t.term)
+      .filter(isEnforceableMissingTerm),
   };
 }

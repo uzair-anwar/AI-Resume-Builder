@@ -26,6 +26,7 @@ export function isTermMatched(term: string, resume: MasterResume): boolean {
     if (s.name.toLowerCase() === hay || s.name.toLowerCase().includes(hay)) return true;
     if (s.aliases?.some((a) => a.toLowerCase() === hay)) return true;
   }
+  if (resume.skillCategories.some((c) => c.label.toLowerCase().includes(hay))) return true;
   const tax = loadTaxonomy();
   const taxTerm = tax.terms.find(
     (t) => t.canonical.toLowerCase() === hay || t.aliases.some((a) => a.toLowerCase() === hay),

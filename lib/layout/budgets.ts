@@ -2,6 +2,7 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import { SUMMARY_MAX_LINES, SKILLS_MAX_LINES } from "./constants";
 import { countBulletLines, countWrappedLines } from "./measure";
 import { COLUMN_WIDTH, SIZE_BODY } from "./constants";
+import { formatSkillLine } from "./skill-line";
 
 export type LineBudgets = {
   summaryMaxLines: number;
@@ -41,16 +42,24 @@ export function computeLineBudgets(resume: MasterResume): LineBudgets {
   };
 }
 
-function countSkillBlockLines(resume: MasterResume): number {
+/** Lines used by the skills block (category label + wrapped skill line per non-empty category). */
+export function countSkillLines(categories: { categoryId: string; names: string[] }[]): number {
   let lines = 0;
-  for (const cat of resume.skillCategories) {
-    const items = resume.skills.filter((s) => s.categoryId === cat.id);
-    if (!items.length) continue;
+  for (const cat of categories) {
+    if (!cat.names.length) continue;
     lines += 1; // category label
-    const line = items.map((s) => s.name).join(" | ");
-    lines += countWrappedLines(line, COLUMN_WIDTH, SIZE_BODY);
+    lines += countWrappedLines(formatSkillLine(cat.categoryId, cat.names), COLUMN_WIDTH, SIZE_BODY);
   }
   return lines;
+}
+
+function countSkillBlockLines(resume: MasterResume): number {
+  return countSkillLines(
+    resume.skillCategories.map((cat) => ({
+      categoryId: cat.id,
+      names: resume.skills.filter((s) => s.categoryId === cat.id).map((s) => s.name),
+    })),
+  );
 }
 
 export function maxCharsForLines(maxLines: number, fontSize: number = SIZE_BODY): number {

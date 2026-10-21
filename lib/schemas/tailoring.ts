@@ -2,8 +2,8 @@ import { z } from "zod";
 import { ResumeViewSchema } from "./resume";
 
 export const TailoringResultSchema = z.object({
-  headline: z.string().min(1).max(120),
-  summary: z.string().min(1).max(1200),
+  headline: z.string().min(1).max(400),
+  summary: z.string().min(1).max(4000),
   selectedSkillIds: z.array(z.string()),
   skillCategoryOrder: z.array(z.string()),
   experience: z.array(
@@ -11,7 +11,7 @@ export const TailoringResultSchema = z.object({
       experienceId: z.string(),
       bullets: z.array(
         z.object({
-          text: z.string().min(1).max(500),
+          text: z.string().min(1).max(1500),
           sourceFactIds: z.array(z.string()).min(1),
         }),
       ),
@@ -20,7 +20,7 @@ export const TailoringResultSchema = z.object({
   projects: z.array(
     z.object({
       projectId: z.string(),
-      description: z.string().min(1).max(800),
+      description: z.string().min(1).max(3000),
       sourceFactIds: z.array(z.string()).min(1),
     }),
   ),

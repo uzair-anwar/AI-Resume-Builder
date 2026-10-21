@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   } catch (e) {
     if (e instanceof SafeFetchError) {
       logError("extract_job_failed", { code: e.code });
-      const status = e.code === "PASTE_REQUIRED" ? 422 : 400;
+      const status = ["LOGIN_REQUIRED", "BOT_BLOCKED", "NOT_FOUND"].includes(e.code) ? 422 : 400;
       return NextResponse.json(
         { error: e.message, code: e.code },
         { status, headers: PRIVATE_HEADERS },

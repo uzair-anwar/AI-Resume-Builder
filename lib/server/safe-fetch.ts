@@ -1,20 +1,14 @@
 import "server-only";
 import dns from "dns/promises";
 import { Agent, fetch as undiciFetch, type RequestInit as UndiciRequestInit } from "undici";
+import { findJobBoard, loginRequiredMessage } from "@/lib/job-boards";
 import { isBlockedHostname, isBlockedIp, validateResolvedAddresses } from "./ip-guard";
 
+const BROWSER_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 const MAX_REDIRECTS = 5;
 const TIMEOUT_MS = 10_000;
 const MAX_BYTES = 1.5 * 1024 * 1024;
-
-const BLOCKED_JOB_HOSTS = [
-  "linkedin.com",
-  "www.linkedin.com",
-  "indeed.com",
-  "www.indeed.com",
-  "glassdoor.com",
-  "www.glassdoor.com",
-];
 
 export class SafeFetchError extends Error {
   constructor(
@@ -41,13 +35,9 @@ function validateUrl(url: URL): void {
   if (isBlockedHostname(host)) {
     throw new SafeFetchError("Hostname is not allowed", "BLOCKED_HOST");
   }
-  for (const blocked of BLOCKED_JOB_HOSTS) {
-    if (host === blocked || host.endsWith(`.${blocked}`)) {
-      throw new SafeFetchError(
-        "This job board requires pasting the description manually",
-        "PASTE_REQUIRED",
-      );
-    }
+  const board = findJobBoard(host);
+  if (board?.access === "login") {
+    throw new SafeFetchError(loginRequiredMessage(board.name), "LOGIN_REQUIRED");
   }
   if (ipaddrLooksLikeIp(host) && isBlockedIp(host)) {
     throw new SafeFetchError("IP address is not allowed", "BLOCKED_IP");
@@ -132,7 +122,14 @@ export type SafeFetchResult = {
   truncated: boolean;
 };
 
-export async function safeFetch(initialUrl: string): Promise<SafeFetchResult> {
+export type SafeFetchOptions = {
+  userAgent?: string;
+};
+
+export async function safeFetch(
+  initialUrl: string,
+  options: SafeFetchOptions = {},
+): Promise<SafeFetchResult> {
   let current = new URL(initialUrl);
   let redirects = 0;
 
@@ -151,8 +148,9 @@ export async function safeFetch(initialUrl: string): Promise<SafeFetchResult> {
         redirect: "manual",
         signal: controller.signal,
         headers: {
-          "User-Agent": "ResumeTailorBot/1.0 (+personal tool)",
-          Accept: "text/html,application/json,text/plain",
+          "User-Agent": options.userAgent ?? BROWSER_UA,
+          Accept: "text/html,application/xhtml+xml,application/json,text/plain;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
         },
         dispatcher: agent,
       };
@@ -174,6 +172,7 @@ export async function safeFetch(initialUrl: string): Promise<SafeFetchResult> {
       const contentType = (res.headers.get("content-type") ?? "").toLowerCase();
       if (
         !contentType.includes("text/html") &&
+        !contentType.includes("xhtml") &&
         !contentType.includes("application/json") &&
         !contentType.includes("text/plain")
       ) {
