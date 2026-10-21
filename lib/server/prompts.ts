@@ -2,6 +2,7 @@ import "server-only";
 import type { SelectedContext } from "./select-facts";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { maxCharsForLines } from "@/lib/layout/budgets";
+import { redactContactDetails } from "./ai/redact";
 
 export function buildTailoringSystemPrompt(): string {
   return `You tailor a resume using ONLY verified facts provided. Rules:
@@ -22,13 +23,17 @@ export function buildTailoringUserPrompt(
   const facts = ctx.facts
     .map((f) => {
       const maxL = analysis.lineBudgets.bullets[f.id] ?? 2;
-      return `${f.id} (max ${maxL} lines, ~${maxCharsForLines(maxL)} chars): ${f.text}`;
+      return `${f.id} (max ${maxL} lines, ~${maxCharsForLines(maxL)} chars): ${redactContactDetails(f.text)}`;
     })
     .join("\n");
-  const summary = ctx.summaryFacts.map((f) => `${f.id}: ${f.text}`).join("\n");
+  const summary = ctx.summaryFacts
+    .map((f) => `${f.id}: ${redactContactDetails(f.text)}`)
+    .join("\n");
   const projectHints = Object.entries(analysis.lineBudgets.projects)
     .map(([id, lines]) => `${id}: max ${lines} lines`)
     .join("\n");
+
+  const safeJob = redactContactDetails(jobText).slice(0, 12000);
 
   return `Focus: ${analysis.focusLabel}
 Matched: ${analysis.coverage.matched}, related: ${analysis.coverage.related}, missing: ${analysis.coverage.missing}
@@ -51,11 +56,11 @@ ${projectHints}
 Missing JD terms (never mention in output): ${(analysis.missingTerms ?? []).join(", ")}
 
 <<<UNTRUSTED_JOB_DESCRIPTION>>>
-${jobText.slice(0, 12000)}
+${safeJob}
 <<<END_JOB_DESCRIPTION>>>`;
 }
 
-export const GROQ_JSON_SCHEMA = {
+export const TAILORING_JSON_SCHEMA = {
   name: "tailoring_result",
   strict: true,
   schema: {
@@ -129,3 +134,6 @@ export const GROQ_JSON_SCHEMA = {
     },
   },
 };
+
+/** @deprecated use TAILORING_JSON_SCHEMA */
+export const GROQ_JSON_SCHEMA = TAILORING_JSON_SCHEMA;

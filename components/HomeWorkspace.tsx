@@ -1,13 +1,28 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { LineBudgets } from "@/lib/layout/budgets";
-import { GROQ_MODELS, DEFAULT_GROQ_MODEL } from "@/lib/groq-models";
-import { loadSelectedModel, saveSelectedModel } from "@/lib/client/model-storage";
+import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai/provider-types";
+import { resolveModelPickerProvider } from "@/lib/ai/ui-helpers";
+import {
+  loadAiProviderChoice,
+  loadAllowProviderFallback,
+  saveAiProviderChoice,
+  saveAllowProviderFallback,
+} from "@/lib/client/ai-provider-storage";
+import {
+  loadAllProviderModels,
+  saveModelForProvider,
+} from "@/lib/client/ai-model-storage";
+import { buildPipelineKey } from "@/lib/client/pipeline-key";
 import { loadProfileOverride } from "@/lib/client/profile-storage";
 import { loadDraft, saveDraft } from "@/lib/client/session-draft";
+import {
+  loadStoredTailorSession,
+  saveStoredTailorSession,
+} from "@/lib/client/session-result";
 import { shortJobTitleForFilename } from "@/lib/job-title";
 import { ResumeEditor } from "./ResumeEditor";
 import { ResumePdfPanel } from "./ResumePdfPanel";
@@ -20,9 +35,18 @@ export default function HomeWorkspace() {
   const [jobUrl, setJobUrl] = useState(() => loadDraft().jobUrl ?? "");
   const [jobDescription, setJobDescription] = useState(() => loadDraft().jobDescription ?? "");
   const [jobTitle, setJobTitle] = useState(() => loadDraft().jobTitle ?? "");
-  const [model, setModel] = useState(() =>
-    typeof window === "undefined" ? DEFAULT_GROQ_MODEL : loadSelectedModel(),
+  const [provider, setProvider] = useState<AiProviderChoice>(() =>
+    typeof window === "undefined" ? "auto" : loadAiProviderChoice(),
   );
+  const [allowFallback, setAllowFallback] = useState(() =>
+    typeof window === "undefined" ? false : loadAllowProviderFallback(),
+  );
+  const [serverProviders, setServerProviders] = useState<AiProviderCatalog[]>([]);
+  const [fallbackOrder, setFallbackOrder] = useState<AiProviderId[]>([]);
+  const [modelsByProvider, setModelsByProvider] = useState<
+    Partial<Record<AiProviderId, string>>
+  >({});
+  const [aiUsage, setAiUsage] = useState<TailorResponse["aiUsage"]>(undefined);
   const [resume, setResume] = useState<ResumeView | null>(null);
   const [analysis, setAnalysis] = useState<JobAnalysis | null>(null);
   const [budgets, setBudgets] = useState<LineBudgets | undefined>();
@@ -33,34 +57,101 @@ export default function HomeWorkspace() {
   const [stage, setStage] = useState<TailorStage>("idle");
   const [viaUrl, setViaUrl] = useState(false);
   const [runId, setRunId] = useState(0);
+  const [completedPipelineKey, setCompletedPipelineKey] = useState<string | null>(null);
   const fontsReady = useLayoutFonts();
   const tailorRequestId = useRef(0);
-  const lastTailorKey = useRef(`${model}\n${jobDescription}`);
-  const tailorRef = useRef<(opts?: { description?: string; title?: string }) => Promise<void>>(
-    async () => undefined,
+  const restoredFromStorage = useRef(false);
+
+  const pipelineKeyInput = useMemo(
+    () => ({
+      jobUrl,
+      jobDescription,
+      provider,
+      allowFallback,
+      modelsByProvider,
+      serverProviders,
+    }),
+    [jobUrl, jobDescription, provider, allowFallback, modelsByProvider, serverProviders],
   );
+
+  const currentPipelineKey = useMemo(() => {
+    if (!serverProviders.length) return null;
+    return buildPipelineKey(pipelineKeyInput);
+  }, [pipelineKeyInput, serverProviders.length]);
+
+  const inputsStale =
+    completedPipelineKey !== null &&
+    currentPipelineKey !== null &&
+    completedPipelineKey !== currentPipelineKey;
 
   useEffect(() => {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((data) => {
+        if (restoredFromStorage.current) return;
         setResume(data.defaultResume);
         if (data.defaultResume && data.lineBudgets) setBudgets(data.lineBudgets);
       })
       .catch(() => setError("Failed to load profile"));
+    fetch("/api/ai-providers")
+      .then((r) => r.json())
+      .then((data) => {
+        const providers = (data.providers ?? []) as AiProviderCatalog[];
+        setFallbackOrder(data.fallbackOrder ?? []);
+        const ids = providers.map((p) => p.id);
+        const models = loadAllProviderModels(ids);
+        setModelsByProvider(models);
+        setServerProviders(providers);
+
+        const draft = loadDraft();
+        const key = buildPipelineKey({
+          jobUrl: draft.jobUrl ?? "",
+          jobDescription: draft.jobDescription ?? "",
+          provider: loadAiProviderChoice(),
+          allowFallback: loadAllowProviderFallback(),
+          modelsByProvider: models,
+          serverProviders: providers,
+        });
+        const stored = loadStoredTailorSession();
+        if (stored?.pipelineKey === key) {
+          restoredFromStorage.current = true;
+          setCompletedPipelineKey(stored.pipelineKey);
+          setJobTitle(stored.jobTitle);
+          setResume(stored.resume);
+          setAnalysis(stored.analysis);
+          setBudgets(stored.budgets ?? stored.analysis.lineBudgets);
+          setWarnings(stored.warnings);
+          setAiUsage(stored.aiUsage);
+          setStage("done");
+        }
+      })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
     saveDraft({ jobUrl, jobDescription, jobTitle });
   }, [jobUrl, jobDescription, jobTitle]);
 
+  const modelPickerProvider = resolveModelPickerProvider(
+    provider,
+    serverProviders,
+    fallbackOrder,
+  );
+  const modelCatalog = serverProviders.find((p) => p.id === modelPickerProvider);
+  const selectedModel =
+    (modelPickerProvider && modelsByProvider[modelPickerProvider]) ||
+    modelCatalog?.defaultModelId ||
+    "";
+
   const tailor = useCallback(
-    async (opts?: { description?: string; title?: string }) => {
-      const description = opts?.description ?? jobDescription;
-      const title = opts?.title ?? jobTitle;
+    async (opts: { description: string; title: string; pipelineKey: string }) => {
+      const { description, title, pipelineKey } = opts;
       if (description.length < 50) return;
 
-      lastTailorKey.current = `${model}\n${description}`;
+      const providerModels = Object.fromEntries(
+        serverProviders.map((p) => [p.id, modelsByProvider[p.id] ?? p.defaultModelId]),
+      ) as Partial<Record<AiProviderId, string>>;
+
       const requestId = ++tailorRequestId.current;
       setError(null);
       setErrorCode(null);
@@ -74,7 +165,9 @@ export default function HomeWorkspace() {
           body: JSON.stringify({
             jobDescription: description,
             jobTitle: title || undefined,
-            model,
+            provider,
+            allowProviderFallback: allowFallback,
+            providerModels,
             ...(override ? { profileOverride: override } : {}),
           }),
         });
@@ -85,8 +178,20 @@ export default function HomeWorkspace() {
         setAnalysis(data.analysis);
         setBudgets(data.analysis.lineBudgets);
         setWarnings(data.warnings ?? []);
+        setAiUsage(data.aiUsage);
         const detected = data.analysis.detectedTitle;
-        if (detected) setJobTitle(shortJobTitleForFilename(detected));
+        const nextTitle = detected ? shortJobTitleForFilename(detected) : title;
+        if (detected) setJobTitle(nextTitle);
+        setCompletedPipelineKey(pipelineKey);
+        saveStoredTailorSession({
+          pipelineKey,
+          jobTitle: nextTitle,
+          resume: data.resume,
+          analysis: data.analysis,
+          budgets: data.analysis.lineBudgets,
+          warnings: data.warnings ?? [],
+          aiUsage: data.aiUsage,
+        });
         setStage("done");
       } catch (e) {
         if (requestId === tailorRequestId.current) {
@@ -97,54 +202,67 @@ export default function HomeWorkspace() {
         if (requestId === tailorRequestId.current) setLoading(false);
       }
     },
-    [jobDescription, jobTitle, model],
+    [provider, allowFallback, modelsByProvider, serverProviders],
   );
 
-  useEffect(() => {
-    tailorRef.current = tailor;
-  }, [tailor]);
+  const runGenerate = useCallback(async () => {
+    if (!currentPipelineKey) return;
+    const trimmedUrl = jobUrl.trim();
+    const hasUrl = trimmedUrl.length > 0;
+    if (!hasUrl && jobDescription.length < 50) {
+      setError("Paste a job description (50+ characters) or enter a job URL.");
+      return;
+    }
 
-  useEffect(() => {
-    if (jobDescription.length < 50) return;
-    if (lastTailorKey.current === `${model}\n${jobDescription}`) return;
-    const timer = setTimeout(() => {
-      setViaUrl(false);
-      setRunId((n) => n + 1);
-      void tailorRef.current();
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, [jobDescription, model]);
-
-  const extractJob = useCallback(async () => {
     setError(null);
     setErrorCode(null);
-    setLoading(true);
-    setViaUrl(true);
     setRunId((n) => n + 1);
-    setStage("fetching");
-    try {
-      const res = await fetch("/api/extract-job", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: jobUrl }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setErrorCode(typeof data.code === "string" ? data.code : null);
-        throw new Error(data.error ?? "Extraction failed");
-      }
 
-      const description = data.description as string;
-      const title = shortJobTitleForFilename(data.title);
-      setJobDescription(description);
-      setJobTitle(title);
-      await tailor({ description, title });
-    } catch (e) {
-      setError((e as Error).message);
-      setStage("idle");
-      setLoading(false);
+    let description = jobDescription;
+    let title = jobTitle;
+
+    if (hasUrl) {
+      setLoading(true);
+      setViaUrl(true);
+      setStage("fetching");
+      try {
+        const res = await fetch("/api/extract-job", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: trimmedUrl }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setErrorCode(typeof data.code === "string" ? data.code : null);
+          throw new Error(data.error ?? "Extraction failed");
+        }
+        description = data.description as string;
+        title = shortJobTitleForFilename(data.title);
+        setJobDescription(description);
+        setJobTitle(title);
+      } catch (e) {
+        setError((e as Error).message);
+        setStage("idle");
+        setLoading(false);
+        return;
+      }
+    } else {
+      setViaUrl(false);
     }
-  }, [jobUrl, tailor]);
+
+    const keyAfterExtract = buildPipelineKey({
+      ...pipelineKeyInput,
+      jobDescription: description,
+      jobUrl: trimmedUrl,
+    });
+
+    await tailor({ description, title, pipelineKey: keyAfterExtract });
+  }, [currentPipelineKey, jobUrl, jobDescription, jobTitle, pipelineKeyInput, tailor]);
+
+  const canGenerate =
+    Boolean(currentPipelineKey) &&
+    !loading &&
+    (jobUrl.trim().length > 0 || jobDescription.length >= 50);
 
   const signInNotice = errorCode === "LOGIN_REQUIRED" || errorCode === "BOT_BLOCKED";
 
@@ -184,7 +302,7 @@ export default function HomeWorkspace() {
       ) : null}
 
       <div className="flex w-full flex-col gap-6">
-        <div className="grid w-full gap-3 md:grid-cols-[minmax(0,1fr)_auto_16rem] md:items-end">
+        <div className="grid w-full gap-3 md:grid-cols-[minmax(0,1fr)_11rem_14rem] md:items-end">
           <label className="block text-sm">
             Job URL
             <input
@@ -194,32 +312,94 @@ export default function HomeWorkspace() {
               placeholder="https://boards.greenhouse.io/... or any job board link"
             />
           </label>
-          <button
-            type="button"
-            disabled={!jobUrl || loading}
-            onClick={() => extractJob()}
-            className="rounded border px-4 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-600"
-          >
-            Extract URL
-          </button>
           <label className="block text-sm">
-            AI model
+            AI provider
             <select
               className="mt-1 w-full rounded border px-2 py-1.5 dark:border-zinc-600 dark:bg-zinc-900"
-              value={model}
+              value={provider}
               onChange={(e) => {
-                setModel(e.target.value);
-                saveSelectedModel(e.target.value);
+                const v = e.target.value as AiProviderChoice;
+                setProvider(v);
+                saveAiProviderChoice(v);
               }}
             >
-              {GROQ_MODELS.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.label}
+              <option value="auto">Auto (server fallback order)</option>
+              {serverProviders.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
                 </option>
               ))}
             </select>
           </label>
+          <label className="block text-sm">
+            Model
+            {modelPickerProvider && modelCatalog ? (
+              <>
+                <span className="ml-1 text-xs font-normal text-zinc-500">
+                  ({modelCatalog.label}
+                  {provider === "auto" ? " · Auto primary" : ""})
+                </span>
+                <select
+                  className="mt-1 w-full rounded border px-2 py-1.5 dark:border-zinc-600 dark:bg-zinc-900"
+                  value={selectedModel}
+                  onChange={(e) => {
+                    const id = modelPickerProvider;
+                    const v = e.target.value;
+                    setModelsByProvider((prev) => ({ ...prev, [id]: v }));
+                    saveModelForProvider(id, v);
+                  }}
+                >
+                  {modelCatalog.models.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <p className="mt-1 text-xs text-zinc-500">Select a configured provider</p>
+            )}
+          </label>
         </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            disabled={!canGenerate}
+            onClick={() => void runGenerate()}
+            className="rounded bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          >
+            {jobUrl.trim() ? "Extract job & tailor resume" : "Tailor resume"}
+          </button>
+          <label className="flex max-w-xl items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={allowFallback}
+              onChange={(e) => {
+                setAllowFallback(e.target.checked);
+                saveAllowProviderFallback(e.target.checked);
+              }}
+            />
+            <span className="text-zinc-600 dark:text-zinc-400">
+              Allow fallback if the chosen provider is rate-limited or unavailable.
+            </span>
+          </label>
+        </div>
+
+        {inputsStale ? (
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            URL, description, provider, model, or fallback setting changed — click the button above
+            to fetch and tailor again.
+          </p>
+        ) : null}
+
+        {provider === "auto" && serverProviders.length > 1 ? (
+          <p className="text-xs text-zinc-500">
+            In Auto mode, fallback providers use the model you last chose for each company (saved in
+            this browser).
+          </p>
+        ) : null}
 
         <label className="block w-full text-sm">
           Job description
@@ -228,6 +408,7 @@ export default function HomeWorkspace() {
             rows={8}
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
+            placeholder="Paste a job description here, or use a URL and click Extract job & tailor resume."
           />
         </label>
 
@@ -236,6 +417,13 @@ export default function HomeWorkspace() {
         {jobTitle ? (
           <p className="text-xs text-zinc-500">
             PDF filename: Uzair_Anwar_{jobTitle.replace(/\s+/g, "_")}
+          </p>
+        ) : null}
+
+        {aiUsage ? (
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
+            Generated with {aiUsage.providerLabel} · {aiUsage.model}
+            {aiUsage.usedProviderFallback ? " (fallback provider)" : ""}
           </p>
         ) : null}
 

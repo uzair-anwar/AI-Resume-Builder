@@ -14,7 +14,15 @@ export const ExtractJobResponseSchema = z.object({
 export const TailorRequestSchema = z.object({
   jobDescription: z.string().min(50).max(20000),
   jobTitle: z.string().max(200).optional(),
-  model: z.string().max(120).optional(),
+  provider: z.enum(["auto", "groq", "openrouter", "gemini", "cloudflare"]).optional(),
+  providerModels: z
+    .record(
+      z.enum(["groq", "openrouter", "gemini", "cloudflare"]),
+      z.string().max(200),
+    )
+    .optional(),
+  allowProviderFallback: z.boolean().optional(),
+  geminiOptIn: z.boolean().optional(),
   profileOverride: z.record(z.string(), z.unknown()).optional(),
 });
 

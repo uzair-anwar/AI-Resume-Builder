@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { TailorRequestSchema } from "@/lib/schemas/job";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
 import { tailorResume } from "@/lib/server/tailor-resume";
-import { AiProviderError } from "@/lib/server/ai/provider";
 import { deterministicTailor } from "@/lib/server/deterministic-tailor";
 import { analyzeJob } from "@/lib/server/analyze-job";
 import { logError, logInfo } from "@/lib/server/log";
@@ -24,30 +23,21 @@ export async function POST(req: Request) {
   const resume = mergeProfileOverride(base, override ?? null);
 
   try {
-    logInfo("tailor_start");
-    const result = await tailorResume(resume, parsed.data.jobDescription, parsed.data.model);
-    logInfo("tailor_done");
+    logInfo("tailor_start", { provider: parsed.data.provider ?? "auto" });
+    const result = await tailorResume(resume, parsed.data.jobDescription, {
+      provider: parsed.data.provider,
+      allowProviderFallback: parsed.data.allowProviderFallback,
+      providerModels: parsed.data.providerModels,
+    });
+    logInfo("tailor_done", { ok: !result.usedFallback });
     return NextResponse.json(result, { headers: PRIVATE_HEADERS });
   } catch (e) {
-    if (e instanceof AiProviderError && e.code === "RATE_LIMIT") {
-      const analysis = analyzeJob(parsed.data.jobDescription, resume);
-      const fallback = deterministicTailor(resume, parsed.data.jobDescription, analysis);
-      fallback.warnings.push(
-        `Groq rate limit — using reordered original wording. Retry in ${e.retryAfterSec ?? 30}s.`,
-      );
-      return NextResponse.json(fallback, { headers: PRIVATE_HEADERS });
-    }
-    if (e instanceof AiProviderError) {
-      logError("tailor_ai_error", { code: e.code });
-      const analysis = analyzeJob(parsed.data.jobDescription, resume);
-      const fallback = deterministicTailor(resume, parsed.data.jobDescription, analysis);
-      fallback.warnings.push(e.message);
-      return NextResponse.json(fallback, { headers: PRIVATE_HEADERS });
-    }
     logError("tailor_error");
-    return NextResponse.json(
-      { error: "Tailoring failed" },
-      { status: 500, headers: PRIVATE_HEADERS },
+    const analysis = analyzeJob(parsed.data.jobDescription, resume);
+    const fallback = deterministicTailor(resume, parsed.data.jobDescription, analysis);
+    fallback.warnings.push(
+      e instanceof Error ? e.message : "Tailoring failed. Your job description was not modified.",
     );
+    return NextResponse.json(fallback, { headers: PRIVATE_HEADERS });
   }
 }

@@ -9,7 +9,7 @@ export type SessionDraft = {
 export function loadDraft(): SessionDraft {
   if (typeof window === "undefined") return {};
   try {
-    return JSON.parse(sessionStorage.getItem(KEY) ?? "{}") as SessionDraft;
+    return JSON.parse(localStorage.getItem(KEY) ?? "{}") as SessionDraft;
   } catch {
     return {};
   }
@@ -17,5 +17,5 @@ export function loadDraft(): SessionDraft {
 
 export function saveDraft(draft: SessionDraft) {
   if (typeof window === "undefined") return;
-  sessionStorage.setItem(KEY, JSON.stringify(draft));
+  localStorage.setItem(KEY, JSON.stringify(draft));
 }

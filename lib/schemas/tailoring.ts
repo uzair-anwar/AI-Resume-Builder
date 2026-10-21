@@ -66,6 +66,13 @@ export const JobAnalysisSchema = z.object({
 
 export type JobAnalysis = z.infer<typeof JobAnalysisSchema>;
 
+export const AiUsageSchema = z.object({
+  provider: z.enum(["groq", "openrouter", "gemini", "cloudflare"]),
+  providerLabel: z.string(),
+  model: z.string(),
+  usedProviderFallback: z.boolean().optional(),
+});
+
 export const TailorResponseSchema = z.object({
   resume: ResumeViewSchema,
   analysis: JobAnalysisSchema,
@@ -78,6 +85,7 @@ export const TailorResponseSchema = z.object({
   ),
   warnings: z.array(z.string()),
   usedFallback: z.boolean().optional(),
+  aiUsage: AiUsageSchema.optional(),
 });
 
 export type TailorResponse = z.infer<typeof TailorResponseSchema>;
