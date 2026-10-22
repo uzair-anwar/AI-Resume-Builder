@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { pdf } from "@react-pdf/renderer";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
+import { SectionCard } from "@/components/ui/SectionCard";
 import { ResumeDocument } from "./ResumeDocument";
 import { slugifyFilename } from "@/lib/shared/format";
 import { shortJobTitleForFilename } from "@/lib/shared/job-title";
@@ -81,11 +82,11 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
 
   const pageBadge =
     pageCount <= 1 ? (
-      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
         1 page
       </span>
     ) : (
-      <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs text-rose-800 dark:bg-rose-900 dark:text-rose-200">
+      <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-800 dark:bg-rose-900 dark:text-rose-200">
         {pageCount} pages — overflow
       </span>
     );
@@ -93,14 +94,26 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
   const previewUrl = blobUrl ? pdfPreviewSrc(blobUrl) : null;
 
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold">PDF preview</h2>
-        <div className="flex items-center gap-2">
+    <SectionCard
+      title="Preview & PDF"
+      subtitle="One-page layout with live PDF export."
+      headerAction={
+        <>
           {pageBadge}
-          {generating ? <span className="text-xs text-zinc-500">Updating…</span> : null}
-        </div>
-      </div>
+          {generating ? (
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">Updating…</span>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => download()}
+            disabled={generating && !previewUrl}
+            className="btn-primary"
+          >
+            Download PDF
+          </button>
+        </>
+      }
+    >
       <div
         className="w-full overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-inner dark:border-zinc-700/80 dark:bg-zinc-900"
         style={{ minHeight: "min(92vh, 1056px)" }}
@@ -122,15 +135,6 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
           </p>
         )}
       </div>
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => download()}
-          className="btn-primary"
-        >
-          Download PDF
-        </button>
-      </div>
-    </div>
+    </SectionCard>
   );
 }

@@ -595,15 +595,15 @@ export default function HomeWorkspace() {
           </SectionCard>
         ) : null}
 
-        <SectionCard title="Preview & PDF" subtitle="One-page layout with live PDF export.">
-          {resume && fontsReady ? (
-            <ResumePdfPanel
-              resume={resume}
-              jobTitle={jobTitle}
-              analysis={analysis}
-              onResumeChange={setResume}
-            />
-          ) : (
+        {resume && fontsReady ? (
+          <ResumePdfPanel
+            resume={resume}
+            jobTitle={jobTitle}
+            analysis={analysis}
+            onResumeChange={setResume}
+          />
+        ) : (
+          <SectionCard title="Preview & PDF" subtitle="One-page layout with live PDF export.">
             <p className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
               <span
                 className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"
@@ -611,8 +611,8 @@ export default function HomeWorkspace() {
               />
               Loading resume preview…
             </p>
-          )}
-        </SectionCard>
+          </SectionCard>
+        )}
       </div>
     </div>
   );
