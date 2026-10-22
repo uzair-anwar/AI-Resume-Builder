@@ -13,6 +13,7 @@ import {
 } from "./jd-extract";
 import { shortJobTitleForFilename } from "@/lib/job-title";
 import { narrativeAllowTerms } from "./ats-expansion";
+import { augmentAllowedNarrativeTerms } from "./jd-exact-phrases";
 import { buildProfileVocabulary, isTermMatched, relatedVia } from "./profile-vocab";
 import { registerDynamicTaxonomyTerm, resetDynamicTaxonomy } from "./taxonomy";
 
@@ -70,7 +71,10 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
     focusLabel,
   } as JobAnalysis;
 
-  const allowedNarrativeTerms = narrativeAllowTerms(terms, resume, analysisDraft);
+  const allowedNarrativeTerms = augmentAllowedNarrativeTerms(
+    narrativeAllowTerms(terms, resume, analysisDraft),
+    analysisDraft,
+  );
   const allowedLower = new Set(allowedNarrativeTerms.map((t) => t.toLowerCase()));
 
   return {

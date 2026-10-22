@@ -1,5 +1,12 @@
 import type { MasterResume } from "@/lib/schemas/resume";
-import { SUMMARY_MAX_LINES, SKILLS_MAX_LINES } from "./constants";
+import {
+  SUMMARY_MAX_LINES,
+  SKILLS_MAX_LINES,
+  TAILOR_BULLET_MAX_LINES,
+  TAILOR_BULLET_MIN_LINES,
+  TAILOR_PROJECT_MAX_LINES,
+  TAILOR_SUMMARY_MAX_LINES,
+} from "./constants";
 import { countBulletLines, countWrappedLines } from "./measure";
 import { COLUMN_WIDTH, SIZE_BODY } from "./constants";
 import { formatSkillLine } from "./skill-line";
@@ -11,27 +18,27 @@ export type LineBudgets = {
   projects: Record<string, number>;
 };
 
-const TAILOR_PROJECT_LINE_CAP = 4;
-const TAILOR_SUMMARY_LINE_CAP = 6;
-
-/** Tighter per-fact caps for tailoring (one-page PDF + mixed 1–2 line bullets). */
+/** Per-fact caps for tailoring: mostly 2–3 line bullets so JD terms stay in narrative text. */
 export function applyTailorLineBudgetCaps(budgets: LineBudgets, resume: MasterResume): LineBudgets {
   const bullets: Record<string, number> = {};
   for (const exp of resume.experience) {
     const dense = exp.facts.length >= 6;
     exp.facts.forEach((f, i) => {
-      const natural = Math.min(budgets.bullets[f.id] ?? 2, 2);
-      const staggered = dense ? (i % 3 === 0 ? 2 : 1) : natural;
-      bullets[f.id] = Math.max(1, staggered);
+      const natural = Math.min(budgets.bullets[f.id] ?? TAILOR_BULLET_MAX_LINES, TAILOR_BULLET_MAX_LINES);
+      const staggered = dense ? (i % 2 === 0 ? TAILOR_BULLET_MAX_LINES : TAILOR_BULLET_MIN_LINES) : natural;
+      bullets[f.id] = Math.max(
+        TAILOR_BULLET_MIN_LINES,
+        Math.min(TAILOR_BULLET_MAX_LINES, staggered),
+      );
     });
   }
   const projects: Record<string, number> = {};
   for (const [id, lines] of Object.entries(budgets.projects)) {
-    projects[id] = Math.min(lines, TAILOR_PROJECT_LINE_CAP);
+    projects[id] = Math.min(lines, TAILOR_PROJECT_MAX_LINES);
   }
   return {
     ...budgets,
-    summaryMaxLines: Math.min(budgets.summaryMaxLines, TAILOR_SUMMARY_LINE_CAP),
+    summaryMaxLines: Math.min(budgets.summaryMaxLines, TAILOR_SUMMARY_MAX_LINES),
     skillsMaxLines: budgets.skillsMaxLines,
     bullets,
     projects,

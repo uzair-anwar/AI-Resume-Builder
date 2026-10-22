@@ -31,6 +31,7 @@ import {
   SIZE_BODY,
   LINE_HEIGHT_BODY,
   BULLET_INDENT,
+  BULLET_GAP_PT,
 } from "@/lib/layout/constants";
 
 Font.register({
@@ -344,7 +345,7 @@ export function ResumeDocument({ resume }: Props) {
               </Text>
               <Text style={styles.dates}>{formatDateRangePdf(exp.startDate, exp.endDate)}</Text>
               {exp.bullets.map((b, i) => (
-                <View key={i} style={[styles.bulletRow, { marginTop: i === 0 ? 0 : 0.26 }]}>
+                <View key={i} style={[styles.bulletRow, { marginTop: i === 0 ? 0 : BULLET_GAP_PT }]}>
                   <View style={styles.bulletDot} />
                   <Paragraph
                     text={b.text}

@@ -1,5 +1,11 @@
 import type { ResumeView } from "@/lib/schemas/resume";
-import { PAGE_HEIGHT, COLUMN_WIDTH, SIZE_BODY, LINE_HEIGHT_BODY } from "./constants";
+import {
+  PAGE_HEIGHT,
+  COLUMN_WIDTH,
+  SIZE_BODY,
+  LINE_HEIGHT_BODY,
+  BULLET_GAP_PT,
+} from "./constants";
 import { countBulletLines, countWrappedLines } from "./measure";
 import { formatSkillLine } from "./skill-line";
 
@@ -35,9 +41,10 @@ export function estimateColumnLineCounts(resume: ResumeView): { left: number; ri
   for (let ei = 0; ei < resume.experience.length; ei++) {
     const exp = resume.experience[ei]!;
     right += 2.6;
-    for (const b of exp.bullets) {
-      right += countBulletLines(b.text) + 0.04;
-    }
+    exp.bullets.forEach((b, bi) => {
+      right += countBulletLines(b.text);
+      if (bi > 0) right += BULLET_GAP_PT / LINE_HEIGHT_BODY;
+    });
     if (ei < resume.experience.length - 1) right += 0.55;
   }
   right += SECTION_HEADER_LINES;

@@ -48,7 +48,7 @@ export function summaryUserPrompt(
 Constraints:
 - Max ${SUMMARY_MAX_LINES} lines (~${maxChars} characters).
 - Synthesize and rephrase the facts below; do not return the raw facts joined by spaces.
-- Weave in at least 3 matched/related JD keywords from the ATS Keyword Plan that align with the candidate's verified profile.
+- Weave in JD keywords from the ATS Keyword Plan and EXACT JOB DESCRIPTION WORDING block — use the same spelling as the job description (summary counts for soft skills like communication, teamwork, analytical skills).
 - Sentence 1 must name the candidate's PRIMARY stack (strongest evidenced technologies below), then add JD-matched technologies. Never open with "specializing in" a technology listed under "Working knowledge".
 - ${hasNumbers ? "Only use numbers that appear in the facts." : "The facts contain no performance metrics: do NOT write any percentages, uptime, latency or other numbers except the years of experience. Describe scope and outcomes in words instead."}
 
@@ -113,7 +113,7 @@ Dates (fixed): ${exp.startDate} – ${exp.endDate ?? "Present"}
 Output & Structural Requirements:
 - Return JSON object with "bullets": array of { "text", "sourceFactIds" }.
 - Preserve bullet density: return between ${minBullets} and ${exp.facts.length} bullets.
-- LENGTH (one-page PDF): each bullet must be 1–2 lines (~90–200 characters). At least half the bullets should be ONE tight line. Vary length (short punchy lines + a few 2-line impact lines). No run-on sentences or comma-stacked keyword lists.
+- LENGTH (one-page PDF): each bullet should be 2–3 lines (~130–280 characters) so JD hard/soft skills appear in the bullet text itself. Mix a few tighter lines with fuller impact lines; weave [JD keywords to include] naturally (not a comma-stacked keyword dump).
 - Every bullet must cite at least one sourceFactId from ${exp.company}.
 - Actively weave each fact's [JD keywords to include] and [Terminology bridge] terms into the rewritten bullet text while keeping all metrics exact.
 - METRICS: For facts marked [has metrics], lead with the Google XYZ "measured by Y" clause using the exact numbers from the source. Across the full resume, surface at least 5 bullets that contain a verifiable number from their source facts (counts, team size, APIs, years, etc.).
@@ -213,7 +213,7 @@ Project name (fixed): ${proj.name}
 ${proj.link ? `Link (fixed): ${proj.link}` : ""}
 
 Constraints:
-- Single cohesive paragraph, max ~${maxLines} lines (~${maxLines * 95} characters). Prefer 2–3 short sentences over one long paragraph.
+- Single cohesive paragraph, max ~${maxLines} lines (~${maxLines * 110} characters). Use 3–4 sentences; weave JD keywords into the narrative (not a list).
 - Weave in the [JD keywords to include] and [Terminology bridge] annotations where natural.
 - "sourceFactIds" must list the fact IDs used from below.
 
@@ -261,7 +261,7 @@ ${summary.slice(0, 500)}
 
 Constraints:
 - ~65 characters when possible; hard max 115.
-- Align role title with the JD while keeping seniority, followed by 2–3 JD-matched skills in parentheses.
+- Start with the Target job title from JD (verbatim wording when it fits) while keeping seniority, then 2–4 exact JD skill phrases in parentheses (e.g. machine learning models, ML Ops, backend software engineering).
 
 ${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }

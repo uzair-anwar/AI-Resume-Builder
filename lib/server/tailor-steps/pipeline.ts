@@ -11,6 +11,7 @@ import { deterministicTailor } from "../deterministic-tailor";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
 import { applyPhraseCoverage } from "../phrase-coverage";
 import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
+import { alignHeadlineToJd } from "../headline-align";
 import { repairTailoring } from "../validate-tailoring";
 import { mergePrevious, runTailorStep, stagedToTailoringResult } from "./run-step";
 import type { TailorAiOptions } from "./run-ai-structured";
@@ -45,7 +46,14 @@ export async function runStagedTailorPipeline(
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
   const repaired = repairTailoring(cleaned, workingResume, analysis);
-  const data = applyPhraseCoverage(repaired.data, workingResume, analysis);
+  const data = applyPhraseCoverage(
+    {
+      ...repaired.data,
+      headline: alignHeadlineToJd(repaired.data.headline, analysis),
+    },
+    workingResume,
+    analysis,
+  );
   const report = repaired.report;
 
   let resumeView = assembleResumeView(workingResume, data);

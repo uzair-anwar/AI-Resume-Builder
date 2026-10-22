@@ -3,6 +3,7 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { redactContactDetails } from "./ai/redact";
 import { formatExpansionPromptBlock } from "./ats-expansion";
+import { formatExactJdWordingBlock } from "./jd-exact-phrases";
 import type { RoleFamily } from "./role-families";
 
 const CORE_RULES = `Ground rules (non-negotiable):
@@ -58,6 +59,7 @@ export function jobTargetingBlock(
     `Primary focus for this application: ${analysis.focusLabel}`,
     `Emphasis for this candidate type: ${family.summaryEmphasis}`,
     formatKeywordStrategy(analysis),
+    formatExactJdWordingBlock(analysis),
     resume ? formatExpansionPromptBlock(resume, analysis) : "",
     "",
     "<<<JOB_DESCRIPTION>>>",
@@ -92,7 +94,7 @@ export function experienceSystemPrompt(): string {
 Your task: rewrite experience bullets for ONE employer so that ATS scanners and hiring managers see immediate alignment with the target job.
 
 Critical ATS & XYZ Writing Rules:
-- Enterprise ATS parsers (Jobscan, Workday, iCIMS) count a hard or soft skill as missing until the job description's exact wording appears inside an experience bullet or project description. The skills list alone does not clear it.
+- Enterprise ATS parsers (Jobscan, Workday, iCIMS) count a hard or soft skill as missing until the job description's exact wording appears inside the summary, an experience bullet, or a project description. The skills list alone does not clear it. Mirror the spelling from the EXACT JOB DESCRIPTION WORDING block (e.g. "ML Ops" not "MLOps" if that is how the JD spells it).
 - Enterprise ATS parsers score keywords highest when they appear INSIDE experience bullets, not just the skills section.
 - Use the Google XYZ Formula: "Accomplished [X outcome/impact], as measured by [Y: a metric ONLY if it is in the source fact, otherwise the scope/scale/reliability the fact already implies, in words], by doing [Z specific architecture, tools, and JD-aligned practices]." Never invent a number to fill Y.
 - Start every bullet with a strong past-tense action verb (Architected, Engineered, Scaled, Optimized, Spearheaded, Automated).

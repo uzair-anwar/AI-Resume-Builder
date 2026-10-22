@@ -1,5 +1,7 @@
 import "server-only";
 import { extractDynamicJdTerms } from "./jd-dynamic-vocab";
+import { extractCuratedJdTerms } from "./jd-curated-phrases";
+import { filterExtractedJdTerms } from "./jd-term-quality";
 import { findTaxonomyTermByName, listAllTaxonomyTerms, matchedSurfaces } from "./taxonomy";
 
 export {
@@ -107,7 +109,12 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
     for (const phrase of extractPhrases(text)) addTerm(map, phrase, weightBase + 1, section);
   }
 
-  // 2. Direct JD vocabulary (lists, bullets, multi-word phrases) — any industry/stack
+  // 2. Curated high-value phrases (taxonomy + known ATS patterns)
+  for (const cur of extractCuratedJdTerms(jobText)) {
+    addTerm(map, cur.term, cur.weight, cur.section, cur.surfaceForms);
+  }
+
+  // 3. Direct JD vocabulary (lists, bullets) — filtered for quality
   for (const dyn of extractDynamicJdTerms(jobText)) {
     addTerm(map, dyn.term, dyn.weight, dyn.section, dyn.surfaceForms);
   }
@@ -115,7 +122,7 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
   dropEmbeddedSurfaces(map);
 
   const canonical = new Set(taxTerms.map((t) => t.canonical.toLowerCase()));
-  return dropFragmentTerms(
+  const raw = dropFragmentTerms(
     [...map.values()].filter(
       (t) =>
         t.term.length >= 2 &&
@@ -123,9 +130,9 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
         !NON_TECH_ACRONYMS.has(t.term.toUpperCase()),
     ),
     canonical,
-  )
-    .sort((a, b) => b.weight - a.weight)
-    .slice(0, 56);
+  ).sort((a, b) => b.weight - a.weight);
+
+  return filterExtractedJdTerms(raw, 40);
 }
 
 /**
@@ -200,7 +207,7 @@ function extractPhrases(text: string): string[] {
     for (const part of m[1].split(/,| and | or /)) {
       const p = part.trim().replace(LEADING_FILLER, "");
       const words = p.split(/\s+/);
-      if (p.length < 2 || p.length >= 40 || words.length > 3) continue;
+      if (p.length < 2 || p.length >= 48 || words.length > 5) continue;
       if (STOPWORDS.has(p.toLowerCase())) continue;
       if (words.some((w) => isTechShape(w))) phrases.push(p);
     }

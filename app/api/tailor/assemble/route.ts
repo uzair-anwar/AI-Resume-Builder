@@ -9,6 +9,7 @@ import { attachAtsScorecard } from "@/lib/server/ats-score";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
 import { applyPhraseCoverage } from "@/lib/server/phrase-coverage";
 import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
+import { alignHeadlineToJd } from "@/lib/server/headline-align";
 import { repairTailoring } from "@/lib/server/validate-tailoring";
 import { stagedToTailoringResult } from "@/lib/server/tailor-steps/run-step";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
@@ -53,7 +54,14 @@ export async function POST(req: Request) {
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
   const repaired = repairTailoring(cleaned, workingResume, analysis);
-  const data = applyPhraseCoverage(repaired.data, workingResume, analysis);
+  const data = applyPhraseCoverage(
+    {
+      ...repaired.data,
+      headline: alignHeadlineToJd(repaired.data.headline, analysis),
+    },
+    workingResume,
+    analysis,
+  );
   const report = repaired.report;
   let resumeView = assembleResumeView(workingResume, data);
   resumeView = fitResumeViewToOnePage(resumeView, analysis);

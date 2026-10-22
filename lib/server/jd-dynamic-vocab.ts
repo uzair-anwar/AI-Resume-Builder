@@ -5,10 +5,10 @@ import { findTaxonomyTermByName } from "./taxonomy";
 export type JdTermKind = "tool" | "concept" | "soft" | "industry" | "noise";
 
 const SOFT_RE =
-  /\b(leadership|mentor|collaborat|communicat|team\s*building|initiative|innovat|professional|passionate|judgment|clarity|stakeholder|agile|scrum|ownership|interpersonal|problem[- ]solving|critical\s+thinking|detail[- ]oriented|self[- ]starter|proactive|maintain|monitor|write|present)\b/i;
+  /\b(leadership|mentor|collaborat|communicat|teamwork|team\s*building|storytelling|analytical|initiative|innovat|professional|passionate|judgment|clarity|stakeholder|agile|scrum|ownership|interpersonal|problem[- ]solving|critical\s+thinking|detail[- ]oriented|self[- ]starter|proactive|maintain|monitor|write|present|customer\s+interaction)\b/i;
 
 const CONCEPT_RE =
-  /\b(architecture|scalab|reliab|performan|optimiz|distributed|microservice|infrastructure|integration|automation|pipeline|security|compliance|observab|testing|design|api|data\s+(model|struct|pipeline|govern)|machine\s+learning|artificial\s+intelligence|cloud|serverless|event[- ]driven|real[- ]time|workflow)\b/i;
+  /\b(architecture|scalab|reliab|performan|optimiz|distributed|microservice|infrastructure|integration|automation|pipeline|feature\s+pipeline|ml\s*ops|m\s*l\s*ops|security|compliance|observab|testing|design|api|data\s+(model|struct|pipeline|govern|product)|machine\s+learning|recommendation|artificial\s+intelligence|cloud|serverless|event[- ]driven|real[- ]time|workflow|backend\s+software|software\s+engineering|pre[- ]sales|post[- ]sales|high[- ]growth)\b/i;
 
 const INDUSTRY_RE =
   /\b(healthcare|fintech|finance|financial|banking|mortgage|insurance|retail|e[- ]?commerce|saas|edtech|logistics|supply\s+chain|manufacturing|automotive|aerospace|defense|government|telecom|media|gaming|crypto|blockchain|legal|hrtech|proptech|cleantech|energy|oil\s+and\s+gas|pharma|biotech|fraud|aml|kyc|hipaa|pci)\b/i;
@@ -131,31 +131,16 @@ export function extractDynamicJdTerms(jobText: string): ExtractedJdTerm[] {
     const bullet = LIST_LINE.exec(trimmed);
     if (bullet?.[1]) {
       const body = bullet[1].trim();
-      if (body.length <= 60 && body.split(/\s+/).length <= 8) {
-        add(body, 3, "general", body);
-      }
       for (const part of splitListChunk(body)) {
-        if (part.split(/\s+/).length <= 4) add(part, 3, "general", part);
+        if (part.split(/\s+/).length <= 5) add(part, 4, "general", part);
       }
       continue;
     }
   }
 
-  // Repeated capitalized / technical 2–4 word phrases (common in ATS job posts)
-  const phraseRe = /\b([A-Za-z][A-Za-z0-9.+#/&-]*(?:\s+[A-Za-z][A-Za-z0-9.+#/&-]*){1,3})\b/g;
-  let pm: RegExpExecArray | null;
-  while ((pm = phraseRe.exec(jobText))) {
-    const phrase = pm[1]!.trim();
-    const words = phrase.split(/\s+/);
-    if (words.length < 2 || words.length > 4) continue;
-    const kind = classifyJdTermKind(phrase);
-    if (kind === "noise" || (kind === "tool" && words.length > 2 && !/[.+#/-]/.test(phrase))) continue;
-    add(phrase, 2, "general", phrase);
-  }
-
   return [...map.values()]
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 40);
+    .slice(0, 32);
 }
 
 export function dynamicTermId(term: string): string {

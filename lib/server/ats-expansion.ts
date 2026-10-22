@@ -188,12 +188,13 @@ export function expansionSkillInjections(
     if (chip.status === "matched") continue;
     const tax = findTaxonomyTermByName(chip.term);
     const kind = tax?.kind ?? chip.termKind ?? classifyJdTermKind(chip.term);
-    if (kind === "soft" || classifyJdTermKind(chip.term) === "noise") continue;
+    if (classifyJdTermKind(chip.term) === "noise") continue;
     if (isHiringCompanyTerm(chip.term, ctx.hiringCompanyNames ?? [])) continue;
-    if (!expansionBridgeReason(chip.term, resume, ctx)) continue;
+    if (kind !== "soft" && !expansionBridgeReason(chip.term, resume, ctx)) continue;
+    if (kind === "soft" && !resume.experience.length) continue;
 
     const display = chip.surfaceForms?.[0] ?? tax?.canonical ?? chip.term;
-    const name = tax?.canonical ?? display;
+    const name = display.length <= 42 ? display : tax?.canonical ?? chip.term;
     if (existing.has(name.toLowerCase())) continue;
 
     const id = tax?.id ? `expansion-${tax.id}` : `expansion-jd-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40)}`;
@@ -201,13 +202,14 @@ export function expansionSkillInjections(
     out.push({
       id,
       name,
-      categoryId: catByFamily[tax?.family ?? "jd-dynamic"] ?? "cat-architecture",
+      categoryId:
+        kind === "soft" ? "cat-vcs" : catByFamily[tax?.family ?? "jd-dynamic"] ?? "cat-architecture",
       aliases: (chip.surfaceForms ?? []).filter((f) => f.toLowerCase() !== name.toLowerCase()),
       userAttested: false,
     });
     existing.add(name.toLowerCase());
   }
-  return out.slice(0, 18);
+  return out.slice(0, 24);
 }
 
 export function mergeResumeWithExpansionSkills(

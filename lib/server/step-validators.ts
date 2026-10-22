@@ -130,8 +130,8 @@ export function validateExperienceStep(
 
   const factIds = getAllFactIds(resume);
   const roleBudget = Math.min(
-    src.facts.reduce((n, f) => n + Math.min(countBulletLines(f.text), 2), 0) + 1,
-    src.facts.length * 2 + 2,
+    src.facts.reduce((n, f) => n + Math.min(countBulletLines(f.text), 3), 0) + 2,
+    src.facts.length * 3 + 2,
   );
   let lineCount = 0;
   const bullets: { text: string; sourceFactIds: string[] }[] = [];
@@ -144,7 +144,7 @@ export function validateExperienceStep(
     if (
       hasForeignTerm(text, analysis) ||
       !numbersAllowedInText(text, srcNums) ||
-      countBulletLines(text) > 2
+      countBulletLines(text) > 3
     ) {
       continue;
     }

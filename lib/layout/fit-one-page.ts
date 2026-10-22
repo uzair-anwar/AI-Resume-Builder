@@ -1,7 +1,14 @@
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { SUMMARY_MAX_LINES, SIZE_BODY, COLUMN_WIDTH } from "./constants";
-import { countBulletLines, countWrappedLines } from "./measure";
+import {
+  TAILOR_BULLET_MAX_LINES,
+  TAILOR_BULLET_MIN_LINES,
+  TAILOR_PROJECT_MAX_LINES,
+  TAILOR_SUMMARY_MAX_LINES,
+  SUMMARY_MAX_LINES,
+  SIZE_BODY,
+  COLUMN_WIDTH,
+} from "./constants";
 import { resumeExceedsOnePage } from "./page-estimate";
 import { fitToMaxBulletLines, fitToMaxWrappedLines } from "./text-fit";
 import { scoreFactRelevance } from "@/lib/relevance";
@@ -38,48 +45,81 @@ function dropLowestBullet(resume: ResumeView, analysis?: JobAnalysis | null): Re
   return { ...resume, experience };
 }
 
-function tightenCopy(resume: ResumeView): ResumeView {
-  const summary = fitToMaxWrappedLines(
-    resume.summary,
-    Math.min(SUMMARY_MAX_LINES, 6),
-    COLUMN_WIDTH,
-    SIZE_BODY,
-  );
-  const experience = resume.experience.map((exp) => ({
-    ...exp,
-    bullets: exp.bullets.map((b, i) => {
-      const maxLines = i % 3 === 0 ? 2 : 1;
-      return { ...b, text: fitToMaxBulletLines(b.text, maxLines) };
-    }),
-  }));
-  const projects = resume.projects.map((p) => ({
-    ...p,
-    description: fitToMaxWrappedLines(p.description, 4, COLUMN_WIDTH, SIZE_BODY),
-  }));
-  return { ...resume, summary, experience, projects };
+function trimToLineCaps(
+  resume: ResumeView,
+  bulletMax: number,
+  projectMax: number,
+  summaryMax: number,
+): ResumeView {
+  return {
+    ...resume,
+    summary: fitToMaxWrappedLines(resume.summary, summaryMax, COLUMN_WIDTH, SIZE_BODY),
+    experience: resume.experience.map((exp) => ({
+      ...exp,
+      bullets: exp.bullets.map((b) => ({
+        ...b,
+        text: fitToMaxBulletLines(b.text, bulletMax),
+      })),
+    })),
+    projects: resume.projects.map((p) => ({
+      ...p,
+      description: fitToMaxWrappedLines(p.description, projectMax, COLUMN_WIDTH, SIZE_BODY),
+    })),
+  };
 }
 
 /**
- * Deterministic one-page fit: shorten text first, then drop lowest-JD-relevance bullets.
- * Uses the same line metrics as the PDF template (no browser PDF render).
+ * Keep rich 2–3 line bullets when possible. Drop low-relevance bullets only when the
+ * template estimate overflows; trim line caps only as a last resort.
  */
 export function fitResumeViewToOnePage(
   resume: ResumeView,
   analysis?: JobAnalysis | null,
-  maxIterations = 40,
+  maxIterations = 28,
 ): ResumeView {
-  let current = tightenCopy(resume);
+  let current = resume;
   let guard = 0;
+
   while (resumeExceedsOnePage(current) && guard++ < maxIterations) {
-    const shorter = tightenCopy(current);
-    if (!resumeExceedsOnePage(shorter)) return shorter;
-    if (JSON.stringify(shorter) !== JSON.stringify(current)) {
-      current = shorter;
+    const dropped = dropLowestBullet(current, analysis);
+    if (dropped) {
+      current = dropped;
       continue;
     }
+    break;
+  }
+
+  if (!resumeExceedsOnePage(current)) return current;
+
+  const trimSteps = [
+    {
+      bullet: TAILOR_BULLET_MAX_LINES,
+      project: TAILOR_PROJECT_MAX_LINES,
+      summary: Math.min(SUMMARY_MAX_LINES, TAILOR_SUMMARY_MAX_LINES),
+    },
+    {
+      bullet: TAILOR_BULLET_MIN_LINES + 1,
+      project: TAILOR_PROJECT_MAX_LINES - 1,
+      summary: TAILOR_SUMMARY_MAX_LINES - 1,
+    },
+    {
+      bullet: TAILOR_BULLET_MIN_LINES,
+      project: TAILOR_PROJECT_MAX_LINES - 2,
+      summary: TAILOR_SUMMARY_MAX_LINES - 2,
+    },
+  ];
+
+  for (const step of trimSteps) {
+    current = trimToLineCaps(current, step.bullet, step.project, step.summary);
+    if (!resumeExceedsOnePage(current)) return current;
+  }
+
+  guard = 0;
+  while (resumeExceedsOnePage(current) && guard++ < 8) {
     const dropped = dropLowestBullet(current, analysis);
     if (!dropped) break;
-    current = tightenCopy(dropped);
+    current = dropped;
   }
+
   return current;
 }
