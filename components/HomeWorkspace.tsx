@@ -395,7 +395,7 @@ export default function HomeWorkspace() {
   const signInNotice = errorCode === "LOGIN_REQUIRED" || errorCode === "BOT_BLOCKED";
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="page-gutter w-full py-6">
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-950/50 dark:text-indigo-200">

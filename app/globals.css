@@ -41,6 +41,27 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+/* Main app content: minimal side gutters, use nearly full viewport width */
+.page-gutter {
+  width: 100%;
+  padding-left: max(0.625rem, env(safe-area-inset-left));
+  padding-right: max(0.625rem, env(safe-area-inset-right));
+}
+
+@media (min-width: 640px) {
+  .page-gutter {
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-gutter {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
 /* Ambient background */
 .app-mesh {
   background-color: var(--background);
