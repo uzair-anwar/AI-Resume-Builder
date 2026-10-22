@@ -23,7 +23,7 @@ export const SKILLS_MAX_LINES = 20;
 /** Tailored resume copy targets (one-page layout with full ATS keyword density). */
 export const TAILOR_BULLET_MAX_LINES = 3;
 export const TAILOR_BULLET_MIN_LINES = 2;
-export const TAILOR_PROJECT_MAX_LINES = 6;
+export const TAILOR_PROJECT_MAX_LINES = 7;
 export const TAILOR_SUMMARY_MAX_LINES = 8;
 /** Extra vertical gap between experience bullets (pt), reflected in page estimate. */
 export const BULLET_GAP_PT = 0.55;

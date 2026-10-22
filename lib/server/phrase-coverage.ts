@@ -161,20 +161,6 @@ function planProfilePhrasePlacements(
   return plan;
 }
 
-function weaveHeadlineJdTerms(headline: string, analysis: JobAnalysis): string {
-  const targets = buildJdPhraseTargets(analysis)
-    .filter((t) => t.kind === "soft" || t.kind === "concept" || t.kind === "tool")
-    .slice(0, 6);
-  let h = headline;
-  const corpus = () => h.toLowerCase();
-  for (const t of targets) {
-    if (corpus().includes(t.phrase.toLowerCase())) continue;
-    if (h.length + t.phrase.length + 3 > 115) break;
-    h = h.includes("(") ? h.replace(/\)\s*$/, `, ${t.phrase})`) : `${h} (${t.phrase})`;
-  }
-  return h.slice(0, 115);
-}
-
 function enforceJdExactSurfaces(
   result: TailoringResult,
   resume: MasterResume,
@@ -224,9 +210,7 @@ function enforceJdExactSurfaces(
     }
   }
 
-  const headline = weaveHeadlineJdTerms(result.headline, analysis);
-
-  return { ...result, headline, summary, experience, projects };
+  return { ...result, summary, experience, projects };
 }
 
 export function planPhrasePlacements(

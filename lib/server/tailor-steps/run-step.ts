@@ -7,6 +7,7 @@ import type {
   TailorStepResponse,
 } from "@/lib/schemas/tailoring-steps";
 import { analyzeJob } from "../analyze-job";
+import { finalizeResumeHeadline } from "../headline-align";
 import {
   EXPERIENCE_JSON_SCHEMA,
   HEADLINE_JSON_SCHEMA,
@@ -238,8 +239,8 @@ export async function runTailorStep(
       warnings.push("Headline adjusted to fit guardrails.");
       return { step, partial, warnings, aiUsage: result.aiUsage, usedFallback: true };
     }
-    warnings.push("Used role-family headline pattern.");
-    partial.headline = fallback;
+    partial.headline = finalizeResumeHeadline(fallback, analysis, resume, family);
+    warnings.push("Used deterministic headline from JD role title.");
     return { step, partial, warnings, usedFallback: true };
   }
 

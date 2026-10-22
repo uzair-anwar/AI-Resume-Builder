@@ -135,7 +135,7 @@ ${CORE_RULES}`;
 export function headlineSystemPrompt(): string {
   return `You are an expert resume headline writer (the single line directly beneath the candidate's name).
 
-Your task: write a high-impact headline that mirrors the target job title and showcases the candidate's top matching stack.
+Your task: write a short, professional role title (3–6 words) aligned to the target job — e.g. Senior Software Engineer, Forward Deployed Engineer, Senior Full Stack Developer. Never copy JD section headers ("What you will do", "Who you are", "Responsibilities").
 
 Rules:
 - Keep the candidate's seniority level from their default headline (e.g., Senior).

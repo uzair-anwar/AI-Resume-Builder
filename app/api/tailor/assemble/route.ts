@@ -9,7 +9,8 @@ import { attachAtsScorecard } from "@/lib/server/ats-score";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
 import { applyPhraseCoverage } from "@/lib/server/phrase-coverage";
 import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
-import { alignHeadlineToJd } from "@/lib/server/headline-align";
+import { finalizeResumeHeadline } from "@/lib/server/headline-align";
+import { detectRoleFamily } from "@/lib/server/role-families";
 import { repairTailoring } from "@/lib/server/validate-tailoring";
 import { stagedToTailoringResult } from "@/lib/server/tailor-steps/run-step";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
@@ -54,10 +55,16 @@ export async function POST(req: Request) {
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
   const repaired = repairTailoring(cleaned, workingResume, analysis);
+  const family = detectRoleFamily(parsed.data.jobDescription);
   const data = applyPhraseCoverage(
     {
       ...repaired.data,
-      headline: alignHeadlineToJd(repaired.data.headline, analysis),
+      headline: finalizeResumeHeadline(
+        repaired.data.headline,
+        analysis,
+        workingResume,
+        family,
+      ),
     },
     workingResume,
     analysis,

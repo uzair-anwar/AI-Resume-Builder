@@ -1,19 +1,60 @@
 import "server-only";
+import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
+import type { RoleFamily } from "./role-families";
+import { toResumeHeadlineCase } from "@/lib/format-headline";
+import { compactRoleTitle, extractRoleTitleFromText, isPlausibleJobTitle, sanitizeDetectedJobTitle } from "./job-title-detect";
 
-/** Improves title-alignment score without changing ATS math — puts JD role title in headline. */
-export function alignHeadlineToJd(headline: string, analysis: JobAnalysis): string {
-  const target = analysis.detectedTitle?.trim();
-  if (!target || target === "Resume") return headline;
+const JUNK_HEADLINE =
+  /\b(what you will|who you are|responsibilities|requirements|qualifications|you will do)\b/i;
 
+function defaultTitleCore(resume: MasterResume, family: RoleFamily): string {
+  const fromDefault = resume.person.defaultHeadline.split("(")[0]!.trim();
+  const fromFamily = family.headlinePattern.split("(")[0]!.trim();
+  return compactRoleTitle(fromDefault || fromFamily, 6);
+}
+
+function optionalStackSuffix(analysis: JobAnalysis, maxLen = 28): string {
+  const terms = analysis.terms
+    .filter((t) => t.status === "matched" || t.status === "related")
+    .filter((t) => t.termKind === "tool" || t.termKind === "concept")
+    .slice(0, 2)
+    .map((t) => (t.surfaceForms?.[0] ?? t.term).split(/\s+/).slice(0, 2).join(" "));
+  const stack = terms.join(" · ").trim();
+  if (!stack || stack.length > maxLen) return "";
+  return ` (${stack})`;
+}
+
+/**
+ * Resume headline = short JD-aligned role (3–6 words), not JD section headers or keyword dumps.
+ */
+export function finalizeResumeHeadline(
+  aiHeadline: string,
+  analysis: JobAnalysis,
+  resume: MasterResume,
+  family: RoleFamily,
+): string {
   const max = 115;
-  const lower = headline.toLowerCase();
-  const titleCore = target.split(/\s*[-–—|]\s*/)[0]!.trim();
-  if (titleCore.length >= 4 && lower.includes(titleCore.toLowerCase().slice(0, Math.min(12, titleCore.length)))) {
-    return headline.slice(0, max);
+  const jdCore =
+    sanitizeDetectedJobTitle(analysis.detectedTitle) ??
+    extractRoleTitleFromText(aiHeadline) ??
+    (isPlausibleJobTitle(aiHeadline.split("(")[0] ?? "")
+      ? compactRoleTitle(aiHeadline.split("(")[0]!)
+      : undefined) ??
+    defaultTitleCore(resume, family);
+
+  const core = compactRoleTitle(jdCore, 5);
+  const suffix = optionalStackSuffix(analysis);
+  let out = `${core}${suffix}`.trim();
+
+  if (JUNK_HEADLINE.test(aiHeadline) || JUNK_HEADLINE.test(out)) {
+    out = `${defaultTitleCore(resume, family)}${suffix}`.trim();
   }
 
-  const paren = headline.includes("(") ? headline.slice(headline.indexOf("(")).trim() : "";
-  const merged = paren ? `${titleCore} ${paren}` : titleCore;
-  return merged.slice(0, max);
+  return toResumeHeadlineCase(out.slice(0, max));
+}
+
+/** @deprecated Use finalizeResumeHeadline */
+export function alignHeadlineToJd(headline: string, analysis: JobAnalysis): string {
+  return headline;
 }

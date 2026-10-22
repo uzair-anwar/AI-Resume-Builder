@@ -2,6 +2,7 @@ import "server-only";
 import { extractDynamicJdTerms } from "./jd-dynamic-vocab";
 import { extractCuratedJdTerms } from "./jd-curated-phrases";
 import { filterExtractedJdTerms } from "./jd-term-quality";
+import { isPlausibleJobTitle, sanitizeDetectedJobTitle } from "./job-title-detect";
 import { findTaxonomyTermByName, listAllTaxonomyTerms, matchedSurfaces } from "./taxonomy";
 
 export {
@@ -264,28 +265,37 @@ function addTerm(
 
 export function detectJobTitle(jobText: string): string | undefined {
   const labeled =
-    /(?:position\s*title|job\s*title|role)\s*:\s*(.+)/i.exec(jobText)?.[1]?.trim() ??
+    /(?:position\s*title|job\s*title|role\s*title)\s*:\s*(.+)/i.exec(jobText)?.[1]?.trim() ??
     /(?:hiring|opening)[:\s]+(.+)/i.exec(jobText)?.[1]?.trim() ??
     /looking for (?:a|an)\s+([A-Z][A-Za-z0-9\s/-]{3,55}?)\s+to\s+(?:build|join|lead|help|design|develop|work)/i.exec(
       jobText,
     )?.[1]?.trim();
-  if (labeled && labeled.length > 3 && labeled.length < 120) return labeled.split("\n")[0];
+  if (labeled) {
+    const clean = sanitizeDetectedJobTitle(labeled.split("\n")[0]);
+    if (clean) return clean;
+  }
+
+  const patterns = [
+    /\b((?:senior|staff|principal|lead|forward[- ]deployed)\s+[\w\s/-]*?(?:engineer|developer|architect|scientist))\b/gi,
+    /\b((?:full[- ]stack|fullstack|backend|frontend|ai)\s+[\w\s/-]*?(?:engineer|developer))\b/gi,
+  ];
+  for (const re of patterns) {
+    const m = re.exec(jobText);
+    if (m?.[1]) {
+      const clean = sanitizeDetectedJobTitle(m[1]);
+      if (clean) return clean;
+    }
+  }
 
   const lines = jobText
     .split("\n")
     .map((l) => l.trim())
     .filter((l) => l.length > 4 && l.length < 90 && !/^https?:/i.test(l));
 
-  const roleLine = lines.find(
-    (l) =>
-      /\b(engineer|developer|architect|lead|manager|scientist|specialist|consultant|analyst|designer)\b/i.test(
-        l,
-      ) && !/^about\s+/i.test(l) && !/^the\s+role$/i.test(l),
-  );
-  if (roleLine && roleLine.length <= 70) return roleLine;
+  const roleLine = lines.find((l) => isPlausibleJobTitle(l));
+  if (roleLine) return sanitizeDetectedJobTitle(roleLine);
 
-  const first = lines.find((l) => !/^about\s+/i.test(l) && !/^the\s+role$/i.test(l));
-  return first ?? lines[0];
+  return undefined;
 }
 
 export function missingJdTermsForOutput(

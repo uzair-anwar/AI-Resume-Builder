@@ -52,7 +52,12 @@ export function repairTailoring(
 
   const factIds = getAllFactIds(resume);
   const budgets = analysis.lineBudgets;
-  const missingTerms = (analysis.missingTerms ?? []).filter((t) => t.length >= 3);
+  const allowedLower = new Set(
+    (analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()),
+  );
+  const missingTerms = (analysis.missingTerms ?? []).filter(
+    (t) => t.length >= 3 && !allowedLower.has(t.toLowerCase()),
+  );
   const hasForeign = (text: string) => missingTerms.some((t) => containsForbiddenTerm(text, t));
   const resolveSkill = buildSkillResolver(resume);
 
@@ -198,7 +203,7 @@ export function repairTailoring(
     const src = resume.projects.find((x) => x.id === projectId)!;
     const original = src.facts.map((f) => f.text).join(" ");
     const srcIds = src.facts.map((f) => f.id);
-    const max = budgets.projects[projectId] ?? 5;
+    const max = (budgets.projects[projectId] ?? 5) + 1;
     const srcNums = extractNumbers(original);
     let sanitized =
       description !== null
@@ -215,7 +220,17 @@ export function repairTailoring(
       !hasForeign(sanitized) &&
       countWrappedLines(sanitized, COLUMN_WIDTH, SIZE_BODY) <= max &&
       extractNumbers(sanitized).every((n) => srcNums.includes(n));
-    if (description !== null && !ok) note(`project ${projectId}`);
+    if (description !== null && !ok) {
+      note(`project ${projectId}`);
+      const fallback =
+        sanitized?.trim() && sanitized.trim() !== original.trim() ? sanitized! : original;
+      projects.push({
+        projectId,
+        description: fallback,
+        sourceFactIds: ids.length ? ids.filter((id) => factIds.has(id)) : srcIds,
+      });
+      return;
+    }
     projects.push({
       projectId,
       description: ok ? sanitized! : original,

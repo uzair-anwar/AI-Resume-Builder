@@ -12,6 +12,7 @@ import {
   isEnforceableMissingTerm,
 } from "./jd-extract";
 import { shortJobTitleForFilename } from "@/lib/job-title";
+import { sanitizeDetectedJobTitle } from "./job-title-detect";
 import { narrativeAllowTerms } from "./ats-expansion";
 import { augmentAllowedNarrativeTerms } from "./jd-exact-phrases";
 import { buildProfileVocabulary, isTermMatched, relatedVia } from "./profile-vocab";
@@ -78,7 +79,10 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
   const allowedLower = new Set(allowedNarrativeTerms.map((t) => t.toLowerCase()));
 
   return {
-    detectedTitle: shortJobTitleForFilename(detectJobTitle(jobText), { hiringCompanyNames }),
+    detectedTitle: shortJobTitleForFilename(
+      sanitizeDetectedJobTitle(detectJobTitle(jobText)) ?? detectJobTitle(jobText),
+      { hiringCompanyNames },
+    ),
     focusLabel,
     terms,
     hiringCompanyNames,

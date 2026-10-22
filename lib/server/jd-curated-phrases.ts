@@ -44,6 +44,16 @@ export function extractCuratedJdTerms(jobText: string): ExtractedJdTerm[] {
     { re: /\bchalk\s+infrastructure\b/gi, canonical: "Chalk Infrastructure" },
     { re: /\brust[- ]speed\b/gi, canonical: "Rust" },
     { re: /\bwith\s+rust\b/gi, canonical: "Rust" },
+    { re: /\bmachine\s+learning\s+infrastructure\b/gi, canonical: "Machine Learning Infrastructure" },
+    { re: /\bcustomer[- ]facing\b/gi, canonical: "Customer-Facing", surface: "customer-facing" },
+    { re: /\bcollaboration\s+with\s+sales\b/gi, canonical: "Collaboration With Sales" },
+    { re: /\btechnical\s+point\s+of\s+contact\b/gi, canonical: "Technical Point of Contact" },
+    { re: /\bpoint\s+of\s+contact\s+pre[- ]sales\b/gi, canonical: "Technical Point of Contact" },
+    { re: /\bmicroservices?\s+architecture\b/gi, canonical: "Microservices Architecture" },
+    { re: /\brestful\s+apis?\b/gi, canonical: "RESTful APIs" },
+    { re: /\bsystem\s+design\b/gi, canonical: "System Design" },
+    { re: /\bobservability\b/gi, canonical: "Observability" },
+    { re: /\bci\/cd\b/gi, canonical: "CI/CD" },
   ];
 
   for (const { re, canonical, surface } of patterns) {
