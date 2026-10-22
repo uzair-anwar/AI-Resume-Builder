@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { TailorStepPreviousSchema } from "@/lib/schemas/tailoring-steps";
-import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
-import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
-import { selectedProjectLabel } from "@/lib/server/project-select";
-import { prepareTailoringWorkspace } from "@/lib/server/tailoring-workspace";
-import { assembleResumeView, buildChanges } from "@/lib/server/assemble-resume";
-import { attachAtsScorecard } from "@/lib/server/ats-score";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
-import { applyPhraseCoverage } from "@/lib/server/phrase-coverage";
-import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
-import { finalizeResumeHeadline } from "@/lib/server/headline-align";
-import { detectRoleFamily } from "@/lib/server/role-families";
-import { polishTailoringResult } from "@/lib/server/polish-resume-copy";
-import { repairTailoring } from "@/lib/server/validate-tailoring";
-import { stagedToTailoringResult } from "@/lib/server/tailor-steps/run-step";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
+import { selectedProjectLabel } from "@/lib/server/tailor/project-select";
+import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
+import { assembleResumeView, buildChanges } from "@/lib/server/resume/assemble-resume";
+import { attachAtsScorecard } from "@/lib/server/ats/ats-score";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
+import { applyPhraseCoverage } from "@/lib/server/ats/phrase-coverage";
+import { fitResumeViewToOnePage } from "@/lib/resume/layout/fit-one-page";
+import { finalizeResumeHeadline } from "@/lib/server/ats/headline-align";
+import { detectRoleFamily } from "@/lib/server/ats/role-families";
+import { polishTailoringResult } from "@/lib/server/resume/polish-resume-copy";
+import { repairTailoring } from "@/lib/server/resume/validate-tailoring";
+import { stagedToTailoringResult } from "@/lib/server/tailor/tailor-steps/run-step";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 
 const BodySchema = z.object({

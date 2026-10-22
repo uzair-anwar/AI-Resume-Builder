@@ -1,15 +1,15 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { TailorResponse } from "@/lib/schemas/tailoring";
-import { buildDefaultResumeView } from "@/lib/build-default-resume";
-import { attachAtsScorecard } from "./ats-score";
-import { coverResumeView } from "./phrase-coverage";
-import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
-import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
+import { buildDefaultResumeView } from "@/lib/resume/build-default-resume";
+import { attachAtsScorecard } from "@/lib/server/ats/ats-score";
+import { coverResumeView } from "@/lib/server/ats/phrase-coverage";
+import { fitResumeViewToOnePage } from "@/lib/resume/layout/fit-one-page";
+import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
 import { scoreFactRelevance } from "./select-facts";
 import { prepareTailoringWorkspace } from "./tailoring-workspace";
 import { selectedProjectLabel } from "./project-select";
-import { polishResumeView } from "./polish-resume-copy";
+import { polishResumeView } from "@/lib/server/resume/polish-resume-copy";
 
 export function deterministicTailor(resume: MasterResume, jobText: string): TailorResponse {
   const { master: working, tailoring, analysis } = prepareTailoringWorkspace(resume, jobText);

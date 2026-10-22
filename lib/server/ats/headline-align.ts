@@ -2,7 +2,7 @@ import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import type { RoleFamily } from "./role-families";
-import { toResumeHeadlineCase } from "@/lib/format-headline";
+import { toResumeHeadlineCase } from "@/lib/shared/format-headline";
 import { compactRoleTitle, extractRoleTitleFromText, isPlausibleJobTitle, sanitizeDetectedJobTitle } from "./job-title-detect";
 
 const JUNK_HEADLINE =

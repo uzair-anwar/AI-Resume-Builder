@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { CoverLetterRequestSchema } from "@/lib/schemas/cover-letter";
-import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
-import { generateCoverLetter } from "@/lib/server/cover-letter";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { generateCoverLetter } from "@/lib/server/cover-letter/cover-letter";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 
 export async function POST(req: Request) {

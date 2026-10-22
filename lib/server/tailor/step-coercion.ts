@@ -1,12 +1,12 @@
 import { z } from "zod";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { SUMMARY_MAX_LINES } from "@/lib/layout/constants";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
-import { countBulletLines } from "@/lib/layout/measure";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
-import type { RoleFamily } from "./role-families";
-import { getFactById } from "./master-resume";
+import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/resume/layout/constants";
+import { countBulletLines } from "@/lib/resume/layout/measure";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
+import type { RoleFamily } from "@/lib/server/ats/role-families";
+import { getFactById } from "@/lib/server/resume/master-resume";
 import { extractNumbers, resolveSkillIds } from "./step-validation-helpers";
 import { trimAndFillSkills } from "./tailor-steps/build-skills";
 import {
@@ -14,7 +14,7 @@ import {
   fitToMaxWrappedLines,
   stripDisallowedNumbers,
   stripForbiddenTerms,
-} from "./text-sanitize";
+} from "@/lib/server/text-sanitize";
 
 const SummarySchema = z.object({ summary: z.string().min(1) });
 const ExperienceSchema = z.object({

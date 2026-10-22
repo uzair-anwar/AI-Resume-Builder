@@ -1,8 +1,8 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
-import { scoreFactRelevance } from "@/lib/relevance";
+import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
+import { scoreFactRelevance } from "@/lib/shared/relevance";
 
 type Project = MasterResume["projects"][number];
 

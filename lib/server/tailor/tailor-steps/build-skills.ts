@@ -1,10 +1,10 @@
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { countSkillLines } from "@/lib/layout/budgets";
-import { relatedVia } from "../profile-vocab";
-import type { RoleFamily } from "../role-families";
+import { countSkillLines } from "@/lib/resume/layout/budgets";
+import { relatedVia } from "@/lib/server/ats/profile-vocab";
+import type { RoleFamily } from "@/lib/server/ats/role-families";
 import { buildSkillResolver } from "@/lib/skills/skill-resolver";
-import { hasForeignTerm } from "../step-validation-helpers";
+import { hasForeignTerm } from "@/lib/server/tailor/step-validation-helpers";
 
 function wordIn(haystack: string, needle: string): boolean {
   if (needle.length < 2) return false;

@@ -2,8 +2,8 @@ import "server-only";
 import {
   buildSynonymGroupsFromTerms,
   dedupeSynonymsInText,
-} from "@/lib/term-synonym-dedupe";
-import { listAllTaxonomyTerms } from "./taxonomy";
+} from "@/lib/shared/term-synonym-dedupe";
+import { listAllTaxonomyTerms } from "@/lib/server/ats/taxonomy";
 
 let cachedGroups: ReturnType<typeof buildSynonymGroupsFromTerms> | null = null;
 

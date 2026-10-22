@@ -6,9 +6,9 @@ import type {
   TailorStepPrevious,
   TailorStepResponse,
 } from "@/lib/schemas/tailoring-steps";
-import { analyzeJob } from "../analyze-job";
+import { analyzeJob } from "@/lib/server/ats/analyze-job";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { finalizeResumeHeadline } from "../headline-align";
+import { finalizeResumeHeadline } from "@/lib/server/ats/headline-align";
 import {
   EXPERIENCE_JSON_SCHEMA,
   HEADLINE_JSON_SCHEMA,
@@ -25,16 +25,16 @@ import {
   skillsOrderUserPrompt,
   summarySystemPrompt,
   summaryUserPrompt,
-} from "../prompts-staged";
-import { detectRoleFamily } from "../role-families";
-import { defaultSummaryText } from "../step-validation-helpers";
+} from "@/lib/server/tailor/prompts-staged";
+import { detectRoleFamily } from "@/lib/server/ats/role-families";
+import { defaultSummaryText } from "@/lib/server/tailor/step-validation-helpers";
 import {
   coerceExperienceStep,
   coerceHeadlineStep,
   coerceProjectStep,
   coerceSkillsStep,
   coerceSummaryStep,
-} from "../step-coercion";
+} from "@/lib/server/tailor/step-coercion";
 import {
   fallbackExperience,
   fallbackProject,
@@ -43,12 +43,12 @@ import {
   validateProjectStep,
   validateSkillsStep,
   validateSummaryStep,
-} from "../step-validators";
+} from "@/lib/server/tailor/step-validators";
 import {
   buildSkillCandidateSet,
   deterministicSkillOrder,
-} from "./build-skills";
-import { runStructuredAiCall, type TailorAiOptions } from "./run-ai-structured";
+} from "@/lib/server/tailor/tailor-steps/build-skills";
+import { runStructuredAiCall, type TailorAiOptions } from "@/lib/server/tailor/tailor-steps/run-ai-structured";
 
 export async function runTailorStep(
   step: TailorStepId,

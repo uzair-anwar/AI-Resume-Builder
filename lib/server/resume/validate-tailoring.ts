@@ -1,19 +1,19 @@
 import "server-only";
-import "./layout-fonts";
+import "@/lib/server/layout-fonts";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
 import { TailoringResultSchema } from "@/lib/schemas/tailoring";
-import { countBulletLines, countWrappedLines } from "@/lib/layout/measure";
-import { COLUMN_WIDTH, SIZE_BODY, SUMMARY_MAX_LINES } from "@/lib/layout/constants";
-import { countSkillLines } from "@/lib/layout/budgets";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
+import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
+import { COLUMN_WIDTH, SIZE_BODY, SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { countSkillLines } from "@/lib/resume/layout/budgets";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 import { getAllFactIds, getFactById } from "./master-resume";
 import {
   fitToMaxBulletLines,
   fitToMaxWrappedLines,
   stripDisallowedNumbers,
   stripForbiddenTerms,
-} from "./text-sanitize";
+} from "@/lib/server/text-sanitize";
 
 export type ValidationIssue = { code: string; message: string };
 

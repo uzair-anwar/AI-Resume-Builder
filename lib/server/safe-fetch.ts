@@ -1,7 +1,7 @@
 import "server-only";
 import dns from "dns/promises";
 import { Agent, fetch as undiciFetch, type RequestInit as UndiciRequestInit } from "undici";
-import { findJobBoard, loginRequiredMessage } from "@/lib/job-boards";
+import { findJobBoard, loginRequiredMessage } from "@/lib/shared/job-boards";
 import { isBlockedHostname, isBlockedIp, validateResolvedAddresses } from "./ip-guard";
 
 const BROWSER_UA =

@@ -2,7 +2,7 @@ import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { TailoringResult } from "@/lib/schemas/tailoring";
 import { getFactById } from "./master-resume";
-import { extractNumbers } from "./step-validation-helpers";
+import { extractNumbers } from "@/lib/server/tailor/step-validation-helpers";
 
 /** Résumé scanners treat digits and common count patterns as measurable. */
 export function bulletHasMeasurable(text: string): boolean {

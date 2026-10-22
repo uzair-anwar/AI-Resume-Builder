@@ -4,7 +4,7 @@ import {
   listConfiguredProviders,
   readProviderEnv,
 } from "@/lib/ai/provider-config";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 
 export async function GET() {
   const cfg = readProviderEnv();

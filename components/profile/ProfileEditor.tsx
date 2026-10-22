@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PageLoader } from "./PageLoader";
-import { SectionCard } from "./SectionCard";
+import { PageLoader } from "@/components/ui/PageLoader";
+import { SectionCard } from "@/components/ui/SectionCard";
 import type { MasterResume } from "@/lib/schemas/resume";
-import { loadProfileOverride, saveProfileOverride } from "@/lib/client/profile-storage";
+import { loadProfileOverride, saveProfileOverride } from "@/lib/client/profile/profile-storage";
 
 export function ProfileEditor() {
   const [master, setMaster] = useState<MasterResume | null>(null);

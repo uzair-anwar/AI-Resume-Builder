@@ -1,8 +1,8 @@
 import "server-only";
 import type { SelectedContext } from "./select-facts";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { maxCharsForLines } from "@/lib/layout/budgets";
-import { redactContactDetails } from "./ai/redact";
+import { maxCharsForLines } from "@/lib/resume/layout/budgets";
+import { redactContactDetails } from "@/lib/server/ai/redact";
 
 export function buildTailoringSystemPrompt(): string {
   return `You are an expert ATS-aware resume tailor for technical roles.

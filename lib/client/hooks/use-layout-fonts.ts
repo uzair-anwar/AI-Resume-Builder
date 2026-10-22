@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fontsLoaded, loadFontsInBrowser } from "@/lib/layout/fonts";
+import { fontsLoaded, loadFontsInBrowser } from "@/lib/resume/layout/fonts";
 
 /** Loads PT Serif for exact text measuring (line counters and PDF line layout). */
 export function useLayoutFonts(): boolean {

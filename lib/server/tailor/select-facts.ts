@@ -1,7 +1,7 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { scoreFactRelevance as scoreByAnalysis } from "@/lib/relevance";
+import { scoreFactRelevance as scoreByAnalysis } from "@/lib/shared/relevance";
 
 export type SelectedContext = {
   facts: { id: string; text: string; experienceId?: string; projectId?: string }[];

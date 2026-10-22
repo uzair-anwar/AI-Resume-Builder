@@ -1,10 +1,10 @@
 import "server-only";
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { TailoringResult } from "@/lib/schemas/tailoring";
-import { normalizeRoleTitleHyphens, toResumeHeadlineCase } from "@/lib/format-headline";
-import { normalizeTypography } from "@/lib/text-normalize";
+import { normalizeRoleTitleHyphens, toResumeHeadlineCase } from "@/lib/shared/format-headline";
+import { normalizeTypography } from "@/lib/shared/text-normalize";
 import { enforceExperienceBulletQuality } from "./bullet-metrics";
-import { dedupeResumeSynonyms } from "./term-synonym-dedupe";
+import { dedupeResumeSynonyms } from "@/lib/server/resume/term-synonym-dedupe";
 
 function polishLine(text: string): string {
   return dedupeResumeSynonyms(normalizeTypography(text));

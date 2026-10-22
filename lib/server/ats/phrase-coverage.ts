@@ -10,13 +10,13 @@ import { mapFactToJdEvidence } from "./evidence-mapper";
 import { findTaxonomyTermByName } from "./taxonomy";
 import { classifyJdTermKind, isHiringCompanyTerm } from "./jd-dynamic-vocab";
 import { buildJdPhraseTargets, preferredJdSurface } from "./jd-exact-phrases";
-import { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/layout/text-fit";
+import { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/resume/layout/text-fit";
 import {
   COLUMN_WIDTH,
   SIZE_BODY,
   TAILOR_BULLET_MAX_LINES,
   TAILOR_PROJECT_MAX_LINES,
-} from "@/lib/layout/constants";
+} from "@/lib/resume/layout/constants";
 
 type FactItem = MasterResume["summaryFacts"][number];
 

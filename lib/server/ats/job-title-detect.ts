@@ -1,5 +1,5 @@
 import "server-only";
-import { toResumeHeadlineCase } from "@/lib/format-headline";
+import { toResumeHeadlineCase } from "@/lib/shared/format-headline";
 
 const SECTION_HEADER_BAD =
   /^(what you|who you|about\b|the role|responsibilities|requirements|qualifications|what we|why join|how to|job description|overview|summary|description)\b/i;

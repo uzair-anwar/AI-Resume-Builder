@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { TailorStepRequestSchema } from "@/lib/schemas/tailoring-steps";
-import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
-import { runTailorStep } from "@/lib/server/tailor-steps/run-step";
-import { prepareTailoringWorkspace } from "@/lib/server/tailoring-workspace";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { runTailorStep } from "@/lib/server/tailor/tailor-steps/run-step";
+import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 
 export async function POST(req: Request) {

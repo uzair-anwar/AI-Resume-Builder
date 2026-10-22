@@ -1,9 +1,9 @@
 "use client";
 
 import type { ResumeView } from "@/lib/schemas/resume";
-import type { LineBudgets } from "@/lib/layout/budgets";
-import { countBulletLines, countWrappedLines } from "@/lib/layout/measure";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
+import type { LineBudgets } from "@/lib/resume/layout/budgets";
+import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
+import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/resume/layout/constants";
 
 type Props = {
   resume: ResumeView;

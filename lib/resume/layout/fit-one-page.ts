@@ -11,7 +11,7 @@ import {
 } from "./constants";
 import { resumeExceedsOnePage } from "./page-estimate";
 import { fitToMaxBulletLines, fitToMaxWrappedLines } from "./text-fit";
-import { scoreFactRelevance } from "@/lib/relevance";
+import { scoreFactRelevance } from "@/lib/shared/relevance";
 
 type BulletRef = { expIndex: number; bulletIndex: number; score: number };
 

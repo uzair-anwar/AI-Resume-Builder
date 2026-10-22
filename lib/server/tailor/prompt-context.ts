@@ -1,10 +1,10 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { redactContactDetails } from "./ai/redact";
-import { formatExpansionPromptBlock } from "./ats-expansion";
-import { formatExactJdWordingBlock } from "./jd-exact-phrases";
-import type { RoleFamily } from "./role-families";
+import { redactContactDetails } from "@/lib/server/ai/redact";
+import { formatExpansionPromptBlock } from "@/lib/server/ats/ats-expansion";
+import { formatExactJdWordingBlock } from "@/lib/server/ats/jd-exact-phrases";
+import type { RoleFamily } from "@/lib/server/ats/role-families";
 
 const CORE_RULES = `Ground rules (non-negotiable):
 - Use ONLY verified facts, skills, and metrics supplied below.

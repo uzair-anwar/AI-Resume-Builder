@@ -1,10 +1,10 @@
 import { z } from "zod";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { SUMMARY_MAX_LINES } from "@/lib/layout/constants";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
-import { countBulletLines, countWrappedLines } from "@/lib/layout/measure";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
+import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/resume/layout/constants";
+import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 
 function getAllFactIds(resume: MasterResume): Set<string> {
   const ids = new Set<string>();
@@ -29,8 +29,8 @@ import {
   resolveSkillIds,
 } from "./step-validation-helpers";
 import { trimAndFillSkills } from "./tailor-steps/build-skills";
-import type { ValidationIssue } from "./validate-tailoring";
-import type { RoleFamily } from "./role-families";
+import type { ValidationIssue } from "@/lib/server/resume/validate-tailoring";
+import type { RoleFamily } from "@/lib/server/ats/role-families";
 import { skillEvidenceTiers } from "./tailor-steps/build-skills";
 
 function textMentionsSkill(text: string, skillName: string, resume: MasterResume): boolean {

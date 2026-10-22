@@ -1,13 +1,13 @@
 import "server-only";
-import { safeFetch, SafeFetchError } from "./safe-fetch";
+import { safeFetch, SafeFetchError } from "@/lib/server/safe-fetch";
 import { parseGreenhouseUrl, fetchGreenhouse } from "./extractors/greenhouse";
 import { parseLeverUrl, fetchLever } from "./extractors/lever";
 import { parseAshbyUrl, fetchAshby } from "./extractors/ashby";
 import { extractJsonLdJobPosting } from "./extractors/jsonld";
 import { extractHtmlJobDescription, extractEmbeddedJson } from "./extractors/html";
 import { detectWall, guessWallFromEmptyPage, type WallKind } from "./extractors/wall";
-import { findJobBoard, loginRequiredMessage, botBlockedMessage } from "@/lib/job-boards";
-import { shortJobTitleForFilename } from "@/lib/job-title";
+import { findJobBoard, loginRequiredMessage, botBlockedMessage } from "@/lib/shared/job-boards";
+import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 
 export type ExtractResult = {
   title?: string;

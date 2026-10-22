@@ -1,5 +1,5 @@
-import { AppShell } from "@/components/AppShell";
-import HomeWorkspaceClient from "@/components/HomeWorkspaceClient";
+import { AppShell } from "@/components/ui/AppShell";
+import HomeWorkspaceClient from "@/components/tailor/HomeWorkspaceClient";
 
 export default function Home() {
   return (

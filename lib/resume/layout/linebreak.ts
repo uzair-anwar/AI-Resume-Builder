@@ -1,4 +1,4 @@
-import { normalizeTypography } from "@/lib/text-normalize";
+import { normalizeTypography } from "@/lib/shared/text-normalize";
 import { textWidth, type FontStyleKey } from "./fonts";
 
 export type LayoutLine = {

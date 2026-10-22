@@ -1,7 +1,7 @@
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { CoverLetterVariants } from "@/lib/schemas/cover-letter";
-import type { LineBudgets } from "@/lib/layout/budgets";
+import type { LineBudgets } from "@/lib/resume/layout/budgets";
 
 const KEY = "resume_tailor_last_result";
 

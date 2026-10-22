@@ -1,7 +1,7 @@
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { containsForbiddenTerm, extractNumbers } from "./step-validation-helpers";
+import { containsForbiddenTerm, extractNumbers } from "@/lib/server/tailor/step-validation-helpers";
 
-export { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/layout/text-fit";
+export { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/resume/layout/text-fit";
 
 export function stripForbiddenTerms(text: string, analysis: JobAnalysis): string {
   let t = text;

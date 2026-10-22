@@ -9,8 +9,8 @@ import type { z } from "zod";
 import { AiUsageSchema } from "@/lib/schemas/tailoring";
 
 type AiUsage = z.infer<typeof AiUsageSchema>;
-import { buildProviderRegistry } from "../ai/registry";
-import type { ValidationIssue } from "../validate-tailoring";
+import { buildProviderRegistry } from "@/lib/server/ai/registry";
+import type { ValidationIssue } from "@/lib/server/resume/validate-tailoring";
 
 export type TailorAiOptions = {
   provider?: AiProviderChoice;

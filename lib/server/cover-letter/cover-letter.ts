@@ -5,18 +5,18 @@ import type {
   CoverLetterVariants,
 } from "@/lib/schemas/cover-letter";
 import { CoverLetterVariantsSchema } from "@/lib/schemas/cover-letter";
-import { buildDefaultResumeView } from "@/lib/build-default-resume";
-import { analyzeJob } from "./analyze-job";
-import { redactContactDetails } from "./ai/redact";
-import { detectJobTitle } from "./jd-extract";
-import { formatKeywordStrategy, safeJobText } from "./prompt-context";
-import { detectRoleFamily } from "./role-families";
-import { stripForbiddenTerms } from "./text-sanitize";
+import { buildDefaultResumeView } from "@/lib/resume/build-default-resume";
+import { analyzeJob } from "@/lib/server/ats/analyze-job";
+import { redactContactDetails } from "@/lib/server/ai/redact";
+import { detectJobTitle } from "@/lib/server/ats/jd-extract";
+import { formatKeywordStrategy, safeJobText } from "@/lib/server/tailor/prompt-context";
+import { detectRoleFamily } from "@/lib/server/ats/role-families";
+import { stripForbiddenTerms } from "@/lib/server/text-sanitize";
 import {
   runStructuredAiCall,
   type TailorAiOptions,
-} from "./tailor-steps/run-ai-structured";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
+} from "@/lib/server/tailor/tailor-steps/run-ai-structured";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 
 export const COVER_LETTER_JSON_SCHEMA = {
   name: "cover_letter_variants",

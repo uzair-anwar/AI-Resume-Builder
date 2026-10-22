@@ -1,8 +1,8 @@
 import "server-only";
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { AtsScorecard, JobAnalysis } from "@/lib/schemas/tailoring";
-import { buildDefaultResumeView } from "@/lib/build-default-resume";
-import { countResumeBulletsWithMetrics } from "./bullet-metrics";
+import { buildDefaultResumeView } from "@/lib/resume/build-default-resume";
+import { countResumeBulletsWithMetrics } from "@/lib/server/resume/bullet-metrics";
 import { findTaxonomyTermByName, findTermInText } from "./taxonomy";
 
 function termPresentInText(term: string, text: string): boolean {

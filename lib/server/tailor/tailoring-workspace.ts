@@ -1,9 +1,9 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { applyTailorLineBudgetCaps, computeLineBudgets } from "@/lib/layout/budgets";
-import { mergeResumeWithExpansionSkills } from "./ats-expansion";
-import { analyzeJob } from "./analyze-job";
+import { applyTailorLineBudgetCaps, computeLineBudgets } from "@/lib/resume/layout/budgets";
+import { mergeResumeWithExpansionSkills } from "@/lib/server/ats/ats-expansion";
+import { analyzeJob } from "@/lib/server/ats/analyze-job";
 import { narrowResumeProjects, selectProjectIdsForJob } from "./project-select";
 
 export type TailoringWorkspace = {

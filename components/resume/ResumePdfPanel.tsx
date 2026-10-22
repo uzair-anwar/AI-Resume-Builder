@@ -5,10 +5,10 @@ import { pdf } from "@react-pdf/renderer";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { ResumeDocument } from "./ResumeDocument";
-import { slugifyFilename } from "@/lib/format";
-import { shortJobTitleForFilename } from "@/lib/job-title";
+import { slugifyFilename } from "@/lib/shared/format";
+import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 import { PDFDocument } from "pdf-lib";
-import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
+import { fitResumeViewToOnePage } from "@/lib/resume/layout/fit-one-page";
 
 type Props = {
   resume: ResumeView;

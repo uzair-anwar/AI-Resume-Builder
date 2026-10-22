@@ -1,6 +1,6 @@
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { scoreFactRelevance } from "@/lib/relevance";
+import { scoreFactRelevance } from "@/lib/shared/relevance";
 
 type BulletRef = { expIndex: number; bulletIndex: number; score: number };
 

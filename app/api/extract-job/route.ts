@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { ExtractJobRequestSchema } from "@/lib/schemas/job";
-import { extractJobFromUrl } from "@/lib/server/extract-job";
+import { extractJobFromUrl } from "@/lib/server/job/extract-job";
 import { SafeFetchError } from "@/lib/server/safe-fetch";
 import { logError, logInfo } from "@/lib/server/log";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 
 export async function POST(req: Request) {
   const json = await req.json().catch(() => null);

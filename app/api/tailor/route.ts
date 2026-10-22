@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { TailorRequestSchema } from "@/lib/schemas/job";
-import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
-import { tailorResume } from "@/lib/server/tailor-resume";
-import { deterministicTailor } from "@/lib/server/deterministic-tailor";
+import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { tailorResume } from "@/lib/server/tailor/tailor-resume";
+import { deterministicTailor } from "@/lib/server/tailor/deterministic-tailor";
 import { logError, logInfo } from "@/lib/server/log";
-import { PRIVATE_HEADERS } from "@/lib/api-headers";
+import { PRIVATE_HEADERS } from "@/lib/shared/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 
 export async function POST(req: Request) {

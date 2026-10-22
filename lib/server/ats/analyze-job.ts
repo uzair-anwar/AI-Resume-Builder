@@ -1,8 +1,8 @@
 import "server-only";
-import "./layout-fonts";
+import "@/lib/server/layout-fonts";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { applyTailorLineBudgetCaps, computeLineBudgets } from "@/lib/layout/budgets";
+import { applyTailorLineBudgetCaps, computeLineBudgets } from "@/lib/resume/layout/budgets";
 import {
   classifyJdTermKind,
   detectHiringCompanyNames,
@@ -11,7 +11,7 @@ import {
   extractJdTerms,
   isEnforceableMissingTerm,
 } from "./jd-extract";
-import { shortJobTitleForFilename } from "@/lib/job-title";
+import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 import { sanitizeDetectedJobTitle } from "./job-title-detect";
 import { narrativeAllowTerms } from "./ats-expansion";
 import { augmentAllowedNarrativeTerms } from "./jd-exact-phrases";

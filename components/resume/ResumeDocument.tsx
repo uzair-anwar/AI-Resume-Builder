@@ -15,10 +15,10 @@ import {
   G as SvgG,
 } from "@react-pdf/renderer";
 import type { ResumeView } from "@/lib/schemas/resume";
-import { formatDateRangePdf } from "@/lib/format";
-import { formatSkillLine } from "@/lib/layout/skill-line";
-import { breakLines } from "@/lib/layout/linebreak";
-import { fontsLoaded } from "@/lib/layout/fonts";
+import { formatDateRangePdf } from "@/lib/shared/format";
+import { formatSkillLine } from "@/lib/resume/layout/skill-line";
+import { breakLines } from "@/lib/resume/layout/linebreak";
+import { fontsLoaded } from "@/lib/resume/layout/fonts";
 import {
   FONT_NAME,
   MARGIN_X,
@@ -32,7 +32,7 @@ import {
   LINE_HEIGHT_BODY,
   BULLET_INDENT,
   BULLET_GAP_PT,
-} from "@/lib/layout/constants";
+} from "@/lib/resume/layout/constants";
 
 Font.register({
   family: FONT_NAME,

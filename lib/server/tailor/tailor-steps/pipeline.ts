@@ -3,21 +3,21 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { TailorResponse } from "@/lib/schemas/tailoring";
 import { TAILOR_STEP_IDS } from "@/lib/schemas/tailoring-steps";
 import type { TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
-import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
-import { selectedProjectLabel } from "../project-select";
-import { prepareTailoringWorkspace } from "../tailoring-workspace";
-import { assembleResumeView, buildChanges } from "../assemble-resume";
-import { attachAtsScorecard } from "../ats-score";
-import { deterministicTailor } from "../deterministic-tailor";
-import { normalizeTypography as nt } from "@/lib/text-normalize";
-import { applyPhraseCoverage } from "../phrase-coverage";
-import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
-import { finalizeResumeHeadline } from "../headline-align";
-import { detectRoleFamily } from "../role-families";
-import { polishTailoringResult } from "../polish-resume-copy";
-import { repairTailoring } from "../validate-tailoring";
-import { mergePrevious, runTailorStep, stagedToTailoringResult } from "./run-step";
-import type { TailorAiOptions } from "./run-ai-structured";
+import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
+import { selectedProjectLabel } from "@/lib/server/tailor/project-select";
+import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
+import { assembleResumeView, buildChanges } from "@/lib/server/resume/assemble-resume";
+import { attachAtsScorecard } from "@/lib/server/ats/ats-score";
+import { deterministicTailor } from "@/lib/server/tailor/deterministic-tailor";
+import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
+import { applyPhraseCoverage } from "@/lib/server/ats/phrase-coverage";
+import { fitResumeViewToOnePage } from "@/lib/resume/layout/fit-one-page";
+import { finalizeResumeHeadline } from "@/lib/server/ats/headline-align";
+import { detectRoleFamily } from "@/lib/server/ats/role-families";
+import { polishTailoringResult } from "@/lib/server/resume/polish-resume-copy";
+import { repairTailoring } from "@/lib/server/resume/validate-tailoring";
+import { mergePrevious, runTailorStep, stagedToTailoringResult } from "@/lib/server/tailor/tailor-steps/run-step";
+import type { TailorAiOptions } from "@/lib/server/tailor/tailor-steps/run-ai-structured";
 
 export async function runStagedTailorPipeline(
   resume: MasterResume,

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { CoverLetterResponse, CoverLetterVariants } from "@/lib/schemas/cover-letter";
-import type { LineBudgets } from "@/lib/layout/budgets";
+import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai/provider-types";
 import { resolveModelPickerProvider } from "@/lib/ai/ui-helpers";
 import {
@@ -12,34 +12,34 @@ import {
   loadAllowProviderFallback,
   saveAiProviderChoice,
   saveAllowProviderFallback,
-} from "@/lib/client/ai-provider-storage";
+} from "@/lib/client/ai/ai-provider-storage";
 import {
   loadAllProviderModels,
   saveModelForProvider,
-} from "@/lib/client/ai-model-storage";
-import { buildPipelineKey } from "@/lib/client/pipeline-key";
-import { loadProfileOverride } from "@/lib/client/profile-storage";
-import { loadDraft, saveDraft } from "@/lib/client/session-draft";
+} from "@/lib/client/ai/ai-model-storage";
+import { buildPipelineKey } from "@/lib/client/tailor/pipeline-key";
+import { loadProfileOverride } from "@/lib/client/profile/profile-storage";
+import { loadDraft, saveDraft } from "@/lib/client/session/session-draft";
 import {
   loadStoredTailorSession,
   saveStoredTailorSession,
-} from "@/lib/client/session-result";
-import { shortJobTitleForFilename } from "@/lib/job-title";
-import { mergeResumeContactFromMaster } from "@/lib/client/merge-resume-contact";
-import { ResumeEditor } from "./ResumeEditor";
-import { ResumePdfPanel } from "./ResumePdfPanel";
-import { JdTermChips } from "./JdTermChips";
-import { CoverLetterPanel } from "./CoverLetterPanel";
+} from "@/lib/client/session/session-result";
+import { shortJobTitleForFilename } from "@/lib/shared/job-title";
+import { mergeResumeContactFromMaster } from "@/lib/client/profile/merge-resume-contact";
+import { ResumeEditor } from "@/components/resume/ResumeEditor";
+import { ResumePdfPanel } from "@/components/resume/ResumePdfPanel";
+import { JdTermChips } from "@/components/tailor/JdTermChips";
+import { CoverLetterPanel } from "@/components/cover-letter/CoverLetterPanel";
 import {
   TailorProgress,
   type TailorProgressStepId,
   type TailorStage,
-} from "./TailorProgress";
-import { runStagedTailorClient } from "@/lib/client/staged-tailor";
+} from "@/components/tailor/TailorProgress";
+import { runStagedTailorClient } from "@/lib/client/tailor/staged-tailor";
 import type { TailorStepId, TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
-import { useLayoutFonts } from "@/lib/client/use-layout-fonts";
+import { useLayoutFonts } from "@/lib/client/hooks/use-layout-fonts";
 import Link from "next/link";
-import { SectionCard } from "./SectionCard";
+import { SectionCard } from "@/components/ui/SectionCard";
 
 export default function HomeWorkspace() {
   const [jobUrl, setJobUrl] = useState(() => loadDraft().jobUrl ?? "");

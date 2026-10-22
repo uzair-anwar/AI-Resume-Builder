@@ -1,11 +1,11 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { maxCharsForLines } from "@/lib/layout/budgets";
-import { SUMMARY_MAX_LINES } from "@/lib/layout/constants";
-import { redactContactDetails } from "./ai/redact";
-import { formatFactWithEvidence, planRewriteModes } from "./evidence-mapper";
-import { phraseInstructions, planPhrasePlacements } from "./phrase-coverage";
+import { maxCharsForLines } from "@/lib/resume/layout/budgets";
+import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { redactContactDetails } from "@/lib/server/ai/redact";
+import { formatFactWithEvidence, planRewriteModes } from "@/lib/server/ats/evidence-mapper";
+import { phraseInstructions, planPhrasePlacements } from "@/lib/server/ats/phrase-coverage";
 import {
   experienceSystemPrompt,
   formatSkillCandidateList,
@@ -15,7 +15,7 @@ import {
   skillsSystemPrompt,
   summarySystemPrompt,
 } from "./prompt-context";
-import type { RoleFamily } from "./role-families";
+import type { RoleFamily } from "@/lib/server/ats/role-families";
 import { skillEvidenceTiers } from "./tailor-steps/build-skills";
 
 export function stagedSystemPrompt(): string {
