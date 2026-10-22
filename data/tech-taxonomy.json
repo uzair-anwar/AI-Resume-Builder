@@ -103,7 +103,7 @@
     {
       "id": "cloud-infrastructure",
       "canonical": "Cloud Infrastructure",
-      "aliases": ["cloud native", "cloud-native", "cloud architecture", "cloud services", "cloud platform"],
+      "aliases": ["cloud native", "cloud-native", "cloud architecture", "cloud services", "cloud platform", "cloud platforms"],
       "family": "cloud",
       "kind": "concept"
     },
@@ -265,7 +265,7 @@
     { "id": "data-visualization", "canonical": "Data Visualization", "aliases": ["dashboards", "data viz", "analytics dashboards", "reporting dashboards"], "family": "data", "kind": "concept" },
     { "id": "workflow-automation", "canonical": "Workflow Automation", "aliases": ["process automation", "business process automation", "workflow engine"], "family": "architecture", "kind": "concept" },
     { "id": "third-party-integrations", "canonical": "Third-Party Integrations", "aliases": ["third party integrations", "external integrations", "api integrations", "webhooks"], "family": "api", "kind": "concept" },
-    { "id": "payments", "canonical": "Payment Systems", "aliases": ["payment processing", "payments platform", "financial systems", "fintech", "money movement"], "family": "domain", "kind": "concept" },
+    { "id": "payments", "canonical": "Payment Systems", "aliases": ["payment processing", "payments platform", "financial systems", "financial system", "financial products", "financial product", "fintech", "money movement"], "family": "domain", "kind": "concept" },
     { "id": "healthcare", "canonical": "Healthcare Systems", "aliases": ["healthcare platform", "health tech", "healthtech", "hipaa"], "family": "domain", "kind": "concept" },
     { "id": "code-quality", "canonical": "Code Quality", "aliases": ["clean code", "code quality standards", "maintainable code"], "family": "quality", "kind": "soft" },
     { "id": "ownership", "canonical": "End-to-End Ownership", "aliases": ["end-to-end ownership", "own features", "full lifecycle", "sdlc", "software development lifecycle"], "family": "process", "kind": "soft" }

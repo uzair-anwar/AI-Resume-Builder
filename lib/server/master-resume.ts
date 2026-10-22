@@ -27,9 +27,17 @@ export function mergeProfileOverride(
   const merged: MasterResume = {
     ...base,
     ...parsed.data,
-    person: { ...base.person, ...parsed.data.person },
+    person: {
+      ...base.person,
+      ...parsed.data.person,
+      location: parsed.data.person?.location?.trim() || base.person.location,
+      phone: parsed.data.person?.phone?.trim() || base.person.phone,
+    },
     skills: [...base.skills],
-    experience: parsed.data.experience ?? base.experience,
+    experience: (parsed.data.experience ?? base.experience).map((exp) => {
+      const fromBase = base.experience.find((e) => e.id === exp.id);
+      return { ...exp, location: exp.location?.trim() || fromBase?.location || "" };
+    }),
     projects: parsed.data.projects ?? base.projects,
     education: parsed.data.education ?? base.education,
   };

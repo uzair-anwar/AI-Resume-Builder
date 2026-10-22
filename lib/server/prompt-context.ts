@@ -89,6 +89,7 @@ export function experienceSystemPrompt(): string {
 Your task: rewrite experience bullets for ONE employer so that ATS scanners and hiring managers see immediate alignment with the target job.
 
 Critical ATS & XYZ Writing Rules:
+- Enterprise ATS parsers (Jobscan, Workday, iCIMS) count a hard or soft skill as missing until the job description's exact wording appears inside an experience bullet or project description. The skills list alone does not clear it.
 - Enterprise ATS parsers score keywords highest when they appear INSIDE experience bullets, not just the skills section.
 - Use the Google XYZ Formula: "Accomplished [X outcome/impact], as measured by [Y: a metric ONLY if it is in the source fact, otherwise the scope/scale/reliability the fact already implies, in words], by doing [Z specific architecture, tools, and JD-aligned practices]." Never invent a number to fill Y.
 - Start every bullet with a strong past-tense action verb (Architected, Engineered, Scaled, Optimized, Spearheaded, Automated).

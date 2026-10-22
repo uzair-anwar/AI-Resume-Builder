@@ -51,7 +51,7 @@ const CONCEPT_HINT_PATTERNS: { re: RegExp; concepts: string[] }[] = [
   },
   {
     re: /\b(ci\/cd|pipelines?|deployments?|releases?|github actions|gitlab|jenkins)\b/i,
-    concepts: ["CI/CD"],
+    concepts: ["CI/CD", "Reliability"],
   },
   {
     re: /\b(monitor\w*|logging|alerts?|alerting|telemetry|tracing|metrics|cloudwatch|datadog|sentry|observab\w*)\b/i,
@@ -63,7 +63,7 @@ const CONCEPT_HINT_PATTERNS: { re: RegExp; concepts: string[] }[] = [
   },
   {
     re: /\b(latency|throughput|optimiz\w*|performance|speed(ed)?|faster|efficien\w*|scal(e|ed|able|ing|ability))\b/i,
-    concepts: ["Performance Optimization", "Scalability"],
+    concepts: ["Performance Optimization", "Scalability", "Reliability"],
   },
   {
     re: /\b(redis|cache|caching)\b/i,
@@ -71,7 +71,7 @@ const CONCEPT_HINT_PATTERNS: { re: RegExp; concepts: string[] }[] = [
   },
   {
     re: /\b(led|lead|leading|mentor\w*|pairing|onboard\w*|coach\w*|guidance)\b/i,
-    concepts: ["Leadership"],
+    concepts: ["Leadership", "Team Building"],
   },
   {
     re: /\b(cross-functional|stakeholders?|collaborat\w*|distributed teams?|code reviews?|reviews)\b/i,

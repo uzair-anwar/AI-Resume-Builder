@@ -29,13 +29,22 @@ export function normalizeText(s: string): string {
 }
 
 export function findTermInText(text: string, term: TaxonomyTerm): boolean {
-  const hay = normalizeText(text);
-  const needles = [term.canonical, ...term.aliases].map(normalizeText);
-  return needles.some((n) => {
-    if (n.length < 2) return false;
-    const re = new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(n)}(?![A-Za-z0-9])`, "i");
-    return re.test(hay);
-  });
+  return matchedSurfaces(text, term).length > 0;
+}
+
+/** JD wordings of a taxonomy term, longest first, in the capitalization the job description uses. */
+export function matchedSurfaces(text: string, term: TaxonomyTerm): string[] {
+  const found: string[] = [];
+  const needles = [term.canonical, ...term.aliases].sort((a, b) => b.length - a.length);
+  for (const n of needles) {
+    if (n.length < 2) continue;
+    const re = new RegExp(`(?<![A-Za-z0-9])${escapeRegExp(n)}(?![A-Za-z0-9])`, "gi");
+    const m = re.exec(text);
+    if (!m) continue;
+    if (found.some((f) => f.toLowerCase() === m[0].toLowerCase())) continue;
+    found.push(m[0]);
+  }
+  return found.slice(0, 3);
 }
 
 function escapeRegExp(s: string): string {

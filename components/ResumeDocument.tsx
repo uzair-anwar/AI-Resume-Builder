@@ -252,7 +252,9 @@ export function ResumeDocument({ resume }: Props) {
           <PinIcon />
         </View>
         <Text style={[styles.abs, styles.contactText, { left: textLeft, top: G.contactRow1Top }]}>
-          {resume.person.location}
+          {resume.person.phone?.trim()
+            ? `${resume.person.location}   |   ${resume.person.phone.trim()}`
+            : resume.person.location}
         </Text>
         <View style={[styles.abs, { left: RIGHT_COLUMN_X + 0.5, top: G.contactRow1Top + 3 }]}>
           <MailIcon />
@@ -337,7 +339,9 @@ export function ResumeDocument({ resume }: Props) {
               style={{ marginBottom: ei === resume.experience.length - 1 ? 0 : 6.9 }}
             >
               <Text style={styles.label}>{exp.title}</Text>
-              <Text style={styles.labelItalic}>{exp.company}</Text>
+              <Text style={styles.labelItalic}>
+                {exp.location?.trim() ? `${exp.company}  |  ${exp.location.trim()}` : exp.company}
+              </Text>
               <Text style={styles.dates}>{formatDateRangePdf(exp.startDate, exp.endDate)}</Text>
               {exp.bullets.map((b, i) => (
                 <View key={i} style={[styles.bulletRow, { marginTop: i === 0 ? 0 : 0.26 }]}>

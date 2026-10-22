@@ -50,6 +50,7 @@ export const PersonSchema = z.object({
   name: z.string(),
   defaultHeadline: z.string(),
   location: z.string(),
+  phone: z.string().optional().default(""),
   email: z.string().email(),
   github: z.string().url(),
   linkedin: z.string().url(),

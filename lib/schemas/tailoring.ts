@@ -38,6 +38,8 @@ export type TailoringResult = z.infer<typeof TailoringResultSchema>;
 
 export const JdTermChipSchema = z.object({
   term: z.string(),
+  /** Wordings that actually appear in the job description. Jobscan matches these, not our canonical name. */
+  surfaceForms: z.array(z.string()).optional(),
   status: z.enum(["matched", "related", "missing"]),
   relatedVia: z.string().optional(),
   inTailoredResume: z.boolean().optional(),

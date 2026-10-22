@@ -3,6 +3,7 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import { buildDefaultResumeView } from "@/lib/build-default-resume";
 import { attachAtsScorecard } from "./ats-score";
+import { coverResumeView } from "./phrase-coverage";
 import { scoreFactRelevance } from "./select-facts";
 
 export function deterministicTailor(
@@ -45,11 +46,15 @@ export function deterministicTailor(
       sourceFactIds: p.facts.map((f) => f.id),
     }));
 
-  const tailoredResume = {
-    ...base,
-    experience,
-    projects,
-  };
+  const tailoredResume = coverResumeView(
+    {
+      ...base,
+      experience,
+      projects,
+    },
+    resume,
+    analysis,
+  );
 
   return {
     resume: tailoredResume,

@@ -10,14 +10,15 @@ import { buildProfileVocabulary, isTermMatched, relatedVia } from "./profile-voc
 export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
   const extracted = extractJdTerms(jobText);
   const terms = extracted.map((t) => {
+    const surfaceForms = t.surfaceForms.length ? t.surfaceForms : [t.term];
     if (isTermMatched(t.term, resume)) {
-      return { term: t.term, status: "matched" as const };
+      return { term: t.term, surfaceForms, status: "matched" as const };
     }
     const via = relatedVia(t.term, resume);
     if (via) {
-      return { term: t.term, status: "related" as const, relatedVia: via };
+      return { term: t.term, surfaceForms, status: "related" as const, relatedVia: via };
     }
-    return { term: t.term, status: "missing" as const };
+    return { term: t.term, surfaceForms, status: "missing" as const };
   });
 
   const matched = terms.filter((t) => t.status === "matched").length;

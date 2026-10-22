@@ -3,7 +3,8 @@
   "person": {
     "name": "Uzair Anwar",
     "defaultHeadline": "Senior Software Engineer (Full Stack)",
-    "location": "Pakistan",
+    "location": "Lahore, Pakistan",
+    "phone": "+923069224673",
     "email": "uzairanwar.online@gmail.com",
     "github": "https://github.com/uzair-anwar",
     "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
@@ -349,7 +350,7 @@
       "id": "exp-micro1",
       "company": "Micro1",
       "title": "Senior Software Engineer",
-      "location": "",
+      "location": "San Francisco, California",
       "startDate": "2025-05",
       "endDate": null,
       "facts": [
@@ -394,7 +395,7 @@
       "id": "exp-devsorb",
       "company": "Devsorb",
       "title": "Full Stack Software Engineer",
-      "location": "",
+      "location": "Lahore, Pakistan",
       "startDate": "2024-01",
       "endDate": "2025-05",
       "facts": [
@@ -439,7 +440,7 @@
       "id": "exp-devsinc",
       "company": "Devsinc",
       "title": "Software Engineer",
-      "location": "",
+      "location": "Lahore, Pakistan",
       "startDate": "2021-05",
       "endDate": "2024-01",
       "facts": [

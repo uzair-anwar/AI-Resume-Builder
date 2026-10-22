@@ -5,6 +5,7 @@ import { maxCharsForLines } from "@/lib/layout/budgets";
 import { SUMMARY_MAX_LINES } from "@/lib/layout/constants";
 import { redactContactDetails } from "./ai/redact";
 import { formatFactWithEvidence, planRewriteModes } from "./evidence-mapper";
+import { phraseInstructions, planPhrasePlacements } from "./phrase-coverage";
 import {
   experienceSystemPrompt,
   formatSkillCandidateList,
@@ -117,6 +118,8 @@ Output & Structural Requirements:
 - Follow each fact's "Rewrite:" level. Most bullets should stay close to the original meaning. Only facts tagged "LOW JD overlap" may be fully rewritten (new structure and emphasis, or merged with a sibling fact via several sourceFactIds), and even then only from this role's verified facts and skills: never new tools, employers, scope claims, metrics or outcomes.
 - If a fact has no number, describe the scope or outcome the fact already implies in words. Never write a percentage, time or count that is not in the source fact.
 
+${phraseInstructions(exp.facts.map((f) => f.id), planPhrasePlacements(resume, analysis))}
+
 Skills demonstrated in this role: ${roleSkills.join(", ") || "see facts"}
 
 Verified facts for ${exp.company} (with per-fact JD evidence mapping):
@@ -211,6 +214,8 @@ Constraints:
 - Single cohesive paragraph, max ~${maxLines + 1} lines.
 - Weave in the [JD keywords to include] and [Terminology bridge] annotations where natural.
 - "sourceFactIds" must list the fact IDs used from below.
+
+${phraseInstructions(proj.facts.map((f) => f.id), planPhrasePlacements(resume, analysis))}
 
 Verified project facts (with JD evidence mapping):
 ${facts}

@@ -1,5 +1,5 @@
 import "server-only";
-import { findTaxonomyTermByName, findTermInText, loadTaxonomy } from "./taxonomy";
+import { findTaxonomyTermByName, loadTaxonomy, matchedSurfaces } from "./taxonomy";
 
 const STOPWORDS = new Set(
   (
@@ -52,6 +52,8 @@ const NON_TECH_ACRONYMS = new Set([
 
 export type ExtractedJdTerm = {
   term: string;
+  /** Phrases as written in the job description. ATS tools match these, not the canonical name. */
+  surfaceForms: string[];
   weight: number;
   section: "required" | "preferred" | "general";
 };
@@ -90,13 +92,14 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
   for (const { text, section } of sections) {
     const weightBase = section === "required" ? 4 : section === "preferred" ? 2 : 1;
     for (const t of tax.terms) {
-      if (findTermInText(text, t)) {
-        addTerm(map, t.canonical, weightBase + 1, section);
-      }
+      const surfaces = matchedSurfaces(text, t);
+      if (surfaces.length) addTerm(map, t.canonical, weightBase + 1, section, surfaces);
     }
     for (const term of tokenizeTech(text)) addTerm(map, term, weightBase, section);
     for (const phrase of extractPhrases(text)) addTerm(map, phrase, weightBase + 1, section);
   }
+
+  dropEmbeddedSurfaces(map);
 
   const canonical = new Set(tax.terms.map((t) => t.canonical.toLowerCase()));
   return dropFragmentTerms(
@@ -192,20 +195,50 @@ function extractPhrases(text: string): string[] {
   return phrases;
 }
 
+/** "Cloud Platform" inside "Google Cloud Platform" is the longer tool, not a separate phrase. */
+function dropEmbeddedSurfaces(map: Map<string, ExtractedJdTerm>) {
+  const all = [...map.values()];
+  const contains = (text: string, phrase: string) => {
+    const esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?<![A-Za-z0-9])${esc}(?![A-Za-z0-9])`, "i").test(text);
+  };
+  for (const t of all) {
+    t.surfaceForms = t.surfaceForms.filter(
+      (s) =>
+        !all.some(
+          (other) =>
+            other !== t &&
+            other.surfaceForms.some((o) => o.length > s.length && contains(o, s)),
+        ),
+    );
+  }
+  for (const [key, t] of map) {
+    if (!t.surfaceForms.length) map.delete(key);
+  }
+}
+
 function addTerm(
   map: Map<string, ExtractedJdTerm>,
   term: string,
   weight: number,
   section: "required" | "preferred" | "general",
+  surfaces?: string[],
 ) {
   const taxTerm = findTaxonomyTermByName(term);
   const canonicalTerm = taxTerm ? taxTerm.canonical : term.trim();
   const key = canonicalTerm.toLowerCase();
+  const incoming = (surfaces?.length ? surfaces : [canonicalTerm]).filter(Boolean);
   const existing = map.get(key);
   if (existing) {
     existing.weight += weight;
+    for (const s of incoming) {
+      if (existing.surfaceForms.some((f) => f.toLowerCase() === s.toLowerCase())) continue;
+      existing.surfaceForms.push(s);
+    }
+    existing.surfaceForms.sort((a, b) => b.length - a.length);
+    existing.surfaceForms = existing.surfaceForms.slice(0, 3);
   } else {
-    map.set(key, { term: canonicalTerm, weight, section });
+    map.set(key, { term: canonicalTerm, surfaceForms: incoming.slice(0, 3), weight, section });
   }
 }
 

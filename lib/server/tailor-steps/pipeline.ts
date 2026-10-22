@@ -8,6 +8,7 @@ import { assembleResumeView, buildChanges } from "../assemble-resume";
 import { attachAtsScorecard } from "../ats-score";
 import { deterministicTailor } from "../deterministic-tailor";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
+import { applyPhraseCoverage } from "../phrase-coverage";
 import { repairTailoring } from "../validate-tailoring";
 import { mergePrevious, runTailorStep, stagedToTailoringResult } from "./run-step";
 import type { TailorAiOptions } from "./run-ai-structured";
@@ -40,7 +41,9 @@ export async function runStagedTailorPipeline(
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const { data, report } = repairTailoring(cleaned, resume, analysis);
+  const repaired = repairTailoring(cleaned, resume, analysis);
+  const data = applyPhraseCoverage(repaired.data, resume, analysis);
+  const report = repaired.report;
 
   const resumeView = assembleResumeView(resume, data);
   const scoredAnalysis = attachAtsScorecard(analysis, resume, resumeView);

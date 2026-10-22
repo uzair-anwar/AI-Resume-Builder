@@ -59,11 +59,12 @@ function scoreSingleResumeView(
   let contextPoints = 0;
   const maxContextPoints = terms.length;
   for (const t of terms) {
+    const forms = [t.term, ...(t.surfaceForms ?? [])];
     const inNarrative =
-      termPresentInText(t.term, narrativeCorpus) ||
+      forms.some((f) => termPresentInText(f, narrativeCorpus)) ||
       (t.relatedVia ? termPresentInText(t.relatedVia, narrativeCorpus) : false);
     const inSkills =
-      termPresentInText(t.term, skillsCorpus) ||
+      forms.some((f) => termPresentInText(f, skillsCorpus)) ||
       (t.relatedVia ? termPresentInText(t.relatedVia, skillsCorpus) : false);
 
     if (inNarrative) {

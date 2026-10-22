@@ -6,6 +6,7 @@ import { analyzeJob } from "@/lib/server/analyze-job";
 import { assembleResumeView, buildChanges } from "@/lib/server/assemble-resume";
 import { attachAtsScorecard } from "@/lib/server/ats-score";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
+import { applyPhraseCoverage } from "@/lib/server/phrase-coverage";
 import { repairTailoring } from "@/lib/server/validate-tailoring";
 import { stagedToTailoringResult } from "@/lib/server/tailor-steps/run-step";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
@@ -48,7 +49,9 @@ export async function POST(req: Request) {
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const { data, report } = repairTailoring(cleaned, resume, analysis);
+  const repaired = repairTailoring(cleaned, resume, analysis);
+  const data = applyPhraseCoverage(repaired.data, resume, analysis);
+  const report = repaired.report;
   const resumeView = assembleResumeView(resume, data);
   const scoredAnalysis = attachAtsScorecard(analysis, resume, resumeView);
 
