@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Resume Tailor",
-  description: "AI-assisted resume tailoring from verified profile data",
+  title: "Resume Tailor — AI job-matched resumes",
+  description:
+    "Tailor a one-page, ATS-optimized resume to any job description from your verified profile.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

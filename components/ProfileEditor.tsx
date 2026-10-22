@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { PageLoader } from "./PageLoader";
+import { SectionCard } from "./SectionCard";
 import type { MasterResume } from "@/lib/schemas/resume";
 import { loadProfileOverride, saveProfileOverride } from "@/lib/client/profile-storage";
 
@@ -55,30 +57,35 @@ export function ProfileEditor() {
     }
   }
 
-  if (!master) return <p className="p-8 text-sm">Loading profile…</p>;
+  if (!master) return <PageLoader label="Loading profile" />;
 
   return (
-    <div className="w-full space-y-6 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-semibold">Profile</h1>
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Master resume is server-side from <code>Uzair_FullStack.pdf</code>. Overrides are stored in
-        your browser only.
-      </p>
+    <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+      <header className="space-y-2">
+        <p className="section-label">Settings</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="text-gradient">Profile</span>
+        </h1>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Master resume is server-side from <code className="rounded bg-zinc-200/60 px-1 dark:bg-zinc-800">Uzair_FullStack.pdf</code>. Overrides are stored in
+          your browser only.
+        </p>
+      </header>
 
-      <section className="rounded border border-zinc-200 p-4 dark:border-zinc-700">
+      <SectionCard>
         <h2 className="font-medium">Add user-attested skill</h2>
         <p className="text-xs text-zinc-500">
           Appears in skills only; bullets still need verified facts.
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           <input
-            className="rounded border px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+            className="input-field !mt-0 max-w-xs"
             placeholder="e.g. Java"
             value={attestName}
             onChange={(e) => setAttestName(e.target.value)}
           />
           <select
-            className="rounded border px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+            className="input-field !mt-0"
             value={attestLevel}
             onChange={(e) => setAttestLevel(e.target.value as typeof attestLevel)}
           >
@@ -88,18 +95,18 @@ export function ProfileEditor() {
           </select>
           <button
             type="button"
-            className="rounded bg-zinc-900 px-3 py-1 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+            className="btn-primary !text-sm"
             onClick={addAttestedSkill}
           >
             Add
           </button>
         </div>
-      </section>
+      </SectionCard>
 
-      <label className="block text-sm">
-        Override JSON (import/export)
+      <SectionCard title="Override JSON" subtitle="Import/export browser-only profile overrides.">
+      <label className="block text-sm font-medium">
         <textarea
-          className="mt-1 w-full rounded border font-mono text-xs dark:border-zinc-600 dark:bg-zinc-900"
+          className="input-field font-mono text-xs"
           rows={16}
           value={jsonText}
           onChange={(e) => setJsonText(e.target.value)}
@@ -109,13 +116,13 @@ export function ProfileEditor() {
         <button
           type="button"
           onClick={save}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="btn-primary"
         >
           Save override
         </button>
         <button
           type="button"
-          className="text-sm underline"
+          className="btn-ghost"
           onClick={() => {
             saveProfileOverride(null);
             setJsonText(JSON.stringify({ attestedSkills: [] }, null, 2));
@@ -125,9 +132,10 @@ export function ProfileEditor() {
           Clear override
         </button>
       </div>
-      {message ? <p className="text-sm text-emerald-600">{message}</p> : null}
-      <Link href="/" className="text-sm underline">
-        Back to tailor
+      {message ? <p className="text-sm text-emerald-600 dark:text-emerald-400">{message}</p> : null}
+      </SectionCard>
+      <Link href="/" className="btn-ghost inline-flex">
+        ← Back to tailor
       </Link>
     </div>
   );

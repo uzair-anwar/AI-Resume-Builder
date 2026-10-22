@@ -61,7 +61,7 @@ export function TailorProgress({ stage, viaUrl, activeStep, completedSteps }: Pr
       : stage === "done"
         ? "Resume tailored to this job."
         : activeStep
-          ? `Working on ${STEP_DEFS.find((s) => s.id === activeStep)?.label ?? activeStep}…`
+          ? `AI step: ${STEP_DEFS.find((s) => s.id === activeStep)?.label ?? activeStep}…`
           : "Tailoring your resume…";
 
   const stepState = (id: TailorProgressStepId): "done" | "active" | "todo" => {
@@ -71,18 +71,37 @@ export function TailorProgress({ stage, viaUrl, activeStep, completedSteps }: Pr
     return "todo";
   };
 
+  const working = stage === "working" || stage === "fetching";
+
   return (
     <div
-      className="w-full rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900"
+      className="glass-panel w-full rounded-2xl p-5"
       role="status"
       aria-live="polite"
     >
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="font-medium">{message}</span>
-        <span className="tabular-nums text-zinc-500">{Math.round(percent)}%</span>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          {working ? (
+            <span
+              className="relative flex h-2.5 w-2.5"
+              aria-hidden
+            >
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-60" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-indigo-500" />
+            </span>
+          ) : (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/15 text-xs text-emerald-600 dark:text-emerald-400">
+              ✓
+            </span>
+          )}
+          <span className="text-sm font-medium">{message}</span>
+        </div>
+        <span className="tabular-nums text-sm font-semibold text-indigo-600 dark:text-indigo-300">
+          {Math.round(percent)}%
+        </span>
       </div>
       <div
-        className="h-2 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700"
+        className="h-2.5 w-full overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}
@@ -90,26 +109,34 @@ export function TailorProgress({ stage, viaUrl, activeStep, completedSteps }: Pr
       >
         <div
           className={`h-full rounded-full transition-[width] duration-500 ease-out ${
-            stage === "done" ? "bg-emerald-500" : "bg-blue-600"
+            stage === "done" ? "bg-emerald-500" : "progress-shimmer"
           }`}
           style={{ width: `${percent}%` }}
         />
       </div>
-      <ol className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+      <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {visibleSteps.map((s) => {
           const state = stepState(s.id);
           return (
             <li
               key={s.id}
-              className={
+              className={`flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                 state === "done"
-                  ? "text-emerald-600 dark:text-emerald-400"
+                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                   : state === "active"
-                    ? "font-medium text-blue-600 dark:text-blue-400"
-                    : "text-zinc-400"
-              }
+                    ? "bg-indigo-500/10 font-medium text-indigo-700 dark:text-indigo-200"
+                    : "text-zinc-500 dark:text-zinc-500"
+              }`}
             >
-              {state === "done" ? "✓" : state === "active" ? "●" : "○"} {s.label}
+              <span
+                className={
+                  state === "active" ? "step-active-dot text-indigo-500" : "text-[10px]"
+                }
+                aria-hidden
+              >
+                {state === "done" ? "✓" : state === "active" ? "●" : "○"}
+              </span>
+              {s.label}
             </li>
           );
         })}

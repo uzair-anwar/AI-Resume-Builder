@@ -58,10 +58,11 @@ export function CoverLetterPanel({
   };
 
   return (
-    <div className="w-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+    <div className="glass-panel w-full rounded-2xl p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">
+          <p className="section-label">Outreach</p>
+          <h2 className="mt-1 text-base font-semibold">
             Grounded Cover Letter & Recruiter Outreach
           </h2>
           <p className="text-xs text-zinc-500">
@@ -73,7 +74,7 @@ export function CoverLetterPanel({
             type="button"
             disabled={!canGenerate || loading}
             onClick={onGenerate}
-            className="rounded bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+            className="btn-primary !px-3.5 !py-1.5 !text-xs"
           >
             {loading
               ? "Generating cover letter…"
@@ -86,14 +87,14 @@ export function CoverLetterPanel({
               <button
                 type="button"
                 onClick={() => void handleCopy()}
-                className="rounded border border-zinc-300 px-3 py-1.5 text-xs font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800"
+                className="btn-ghost !text-xs"
               >
                 {copied ? "Copied!" : "Copy"}
               </button>
               <button
                 type="button"
                 onClick={handleDownloadTxt}
-                className="rounded border border-zinc-300 px-3 py-1.5 text-xs font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800"
+                className="btn-ghost !text-xs"
               >
                 Download .txt
               </button>
@@ -119,8 +120,8 @@ export function CoverLetterPanel({
                   onClick={() => setActiveTab(tab.id)}
                   className={`rounded px-2.5 py-1 text-xs font-medium ${
                     activeTab === tab.id
-                      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                      : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                      ? "bg-indigo-600 text-white shadow-sm dark:bg-indigo-500"
+                      : "text-zinc-600 hover:bg-indigo-50 dark:text-zinc-400 dark:hover:bg-indigo-950/40"
                   }`}
                 >
                   {tab.label}
@@ -138,14 +139,14 @@ export function CoverLetterPanel({
               rows={11}
               value={coverLetter.standard}
               onChange={(e) => onChange({ ...coverLetter, standard: e.target.value })}
-              className="w-full rounded border border-zinc-300 p-2.5 text-sm leading-relaxed dark:border-zinc-600 dark:bg-zinc-900"
+              className="input-field p-2.5 text-sm leading-relaxed"
             />
           ) : activeTab === "shortMessage" ? (
             <textarea
               rows={5}
               value={coverLetter.shortMessage}
               onChange={(e) => onChange({ ...coverLetter, shortMessage: e.target.value })}
-              className="w-full rounded border border-zinc-300 p-2.5 text-sm leading-relaxed dark:border-zinc-600 dark:bg-zinc-900"
+              className="input-field p-2.5 text-sm leading-relaxed"
             />
           ) : (
             <textarea
@@ -159,7 +160,7 @@ export function CoverLetterPanel({
                     .map((line) => line.replace(/^[•*-]\s*/, "")),
                 })
               }
-              className="w-full rounded border border-zinc-300 p-2.5 text-sm leading-relaxed dark:border-zinc-600 dark:bg-zinc-900"
+              className="input-field p-2.5 text-sm leading-relaxed"
             />
           )}
         </div>

@@ -3,9 +3,11 @@
 import dynamic from "next/dynamic";
 
 /** The workspace restores a draft from sessionStorage, so it only renders in the browser. */
+import { PageLoader } from "./PageLoader";
+
 const HomeWorkspace = dynamic(() => import("./HomeWorkspace"), {
   ssr: false,
-  loading: () => <p className="p-6 text-sm text-zinc-500">Loading…</p>,
+  loading: () => <PageLoader />,
 });
 
 export default function HomeWorkspaceClient() {

@@ -39,6 +39,7 @@ import { runStagedTailorClient } from "@/lib/client/staged-tailor";
 import type { TailorStepId, TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
 import { useLayoutFonts } from "@/lib/client/use-layout-fonts";
 import Link from "next/link";
+import { SectionCard } from "./SectionCard";
 
 export default function HomeWorkspace() {
   const [jobUrl, setJobUrl] = useState(() => loadDraft().jobUrl ?? "");
@@ -394,16 +395,23 @@ export default function HomeWorkspace() {
   const signInNotice = errorCode === "LOGIN_REQUIRED" || errorCode === "BOT_BLOCKED";
 
   return (
-    <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">Resume Tailor</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            One-page resume matched to each job — same layout as your template PDF.
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div className="space-y-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200/80 bg-indigo-50/80 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-950/50 dark:text-indigo-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_var(--accent-glow)]" />
+            AI-powered tailoring
+          </span>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <span className="text-gradient">Resume Tailor</span>
+          </h1>
+          <p className="max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            One-page, ATS-aware resume for each job — grounded in your verified profile and template
+            layout.
           </p>
         </div>
-        <Link href="/profile" className="text-sm underline">
-          Profile
+        <Link href="/profile" className="btn-ghost shrink-0">
+          Edit profile
         </Link>
       </header>
 
@@ -429,20 +437,21 @@ export default function HomeWorkspace() {
       ) : null}
 
       <div className="flex w-full flex-col gap-6">
-        <div className="grid w-full gap-3 md:grid-cols-[minmax(0,1fr)_11rem_14rem] md:items-end">
-          <label className="block text-sm">
+        <SectionCard title="Job & AI" subtitle="Paste a URL or description, then tailor in one click.">
+        <div className="grid w-full gap-4 md:grid-cols-[minmax(0,1fr)_11rem_14rem] md:items-end">
+          <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             Job URL
             <input
-              className="mt-1 w-full rounded border px-2 py-1.5 dark:border-zinc-600 dark:bg-zinc-900"
+              className="input-field"
               value={jobUrl}
               onChange={(e) => setJobUrl(e.target.value)}
               placeholder="https://boards.greenhouse.io/... or any job board link"
             />
           </label>
-          <label className="block text-sm">
+          <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             AI provider
             <select
-              className="mt-1 w-full rounded border px-2 py-1.5 dark:border-zinc-600 dark:bg-zinc-900"
+              className="input-field"
               value={provider}
               onChange={(e) => {
                 const v = e.target.value as AiProviderChoice;
@@ -458,7 +467,7 @@ export default function HomeWorkspace() {
               ))}
             </select>
           </label>
-          <label className="block text-sm">
+          <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             Model
             {modelPickerProvider && modelCatalog ? (
               <>
@@ -467,7 +476,7 @@ export default function HomeWorkspace() {
                   {provider === "auto" ? " · Auto primary" : ""})
                 </span>
                 <select
-                  className="mt-1 w-full rounded border px-2 py-1.5 dark:border-zinc-600 dark:bg-zinc-900"
+                  className="input-field"
                   value={selectedModel}
                   onChange={(e) => {
                     const id = modelPickerProvider;
@@ -489,14 +498,14 @@ export default function HomeWorkspace() {
           </label>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-zinc-200/80 pt-5 dark:border-zinc-700/80">
           <button
             type="button"
             disabled={!canGenerate}
             onClick={() => void runGenerate()}
-            className="rounded bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+            className="btn-primary"
           >
-            {jobUrl.trim() ? "Extract job & tailor resume" : "Tailor resume"}
+            {loading ? "Working…" : jobUrl.trim() ? "Extract job & tailor resume" : "Tailor resume"}
           </button>
           <label className="flex max-w-xl items-start gap-2 text-sm">
             <input
@@ -528,16 +537,17 @@ export default function HomeWorkspace() {
           </p>
         ) : null}
 
-        <label className="block w-full text-sm">
+        <label className="mt-5 block w-full text-sm font-medium text-zinc-800 dark:text-zinc-200">
           Job description
           <textarea
-            className="mt-1 w-full rounded border px-2 py-1.5 font-mono text-xs dark:border-zinc-600 dark:bg-zinc-900"
+            className="input-field font-mono text-xs leading-relaxed"
             rows={8}
             value={jobDescription}
             onChange={(e) => setJobDescription(e.target.value)}
             placeholder="Paste a job description here, or use a URL and click Extract job & tailor resume."
           />
         </label>
+        </SectionCard>
 
         <TailorProgress
           key={runId}
@@ -580,10 +590,12 @@ export default function HomeWorkspace() {
         ) : null}
 
         {resume && fontsReady ? (
-          <ResumeEditor resume={resume} onChange={setResume} budgets={budgets} />
+          <SectionCard title="Edit copy" subtitle="Fine-tune headline, summary, and bullets before export.">
+            <ResumeEditor resume={resume} onChange={setResume} budgets={budgets} />
+          </SectionCard>
         ) : null}
 
-        <div className="w-full">
+        <SectionCard title="Preview & PDF" subtitle="One-page layout with live PDF export.">
           {resume && fontsReady ? (
             <ResumePdfPanel
               resume={resume}
@@ -592,9 +604,15 @@ export default function HomeWorkspace() {
               onResumeChange={setResume}
             />
           ) : (
-            <p className="text-sm text-zinc-500">Loading resume preview…</p>
+            <p className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
+              <span
+                className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"
+                aria-hidden
+              />
+              Loading resume preview…
+            </p>
           )}
-        </div>
+        </SectionCard>
       </div>
     </div>
   );

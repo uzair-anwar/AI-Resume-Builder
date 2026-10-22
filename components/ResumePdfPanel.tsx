@@ -102,7 +102,7 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
         </div>
       </div>
       <div
-        className="w-full overflow-hidden bg-white dark:bg-zinc-900"
+        className="w-full overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-inner dark:border-zinc-700/80 dark:bg-zinc-900"
         style={{ minHeight: "min(92vh, 1056px)" }}
       >
         {previewUrl ? (
@@ -113,14 +113,20 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
             className="block h-[min(92vh,1056px)] w-full border-0"
           />
         ) : (
-          <p className="p-4 text-sm text-zinc-500">Generating preview…</p>
+          <p className="flex items-center gap-2 p-6 text-sm text-zinc-500">
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"
+              aria-hidden
+            />
+            Generating preview…
+          </p>
         )}
       </div>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => download()}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm text-white dark:bg-zinc-100 dark:text-zinc-900"
+          className="btn-primary"
         >
           Download PDF
         </button>

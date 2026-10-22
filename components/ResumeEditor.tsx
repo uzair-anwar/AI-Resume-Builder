@@ -29,7 +29,7 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
         <label className="block">
           <span className="flex justify-between font-medium">Headline {lineLabel(1, 1)}</span>
           <input
-            className="mt-1 w-full rounded border border-zinc-300 px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+            className="input-field"
             value={resume.headline}
             onChange={(e) => onChange({ ...resume, headline: e.target.value })}
           />
@@ -40,7 +40,7 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
             {lineLabel(countWrappedLines(resume.summary, COLUMN_WIDTH, SIZE_BODY), summaryMax)}
           </span>
           <textarea
-            className="mt-1 w-full rounded border border-zinc-300 px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+            className="input-field"
             rows={5}
             value={resume.summary}
             onChange={(e) => onChange({ ...resume, summary: e.target.value })}
@@ -52,7 +52,7 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
         {resume.experience.map((exp, ei) => (
           <details
             key={exp.id}
-            className="group rounded border border-zinc-200 p-3 dark:border-zinc-700"
+            className="group rounded-xl border border-zinc-200/80 bg-white/40 p-3 dark:border-zinc-700/80 dark:bg-zinc-900/30"
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold marker:hidden [&::-webkit-details-marker]:hidden">
               <span>
@@ -76,7 +76,7 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
                   </div>
                   <div className="flex gap-2">
                     <textarea
-                      className="min-h-[48px] flex-1 rounded border border-zinc-300 px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+                      className="input-field min-h-[48px] flex-1"
                       value={b.text}
                       onChange={(e) => {
                         const experience = resume.experience.map((x, i) =>

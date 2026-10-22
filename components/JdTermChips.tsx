@@ -29,7 +29,8 @@ export function JdTermChips({ analysis }: { analysis: JobAnalysis }) {
     score !== undefined && baseScore !== undefined ? Math.max(0, score - baseScore) : 0;
 
   return (
-    <div className="space-y-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+    <div className="glass-panel space-y-3 rounded-2xl p-5 sm:p-6">
+      <p className="section-label">ATS insights</p>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="font-semibold">Focus:</span>
