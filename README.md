@@ -1,6 +1,6 @@
 # Resume Tailor
 
-**Resume Tailor** helps you turn one master resume into a **job-specific, one-page PDF** that keeps the same look as your template. You give it a job posting (link or pasted text), choose which AI service to use, and it rewrites headlines, summary, skills, and bullet points to match that role—without inventing experience you do not have.
+**Resume Tailor** helps you turn one master resume into a **job-specific, one-page PDF** that keeps the same look as your template. You give it a job posting (link or pasted text), choose which AI service to use, and it rewrites headlines, summary, skills, bullets, and projects to match that role—without inventing experience you do not have.
 
 There is **no account or login**. Everything runs in your browser and on your own machine (or your own Vercel site). Your API keys never appear in the page—only on the server.
 
@@ -17,18 +17,37 @@ If you only want to **use** the app after someone else set it up, skip to [How t
 
 ## What the app does (in plain language)
 
-1. **Starts from your real profile** — name, jobs, projects, and facts stored in the app (see Profile in the menu).
-2. **Reads the job** — from a job board URL (Greenhouse, Lever, and others when possible) or from text you paste.
-3. **Analyzes the posting** — highlights terms that match, are related, or are missing from your background.
-4. **Uses AI in five focused steps** (you’ll see each one on the progress bar):
-   - **Summary** — job-aligned professional summary from your verified summary facts.
-   - **Work experience** — rewrites bullets per role (company titles and dates stay fixed).
-   - **Skills** — puts JD-matched skills first, keeps related skills from your profile, and fills the skills block (not just 4–6 items).
-   - **Projects** — tailors each project description to the posting.
-   - **Headline** — adjusts the line under your name for the role stack (same seniority level; employer job titles are never changed).
-5. **Shows a live preview** — the PDF updates as steps finish; edit in the browser, then download (e.g. `Uzair_Anwar_Senior_Engineer.pdf`).
+1. **Starts from your real profile** — name, jobs, projects, and facts in `data/master-resume.json` (plus optional browser overrides on **Profile**).
+2. **Reads the job** — from a job board URL (Greenhouse, Lever, Ashby, and others when possible) or from text you paste.
+3. **Analyzes the posting** — JD terms as **matched**, **related**, or **missing**, with an internal **ATS match scorecard** (keywords in narrative, skills, title alignment, structure/metrics).
+4. **Uses AI in staged steps** (progress bar):
+   - **Summary** — job-aligned summary from verified summary facts.
+   - **Work experience** — Google XYZ–style bullets; preserves bullet count per role; prefers **numbers from source facts** and varied opening verbs.
+   - **Skills** — JD-matched skills first; gap-fill and exact JD phrasing where allowed.
+   - **Projects** — picks the **best 3 projects** for the JD from your full project pool, then tailors each description.
+   - **Headline** — short role title (e.g. Forward Deployed Engineer), not JD section headers.
+5. **Deterministic polish** — synonym dedupe (JavaScript vs JS), title casing, metric backfill from facts, phrase weaving for ATS, one-page fit (drop low-relevance bullets before chopping text).
+6. **Cover letter** (optional) — Standard letter, short LinkedIn/Wellfound note, and talking points grounded in the tailored resume.
+7. **Live PDF preview** — edit in the browser, download `Name_RoleTitle.pdf`.
 
-The app **does not** automatically run AI when you type or change settings. You click one button when you are ready. After a successful run, results are **saved in your browser** so a refresh does not call the AI again—until you change the URL, description, AI company, model, or fallback setting.
+The app **does not** auto-run AI when you change settings. You click one button when ready. After a successful run, results are **saved in your browser** until the URL, description, provider, model, or fallback setting changes.
+
+---
+
+## Recent improvements (changelog)
+
+Highlights from recent development (ATS quality, layout, and UX):
+
+| Area | What changed |
+|------|----------------|
+| **ATS / JD** | Curated JD phrases, taxonomy (`data/tech-taxonomy.json`), exact-phrase weaving, hiring-company filtering, internal scorecard in the UI |
+| **Projects** | Master profile can list **many** projects; each tailor run **selects top 3** by JD relevance and only rewrites those |
+| **One-page PDF** | Sentence-aware trim, bullet “widow” handling, richer 2–3 line bullets before aggressive cuts |
+| **Headline & copy** | Title case, spaces not hyphens in role titles (Forward Deployed), one canonical name per tech (no JS + JavaScript together) |
+| **Experience metrics** | Prompts + post-pass to surface verified counts (APIs, team size, etc.) and diversify bullet verbs |
+| **Cover letter** | One-click variants tied to the same job + tailored resume |
+| **UI** | Mesh background, glass panels, gradient progress, full-width workspace, feature-grouped components |
+| **Repo layout** | Feature folders under `components/*` and `lib/server/{ats,tailor,resume,job,cover-letter}` — see [Folder structure](#folder-structure) |
 
 ---
 
@@ -36,59 +55,61 @@ The app **does not** automatically run AI when you type or change settings. You 
 
 ### 1. Open the app
 
-- **On your computer:** whoever set up the project runs it locally (see [For developers](#for-developers-setup-and-run)) or hosts it on Vercel; you open the link they give you (often `http://localhost:3000` at home).
+- **On your computer:** run locally (see [For developers](#for-developers-setup-and-run)) or open your hosted URL (often `http://localhost:3000`).
 
 ### 2. Add the job
 
-Choose **one** of these:
-
 | Option | What to do |
 |--------|------------|
-| **Job link** | Paste the full URL from the job board into **Job URL**. |
-| **Pasted text** | Copy the whole job description into **Job description** (at least a short paragraph). |
+| **Job link** | Paste the full URL into **Job URL**. |
+| **Pasted text** | Copy the job description into **Job description** (at least ~50 characters). |
 
-You can use both: a URL is fetched first; the text box updates with what was found.
+A URL is fetched first when you use **Extract job & tailor resume**; the text box updates when extraction succeeds.
 
 ### 3. Choose AI (optional)
 
-- **AI provider** — “Auto” tries providers in a server-defined order. Or pick one company (e.g. Groq, OpenRouter).
-- **Model** — dropdown lists safe choices for that company (defaults are fine for most people).
-- **Allow fallback** — if checked, the app may switch to another configured provider if the first is busy or rate-limited. Your resume and job text would be sent to that provider too.
+- **AI provider** — **Auto** or a specific vendor (Groq, OpenRouter, Gemini, Cloudflare).
+- **Model** — per-provider dropdown (defaults are usually fine).
+- **Allow fallback** — may send the same job + profile text to another configured provider if the first fails or is rate-limited.
 
-You need at least one AI service configured on the server (API keys). If none are set, tailoring falls back to simple rules without AI.
+At least one provider must be configured server-side. Otherwise the app uses **deterministic** reordering (no AI wording).
 
 ### 4. Run tailoring
 
-Click:
+- **Extract job & tailor resume** — when a **Job URL** is set.
+- **Tailor resume** — description only.
 
-- **Extract job & tailor resume** — when you entered a **Job URL**.
-- **Tailor resume** — when you only pasted **Job description** (no URL).
-
-Wait for the progress steps to finish. If something fails (login wall on a job site, blocked bot, etc.), the app shows an error; try pasting the description manually.
+Watch the progress steps. On extraction errors (login wall, bot block), paste the description manually.
 
 ### 5. Review and download
 
-- Check **matched / related / missing** chips against the posting.
-- Tweak wording in the editor if needed.
-- Use the PDF panel to preview and **download** your one-page resume.
+- **ATS insights** — focus label, match rate, keyword chips, score breakdown.
+- Edit headline, summary, and bullets if needed.
+- **Preview & PDF** — download when the badge shows **1 page**.
 
-### 6. Apply to another job
+Warnings (e.g. which **3 projects** were chosen for this JD) appear under the progress area.
 
-Change the URL or description (and provider/model if you want), then click the button again. A yellow note appears if your settings changed but you have not re-run yet.
+### 6. Cover letter (optional)
+
+After tailoring, generate **Standard**, **Short note**, or **Talking points**; copy or download `.txt`.
+
+### 7. Another job
+
+Change URL or description and run again. A note appears if inputs changed since the last cached run.
 
 ### Profile page
 
-Use **Profile** in the header to adjust your master data in the browser (stored locally). That overrides the default file for future tailoring on this device.
+**Edit profile** — browser-only JSON overrides and user-attested skills (skills list only; bullets still need verified facts in master data).
 
 ---
 
 ## Tips for non-technical users
 
-- **Nothing happens until you click the big button** — changing the model or URL does not spend API credits by itself.
-- **Refreshing the page** is safe after a successful run; you should see the same tailored resume if nothing changed.
-- **Private job links** or sites that require sign-in may not extract; paste the job text instead.
-- **AI can make mistakes** — always read the PDF before sending it to an employer.
-- **Free tiers** (Groq, OpenRouter `:free` models, Gemini free tier, etc.) have limits; if you hit errors, wait a bit or ask whoever manages the keys to add another provider.
+- **Nothing runs until you click the tailor button** — changing model or URL does not spend API credits by itself.
+- **Refresh** after a successful run restores the cached result if the pipeline key unchanged.
+- **Private or login-only job pages** — paste the description.
+- **Always proofread** the PDF before applying.
+- **Free API tiers** have rate limits; enable fallback or add another provider in `.env.local`.
 
 ---
 
@@ -96,8 +117,8 @@ Use **Profile** in the header to adjust your master data in the browser (stored 
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/) (LTS recommended)
-- npm (comes with Node)
+- [Node.js](https://nodejs.org/) (LTS)
+- npm
 
 ### Install
 
@@ -106,19 +127,16 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local` and add **at least one** provider. Keys stay server-side only; models are chosen in the UI.
+Edit `.env.local` with **at least one** provider (keys are server-only):
 
-| Provider | Environment variables | Notes |
-|----------|----------------------|--------|
-| Groq | `GROQ_API_KEY` | [Groq console](https://console.groq.com/keys) |
-| OpenRouter | `OPENROUTER_API_KEY` | App only allows `:free` models in the picker |
-| Google Gemini | `GEMINI_API_KEY` | Free tier; see Google’s data-use terms |
-| Cloudflare Workers AI | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | [Workers AI REST](https://developers.cloudflare.com/workers-ai/get-started/rest-api/) |
+| Provider | Environment variables |
+|----------|----------------------|
+| Groq | `GROQ_API_KEY` |
+| OpenRouter | `OPENROUTER_API_KEY` |
+| Google Gemini | `GEMINI_API_KEY` |
+| Cloudflare Workers AI | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` |
 
-Optional in `.env.local`:
-
-- `AI_FALLBACK_ORDER` — comma-separated list for **Auto** mode (default: `groq,openrouter,gemini,cloudflare`).
-- `AI_MAX_ELAPSED_MS`, `AI_MAX_ATTEMPTS` — limits for retries (useful on slow serverless timeouts).
+Optional: `AI_FALLBACK_ORDER`, `AI_MAX_ELAPSED_MS`, `AI_MAX_ATTEMPTS`.
 
 ### Run locally
 
@@ -128,45 +146,96 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Other commands
+### Commands
 
 ```bash
-npm run build      # production build
-npm run lint       # ESLint
-npm run typecheck  # TypeScript
-npm run format     # Prettier write
-npm run format:check
-npm test           # unit tests (provider config, etc.)
+npm run build       # production build
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm run format      # Prettier write
+npm test            # unit tests
 ```
 
-### Project layout (short)
+---
 
-- `data/master-resume.json` — default master resume on disk.
-- `components/HomeWorkspace.tsx` — main UI (URL, provider, model, generate button, preview).
-- `app/api/tailor/step`, `app/api/tailor/assemble`, `app/api/extract-job` — staged AI steps and final layout assembly.
-- `lib/server/tailor-steps/` — summary, experience, skills, projects, headline runners.
-- `lib/client/session-result.ts` — browser cache of last successful tailor run.
+## Folder structure
+
+The codebase is organized **by feature**, not by file type. Full detail: **[docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md)**.
+
+```
+app/                      # Next.js pages + API routes
+components/
+  ui/                     # AppShell, loaders, SectionCard
+  tailor/                 # Home workspace, progress, ATS chips
+  resume/                 # Editor, PDF preview, ResumeDocument
+  cover-letter/           # Cover letter panel
+  profile/                # Profile editor
+data/                     # master-resume.json, tech-taxonomy.json, role-families.json
+lib/
+  schemas/                # Zod: resume, tailoring, cover-letter, …
+  shared/                   # format, normalize, job-title, synonym dedupe
+  resume/layout/          # One-page measurement, budgets, text-fit
+  client/                   # ai/, profile/, session/, tailor/, hooks/
+  server/
+    ats/                    # analyze-job, JD extract, phrase coverage, scorecard
+    tailor/                 # prompts, validators, pipeline, project-select
+    resume/                 # assemble, validate, polish, bullet-metrics
+    cover-letter/
+    job/                    # extract-job + board extractors
+    ai/                     # LLM provider adapters
+scripts/                  # import-path helpers after refactors
+```
+
+**Import alias:** `@/` → repository root (`tsconfig.json`).
+
+**Key entry points**
+
+| Path | Role |
+|------|------|
+| `components/tailor/HomeWorkspace.tsx` | Main UI |
+| `lib/server/tailor/tailor-steps/pipeline.ts` | End-to-end tailor pipeline |
+| `lib/server/tailor/tailoring-workspace.ts` | Master profile + top-3 project slice per JD |
+| `lib/server/ats/analyze-job.ts` | JD analysis + line budgets |
+| `lib/client/session/session-result.ts` | Browser cache of last tailor run |
+| `data/master-resume.json` | Default master resume on disk |
+
+---
+
+## Roadmap / future improvements
+
+Ideas that fit the current architecture but are not fully built yet:
+
+- **UI** — Side-by-side editor + PDF on ultra-wide screens; light/dark theme toggle (today follows system).
+- **Projects** — Optional AI tie-break when two projects score similarly; manual pin/exclude projects per application.
+- **ATS** — Export Jobscan-style checklist; optional “target score” hints without changing core scoring math.
+- **Profile** — Visual project/fact editor instead of JSON-only overrides; import from LinkedIn/PDF (with review).
+- **Testing** — More integration tests for `project-select`, `bullet-metrics`, and one-page fit edge cases.
+- **Deploy** — Document recommended Vercel timeouts; optional queue for long multi-step AI runs.
+- **Repo** — Optional `src/` layout (`src/app`, `src/components`) if you prefer a single source root.
+- **i18n** — Multi-language master profiles (headline/summary still English-first for most US JDs).
+
+Contributions welcome; keep master facts truthful and avoid inventing metrics in prompts or polish passes.
 
 ---
 
 ## Deploy (Vercel)
 
-1. Import this repository into [Vercel](https://vercel.com).
-2. Add the same environment variables as in `.env.local` (Project → Settings → Environment Variables).
-3. Deploy. The app needs server routes (`/api/*`); a static-only export is not enough.
+1. Import the repo into [Vercel](https://vercel.com).
+2. Set the same env vars as `.env.local`.
+3. Deploy (needs server routes `/api/*`).
 
-On the free Hobby plan, long AI calls may hit time limits; Pro or tuning `AI_MAX_ELAPSED_MS` can help.
+Hobby plan may hit function timeouts on long AI chains; tune `AI_MAX_ELAPSED_MS` or use Pro.
 
 ---
 
 ## Privacy and scope
 
 - Personal tool — **no multi-user auth**.
-- Job text and resume content are sent to whichever AI provider you select (and optionally a fallback provider).
-- Browser storage: job draft, provider/model choices, and last tailored result (this device only).
+- Job text and resume content go to the AI provider you select (and optional fallback).
+- Browser storage: drafts, provider/model prefs, last tailored result (this device only).
 
 ---
 
 ## License and credits
 
-Built for personal resume tailoring with a fixed PDF template (PT Serif, two-column layout). Adjust `data/master-resume.json` and profile overrides for your own background.
+Built for personal resume tailoring with a fixed PDF template (PT Serif, two-column layout). Edit `data/master-resume.json` and profile overrides for your own background.
