@@ -74,6 +74,7 @@ export async function POST(req: Request) {
       workingResume,
       analysis,
     ),
+    workingResume,
   );
   const report = repaired.report;
   let resumeView = assembleResumeView(tailoring, data);

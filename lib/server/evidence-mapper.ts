@@ -309,7 +309,9 @@ export function formatFactWithEvidence(
   }
   if (includeRewriteMode) {
     hints.push(REWRITE_GUIDANCE[modeOverride ?? ev.rewriteMode]);
-    if (ev.hasMetrics) hints.push("has metrics — lead bullet with XYZ measured-by clause");
+    if (ev.hasMetrics) {
+      hints.push("REQUIRED METRIC — include every number from the source fact in this bullet (XYZ measured-by Y)");
+    }
   }
   const lineTag = maxLines ? `max ~${maxLines} lines` : "";
   const meta = [lineTag, ...hints].filter(Boolean).join(" | ");

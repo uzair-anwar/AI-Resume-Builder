@@ -99,6 +99,8 @@ Critical ATS & XYZ Writing Rules:
 - Enterprise ATS parsers (Jobscan, Workday, iCIMS) count a hard or soft skill as missing until the job description's exact wording appears inside the summary, an experience bullet, or a project description. The skills list alone does not clear it. Mirror the spelling from the EXACT JOB DESCRIPTION WORDING block (e.g. "ML Ops" not "MLOps" if that is how the JD spells it).
 - Enterprise ATS parsers score keywords highest when they appear INSIDE experience bullets, not just the skills section.
 - Use the Google XYZ Formula: "Accomplished [X outcome/impact], as measured by [Y: a metric ONLY if it is in the source fact, otherwise the scope/scale/reliability the fact already implies, in words], by doing [Z specific architecture, tools, and JD-aligned practices]." Never invent a number to fill Y.
+- When a source fact contains a count, percentage, team size, or N+ scope (e.g. 12+ APIs, 4 engineers, 3 data stores), that exact number MUST appear in the bullet that cites that fact. Aim for at least half of bullets in each role to include a verifiable number when the role's facts support it.
+- Start each bullet with a distinct past-tense action verb within the same employer; do not repeat the same opening verb (Built, Developed, Created) on consecutive bullets.
 - Start every bullet with a strong past-tense action verb (Architected, Engineered, Scaled, Optimized, Spearheaded, Automated).
 - Follow each fact's [JD keywords to include] and [Terminology bridge] annotations to weave exact JD phrases naturally into the bullet.
 - STRUCTURAL INVARIANT: Preserve the bullet count of the role (if a role has N facts, output N or N-1 bullets). Do NOT collapse a multi-bullet job into 1–2 bullets.

@@ -104,6 +104,13 @@ export function experienceUserPrompt(
     ...new Set(exp.facts.flatMap((f) => f.skills ?? [])),
   ].slice(0, 15);
 
+  const metricFactIds = exp.facts
+    .filter((f) => /\d/.test(f.text))
+    .map((f) => f.id);
+  const metricTarget = metricFactIds.length
+    ? Math.max(1, Math.ceil(exp.facts.length / 2))
+    : 0;
+
   return `Rewrite experience bullets for ${exp.company} using the Google XYZ formula (Accomplished X, measured by Y, by doing Z).
 
 Employer (fixed): ${exp.company}
@@ -116,7 +123,12 @@ Output & Structural Requirements:
 - LENGTH (one-page PDF): each bullet should be 2–3 lines (~130–280 characters) so JD hard/soft skills appear in the bullet text itself. Write complete sentences that end with proper punctuation — never stop mid-phrase. If a bullet wraps to two lines, avoid a single-word second line (add a few more words or tighten to one line).
 - Every bullet must cite at least one sourceFactId from ${exp.company}.
 - Actively weave each fact's [JD keywords to include] and [Terminology bridge] terms into the rewritten bullet text while keeping all metrics exact.
-- METRICS: For facts marked [has metrics], lead with the Google XYZ "measured by Y" clause using the exact numbers from the source. Across the full resume, surface at least 5 bullets that contain a verifiable number from their source facts (counts, team size, APIs, years, etc.).
+- METRICS: Facts with numbers in this role: ${metricFactIds.length ? metricFactIds.join(", ") : "none"}. ${
+    metricTarget
+      ? `Include a verifiable number in at least ${metricTarget} bullets for this employer (copy counts exactly from the citing source fact).`
+      : "No numeric facts in this role — describe scope in words only."
+  } For facts marked [REQUIRED METRIC], the bullet must contain every digit from that source fact.
+- OPENINGS: Use a different past-tense verb to start each bullet in this role (Built, Engineered, Integrated, Mentored, …) — never repeat the same first verb twice.
 - Follow each fact's "Rewrite:" level. Most bullets should stay close to the original meaning. Only facts tagged "LOW JD overlap" may be fully rewritten (new structure and emphasis, or merged with a sibling fact via several sourceFactIds), and even then only from this role's verified facts and skills: never new tools, employers, scope claims, metrics or outcomes.
 - If a fact has no number, describe the scope or outcome the fact already implies in words. Never write a percentage, time or count that is not in the source fact.
 

@@ -2,6 +2,7 @@ import "server-only";
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { AtsScorecard, JobAnalysis } from "@/lib/schemas/tailoring";
 import { buildDefaultResumeView } from "@/lib/build-default-resume";
+import { countResumeBulletsWithMetrics } from "./bullet-metrics";
 import { findTaxonomyTermByName, findTermInText } from "./taxonomy";
 
 function termPresentInText(term: string, text: string): boolean {
@@ -113,8 +114,10 @@ function scoreSingleResumeView(
   );
   const actualBullets = view.experience.reduce((n, e) => n + e.bullets.length, 0);
   const bulletRatio = expectedBullets > 0 ? Math.min(1, actualBullets / expectedBullets) : 1;
-  const hasMetrics = /\b\d+(\.\d+)?%|\b\d+\+/.test(fullCorpus);
-  const structuralScore = Math.round(bulletRatio * 80 + (hasMetrics ? 20 : 10));
+  const { total: bulletTotal, withMetric } = countResumeBulletsWithMetrics(view);
+  const metricRatio = bulletTotal > 0 ? withMetric / bulletTotal : 0;
+  const metricScore = metricRatio >= 0.5 ? 20 : metricRatio >= 0.35 ? 15 : metricRatio > 0 ? 12 : 8;
+  const structuralScore = Math.round(bulletRatio * 80 + metricScore);
 
   const total = Math.min(
     99,

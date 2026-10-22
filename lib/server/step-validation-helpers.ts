@@ -3,7 +3,7 @@ import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { buildSkillResolver } from "@/lib/skills/skill-resolver";
 
 /** Numeric tokens, including unit-suffixed ones (99.9%, 3x, 10k, 800ms), so invented metrics are caught. */
-const METRIC_RE = /\b\d+(?:\.\d+)?(?:%|x\b|k\b|ms\b)?/gi;
+const METRIC_RE = /\b\d+(?:\.\d+)?\+?(?:%|x\b|k\b|ms\b)?/gi;
 
 export function extractNumbers(text: string): string[] {
   return text.match(METRIC_RE) ?? [];

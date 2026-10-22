@@ -71,6 +71,7 @@ export async function runStagedTailorPipeline(
       workingResume,
       analysis,
     ),
+    workingResume,
   );
   const report = repaired.report;
 

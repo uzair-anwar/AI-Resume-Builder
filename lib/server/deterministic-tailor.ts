@@ -55,6 +55,7 @@ export function deterministicTailor(resume: MasterResume, jobText: string): Tail
       ),
       analysis,
     ),
+    working,
   );
 
   const warnings = [
