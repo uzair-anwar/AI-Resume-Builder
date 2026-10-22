@@ -26,7 +26,6 @@ import {
 } from "@/lib/client/session/session-result";
 import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 import { mergeResumeContactFromMaster } from "@/lib/client/profile/merge-resume-contact";
-import { ResumeEditor } from "@/components/resume/ResumeEditor";
 import { ResumePdfPanel } from "@/components/resume/ResumePdfPanel";
 import { JdTermChips } from "@/components/tailor/JdTermChips";
 import { CoverLetterPanel } from "@/components/cover-letter/CoverLetterPanel";
@@ -589,27 +588,29 @@ export default function HomeWorkspace() {
           />
         ) : null}
 
-        {resume && fontsReady ? (
-          <SectionCard title="Edit copy" subtitle="Fine-tune headline, summary, and bullets before export.">
-            <ResumeEditor resume={resume} onChange={setResume} budgets={budgets} />
-          </SectionCard>
-        ) : null}
-
-        {resume && fontsReady ? (
-          <ResumePdfPanel
-            resume={resume}
-            jobTitle={jobTitle}
-            analysis={analysis}
-            onResumeChange={setResume}
-          />
-        ) : (
+        {!fontsReady ? (
           <SectionCard title="Preview & PDF" subtitle="One-page layout with live PDF export.">
             <p className="flex items-center justify-center gap-2 py-16 text-sm text-zinc-500">
               <span
                 className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"
                 aria-hidden
               />
-              Loading resume preview…
+              Loading fonts…
+            </p>
+          </SectionCard>
+        ) : resume ? (
+          <ResumePdfPanel
+            resume={resume}
+            jobTitle={jobTitle}
+            analysis={analysis}
+            budgets={budgets}
+            onResumeChange={setResume}
+          />
+        ) : (
+          <SectionCard title="Preview & PDF" subtitle="One-page layout with live PDF export.">
+            <p className="py-16 text-center text-sm text-zinc-500">
+              Paste a job description and click <strong className="font-medium">Tailor resume</strong>{" "}
+              to generate your one-page PDF (top 3 projects chosen for the JD).
             </p>
           </SectionCard>
         )}

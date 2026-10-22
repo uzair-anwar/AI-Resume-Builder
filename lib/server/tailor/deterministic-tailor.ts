@@ -13,7 +13,7 @@ import { polishResumeView } from "@/lib/server/resume/polish-resume-copy";
 
 export function deterministicTailor(resume: MasterResume, jobText: string): TailorResponse {
   const { master: working, tailoring, analysis } = prepareTailoringWorkspace(resume, jobText);
-  const base = buildDefaultResumeView(working);
+  const base = buildDefaultResumeView(tailoring);
 
   const scoredBullets = working.experience.map((exp) => ({
     exp,

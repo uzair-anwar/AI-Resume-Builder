@@ -17,6 +17,8 @@ import {
 import type { ResumeView } from "@/lib/schemas/resume";
 import { formatDateRangePdf } from "@/lib/shared/format";
 import { formatSkillLine } from "@/lib/resume/layout/skill-line";
+import { RichInlineText } from "@/components/resume/RichTextPdf";
+import { hasRichMarkup, plainFromRich } from "@/lib/shared/rich-text";
 import { breakLines } from "@/lib/resume/layout/linebreak";
 import { fontsLoaded } from "@/lib/resume/layout/fonts";
 import {
@@ -166,8 +168,7 @@ function LinkedInIcon() {
 }
 
 /**
- * Renders text with our own line breaking (same algorithm as the line budgets).
- * Justified paragraphs space words evenly on every line except the last.
+ * Measured line breaking (same algorithm as line budgets). Justified lines space words evenly except the last.
  */
 function Paragraph({
   text,
@@ -198,6 +199,64 @@ function Paragraph({
         ) : (
           <View key={i} style={[styles.lineBox, { width: width + 4 }]}>
             <Text style={styles.body}>{line.text}</Text>
+          </View>
+        ),
+      )}
+    </View>
+  );
+}
+
+/** Rich markup when user edited copy; otherwise use measured Paragraph. */
+function BodyParagraph({
+  text,
+  width,
+  justify,
+  indent = 0,
+}: {
+  text: string;
+  width: number;
+  justify?: boolean;
+  indent?: number;
+}) {
+  if (!hasRichMarkup(text)) {
+    return <Paragraph text={text} width={width} justify={justify} indent={indent} />;
+  }
+  return <RichInlineParagraph text={text} width={width} justify={justify} indent={indent} />;
+}
+
+/** Per-line rich render (markup should not span lines). */
+function RichInlineParagraph({
+  text,
+  width,
+  justify,
+  indent = 0,
+}: {
+  text: string;
+  width: number;
+  justify?: boolean;
+  indent?: number;
+}) {
+  const plain = plainFromRich(text);
+  if (!fontsLoaded()) {
+    return <Text style={[styles.body, { marginLeft: indent }]}>{plain}</Text>;
+  }
+  const lines = breakLines(plain, width, SIZE_BODY, "regular");
+  return (
+    <View style={{ marginLeft: indent, width }}>
+      {lines.map((line, i) =>
+        justify && !line.last && line.units.length > 1 ? (
+          <View key={i} style={styles.justifyRow}>
+            {line.units.map((u, j) => (
+              <Text key={j} style={styles.body}>
+                {u}
+              </Text>
+            ))}
+          </View>
+        ) : (
+          <View key={i} style={[styles.lineBox, { width: width + 4 }]}>
+            <Text style={styles.body}>
+              <RichInlineText text={line.text} baseStyle={{ fontSize: SIZE_BODY, lineHeight: LINE_HEIGHT_BODY }} />
+            </Text>
           </View>
         ),
       )}
@@ -246,7 +305,14 @@ export function ResumeDocument({ resume }: Props) {
           {resume.person.name}
         </Text>
         <Text style={[styles.abs, styles.headline, { left: MARGIN_X, top: G.headlineTop }]}>
-          {resume.headline}
+          {hasRichMarkup(resume.headline) ? (
+            <RichInlineText
+              text={resume.headline}
+              baseStyle={{ fontSize: SIZE_HEADLINE, lineHeight: 15 }}
+            />
+          ) : (
+            resume.headline
+          )}
         </Text>
 
         <View style={[styles.abs, { left: MARGIN_X + 1, top: G.contactRow1Top + 2 }]}>
@@ -279,7 +345,7 @@ export function ResumeDocument({ resume }: Props) {
 
         <View style={[styles.abs, { left: MARGIN_X, top: G.columnsTop, width: COLUMN_WIDTH }]}>
           <Section title="Summary" first />
-          <Paragraph text={resume.summary} width={COLUMN_WIDTH} justify />
+          <BodyParagraph text={resume.summary} width={COLUMN_WIDTH} justify />
 
           <Section title="Skills" labelNext />
           {resume.skills.map((cat, ci) => (
@@ -290,7 +356,7 @@ export function ResumeDocument({ resume }: Props) {
             >
               <Text style={styles.label}>{cat.categoryLabel}</Text>
               <View style={{ marginTop: -0.2 }}>
-                <Paragraph
+                <BodyParagraph
                   text={formatSkillLine(
                     cat.categoryId,
                     cat.items.map((i) => i.name),
@@ -324,7 +390,7 @@ export function ResumeDocument({ resume }: Props) {
                 )}
               </View>
               <View style={{ marginTop: 0.5 }}>
-                <Paragraph text={p.description} width={COLUMN_WIDTH} justify />
+                <BodyParagraph text={p.description} width={COLUMN_WIDTH} justify />
               </View>
             </View>
           ))}
@@ -347,7 +413,7 @@ export function ResumeDocument({ resume }: Props) {
               {exp.bullets.map((b, i) => (
                 <View key={i} style={[styles.bulletRow, { marginTop: i === 0 ? 0 : BULLET_GAP_PT }]}>
                   <View style={styles.bulletDot} />
-                  <Paragraph
+                  <BodyParagraph
                     text={b.text}
                     width={COLUMN_WIDTH - BULLET_INDENT}
                     indent={BULLET_INDENT}

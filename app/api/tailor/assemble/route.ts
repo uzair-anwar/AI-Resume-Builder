@@ -3,7 +3,7 @@ import { z } from "zod";
 import { TailorStepPreviousSchema } from "@/lib/schemas/tailoring-steps";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
 import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
-import { selectedProjectLabel } from "@/lib/server/tailor/project-select";
+import { limitTailoringProjects, selectedProjectLabel } from "@/lib/server/tailor/project-select";
 import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
 import { assembleResumeView, buildChanges } from "@/lib/server/resume/assemble-resume";
 import { attachAtsScorecard } from "@/lib/server/ats/ats-score";
@@ -58,7 +58,11 @@ export async function POST(req: Request) {
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const repaired = repairTailoring(cleaned, tailoring, analysis);
+  const repaired = repairTailoring(
+    limitTailoringProjects(cleaned, tailoring, analysis),
+    tailoring,
+    analysis,
+  );
   const family = detectRoleFamily(parsed.data.jobDescription);
   const data = polishTailoringResult(
     applyPhraseCoverage(

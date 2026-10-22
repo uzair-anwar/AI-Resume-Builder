@@ -1,6 +1,7 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
-import type { JobAnalysis } from "@/lib/schemas/tailoring";
+import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
+import { limitResumeViewProjects } from "@/lib/shared/limit-resume-projects";
 import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
 import { scoreFactRelevance } from "@/lib/shared/relevance";
 
@@ -75,4 +76,35 @@ export function narrowResumeProjects(resume: MasterResume, projectIds: string[])
 export function selectedProjectLabel(resume: MasterResume, ids: string[]): string {
   const byId = new Map(resume.projects.map((p) => [p.id, p]));
   return ids.map((id) => byId.get(id)?.name ?? id).join(", ");
+}
+
+/** JD-selected ids when present; otherwise the tailoring slice on the master profile. */
+export function resolveProjectIdsForResume(
+  resume: MasterResume,
+  analysis?: JobAnalysis | null,
+): string[] {
+  const fromAnalysis = analysis?.selectedProjectIds?.filter((id) =>
+    resume.projects.some((p) => p.id === id),
+  );
+  if (fromAnalysis?.length) return fromAnalysis.slice(0, RESUME_MAX_PROJECTS);
+  if (resume.projects.length <= RESUME_MAX_PROJECTS) {
+    return resume.projects.map((p) => p.id);
+  }
+  return resume.projects.slice(0, RESUME_MAX_PROJECTS).map((p) => p.id);
+}
+
+export { limitResumeViewProjects } from "@/lib/shared/limit-resume-projects";
+
+export function limitTailoringProjects(
+  data: TailoringResult,
+  resume: MasterResume,
+  analysis: JobAnalysis,
+): TailoringResult {
+  const ids = new Set(resolveProjectIdsForResume(resume, analysis));
+  const projects = data.projects.filter((p) => ids.has(p.projectId));
+  const order = [...ids];
+  projects.sort(
+    (a, b) => order.indexOf(a.projectId) - order.indexOf(b.projectId),
+  );
+  return { ...data, projects };
 }

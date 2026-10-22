@@ -4,7 +4,7 @@ import type { TailorResponse } from "@/lib/schemas/tailoring";
 import { TAILOR_STEP_IDS } from "@/lib/schemas/tailoring-steps";
 import type { TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
 import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
-import { selectedProjectLabel } from "@/lib/server/tailor/project-select";
+import { limitTailoringProjects, selectedProjectLabel } from "@/lib/server/tailor/project-select";
 import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
 import { assembleResumeView, buildChanges } from "@/lib/server/resume/assemble-resume";
 import { attachAtsScorecard } from "@/lib/server/ats/ats-score";
@@ -56,7 +56,11 @@ export async function runStagedTailorPipeline(
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
   const family = detectRoleFamily(jobText);
-  const repaired = repairTailoring(cleaned, tailoring, analysis);
+  const repaired = repairTailoring(
+    limitTailoringProjects(cleaned, tailoring, analysis),
+    tailoring,
+    analysis,
+  );
   const data = polishTailoringResult(
     applyPhraseCoverage(
       {

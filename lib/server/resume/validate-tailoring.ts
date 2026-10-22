@@ -5,6 +5,7 @@ import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
 import { TailoringResultSchema } from "@/lib/schemas/tailoring";
 import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
 import { COLUMN_WIDTH, SIZE_BODY, SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { resolveProjectIdsForResume } from "@/lib/server/tailor/project-select";
 import { countSkillLines } from "@/lib/resume/layout/budgets";
 import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 import { getAllFactIds, getFactById } from "./master-resume";
@@ -191,9 +192,9 @@ export function repairTailoring(
     return { experienceId: src.id, bullets };
   });
 
-  // projects (all projects; AI order kept for known ones)
-  const knownProjects = data.projects.filter((p) =>
-    resume.projects.some((x) => x.id === p.projectId),
+  const projectIds = resolveProjectIdsForResume(resume, analysis);
+  const knownProjects = data.projects.filter(
+    (p) => projectIds.includes(p.projectId) && resume.projects.some((x) => x.id === p.projectId),
   );
   const seen = new Set<string>();
   const projects: TailoringResult["projects"] = [];
@@ -238,7 +239,9 @@ export function repairTailoring(
     });
   };
   for (const p of knownProjects) pushProject(p.projectId, p.description, p.sourceFactIds);
-  for (const src of resume.projects) pushProject(src.id, null, []);
+  for (const id of projectIds) {
+    if (!seen.has(id)) pushProject(id, null, []);
+  }
   for (const p of projects) {
     if (!p.sourceFactIds.length) {
       p.sourceFactIds = resume.projects.find((x) => x.id === p.projectId)!.facts.map((f) => f.id);

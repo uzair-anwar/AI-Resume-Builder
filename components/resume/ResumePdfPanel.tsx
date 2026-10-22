@@ -6,15 +6,17 @@ import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { ResumeDocument } from "./ResumeDocument";
+import { ResumeEditor } from "./ResumeEditor";
+import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import { slugifyFilename } from "@/lib/shared/format";
 import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 import { PDFDocument } from "pdf-lib";
-import { fitResumeViewToOnePage } from "@/lib/resume/layout/fit-one-page";
 
 type Props = {
   resume: ResumeView;
   jobTitle?: string;
   analysis?: JobAnalysis | null;
+  budgets?: LineBudgets;
   onResumeChange?: (resume: ResumeView) => void;
 };
 
@@ -23,15 +25,24 @@ function pdfPreviewSrc(blobUrl: string): string {
   return `${blobUrl}#navpanes=0&toolbar=0&view=FitH&zoom=page-width`;
 }
 
-export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: Props) {
+export function ResumePdfPanel({
+  resume,
+  jobTitle,
+  analysis,
+  budgets,
+  onResumeChange,
+}: Props) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [pageCount, setPageCount] = useState(1);
   const [generating, setGenerating] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(async () => {
       setGenerating(true);
+      setPreviewError(null);
       try {
         const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
         if (cancelled) return;
@@ -43,6 +54,10 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
           if (prev) URL.revokeObjectURL(prev);
           return url;
         });
+      } catch (e) {
+        if (!cancelled) {
+          setPreviewError(e instanceof Error ? e.message : "PDF preview failed");
+        }
       } finally {
         if (!cancelled) setGenerating(false);
       }
@@ -58,14 +73,6 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
       if (blobUrl) URL.revokeObjectURL(blobUrl);
     };
   }, [blobUrl]);
-
-  useEffect(() => {
-    if (!onResumeChange || pageCount <= 1) return;
-    const fitted = fitResumeViewToOnePage(resume, analysis);
-    if (JSON.stringify(fitted) !== JSON.stringify(resume)) {
-      onResumeChange(fitted);
-    }
-  }, [pageCount, resume, analysis, onResumeChange]);
 
   const download = useCallback(async () => {
     const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
@@ -105,6 +112,14 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
           ) : null}
           <button
             type="button"
+            onClick={() => setEditMode((v) => !v)}
+            className="btn-ghost text-sm"
+            aria-pressed={editMode}
+          >
+            {editMode ? "Done editing" : "Edit text"}
+          </button>
+          <button
+            type="button"
             onClick={() => download()}
             disabled={generating && !previewUrl}
             className="btn-primary"
@@ -118,7 +133,11 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
         className="w-full overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-inner dark:border-zinc-700/80 dark:bg-zinc-900"
         style={{ minHeight: "min(92vh, 1056px)" }}
       >
-        {previewUrl ? (
+        {previewError ? (
+          <p className="p-6 text-sm text-rose-600 dark:text-rose-400" role="alert">
+            {previewError}
+          </p>
+        ) : previewUrl ? (
           <embed
             type="application/pdf"
             title="Resume PDF preview"
@@ -135,6 +154,12 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
           </p>
         )}
       </div>
+
+      {editMode && onResumeChange ? (
+        <div className="mt-6 border-t border-zinc-200/80 pt-6 dark:border-zinc-700/80">
+          <ResumeEditor resume={resume} onChange={onResumeChange} budgets={budgets} />
+        </div>
+      ) : null}
     </SectionCard>
   );
 }
