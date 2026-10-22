@@ -2,7 +2,11 @@ import "server-only";
 import { extractDynamicJdTerms } from "./jd-dynamic-vocab";
 import { extractCuratedJdTerms } from "./jd-curated-phrases";
 import { filterExtractedJdTerms } from "./jd-term-quality";
-import { isPlausibleJobTitle, sanitizeDetectedJobTitle } from "./job-title-detect";
+import {
+  inferRoleTitleFromJdContent,
+  isPlausibleJobTitle,
+  sanitizeDetectedJobTitle,
+} from "./job-title-detect";
 import { findTaxonomyTermByName, listAllTaxonomyTerms, matchedSurfaces } from "./taxonomy";
 
 export {
@@ -263,7 +267,7 @@ function addTerm(
   }
 }
 
-export function detectJobTitle(jobText: string): string | undefined {
+export function detectJobTitle(jobText: string, defaultHeadline?: string): string | undefined {
   const labeled =
     /(?:position\s*title|job\s*title|role\s*title)\s*:\s*(.+)/i.exec(jobText)?.[1]?.trim() ??
     /(?:hiring|opening)[:\s]+(.+)/i.exec(jobText)?.[1]?.trim() ??
@@ -286,6 +290,9 @@ export function detectJobTitle(jobText: string): string | undefined {
       if (clean) return clean;
     }
   }
+
+  const inferred = inferRoleTitleFromJdContent(jobText, defaultHeadline);
+  if (inferred) return inferred;
 
   const lines = jobText
     .split("\n")

@@ -241,7 +241,7 @@ export async function runTailorStep(
       warnings.push("Headline adjusted to fit guardrails.");
       return { step, partial, warnings, aiUsage: result.aiUsage, usedFallback: true };
     }
-    partial.headline = finalizeResumeHeadline(fallback, analysis, resume, family);
+    partial.headline = finalizeResumeHeadline(fallback, analysis, resume, family, jobText);
     warnings.push("Used deterministic headline from JD role title.");
     return { step, partial, warnings, usedFallback: true };
   }

@@ -61,7 +61,7 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
   const focusLabel =
     topMatched.length > 0
       ? topMatched.join(" · ")
-      : (detectJobTitle(jobText) ?? "General engineering");
+      : (detectJobTitle(jobText, resume.person.defaultHeadline) ?? "General engineering");
 
   const lineBudgets = applyTailorLineBudgetCaps(computeLineBudgets(resume), resume);
   const analysisDraft = {
@@ -80,7 +80,8 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
 
   return {
     detectedTitle: shortJobTitleForFilename(
-      sanitizeDetectedJobTitle(detectJobTitle(jobText)) ?? detectJobTitle(jobText),
+      sanitizeDetectedJobTitle(detectJobTitle(jobText, resume.person.defaultHeadline)) ??
+        detectJobTitle(jobText, resume.person.defaultHeadline),
       { hiringCompanyNames },
     ),
     focusLabel,

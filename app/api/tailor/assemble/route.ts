@@ -69,6 +69,7 @@ export async function POST(req: Request) {
           analysis,
           workingResume,
           family,
+          parsed.data.jobDescription,
         ),
       },
       workingResume,

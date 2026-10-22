@@ -54,3 +54,57 @@ export function sanitizeDetectedJobTitle(raw: string | undefined): string | unde
   if (isPlausibleJobTitle(raw)) return compactRoleTitle(raw);
   return undefined;
 }
+
+function seniorityPrefix(defaultHeadline?: string): string {
+  const h = defaultHeadline?.toLowerCase() ?? "";
+  if (/\b(principal|staff)\b/.test(h)) return "Staff ";
+  if (/\bsenior\b/.test(h)) return "Senior ";
+  if (/\blead\b/.test(h)) return "Lead ";
+  return "Senior ";
+}
+
+/**
+ * JDs without a labeled title (e.g. "The Role" + full-stack delivery) still need a role line.
+ */
+export function inferRoleTitleFromJdContent(
+  jobText: string,
+  defaultHeadline?: string,
+): string | undefined {
+  const hay = jobText.toLowerCase();
+  const prefix = seniorityPrefix(defaultHeadline);
+
+  const fullStackPhrase = /\bfull[- ]?stack\b/.test(hay);
+  const javaBackend = /\b(java|spring boot|spring)\b/.test(hay);
+  const reactFront = /\breact(\s+js)?\b/.test(hay);
+  const explicitSplit =
+    javaBackend &&
+    reactFront &&
+    /\bbackend\b/.test(hay) &&
+    /\bfrontend\b/.test(hay);
+
+  if (fullStackPhrase || explicitSplit) {
+    return compactRoleTitle(`${prefix}Full Stack Engineer`);
+  }
+
+  if (/\bspring boot\b/.test(hay) && /\bbackend\b/.test(hay)) {
+    return compactRoleTitle(`${prefix}Software Engineer`);
+  }
+
+  if (/\bforward[- ]?deployed\b/.test(hay)) {
+    return compactRoleTitle(`${prefix}Forward Deployed Engineer`);
+  }
+
+  return undefined;
+}
+
+/** Headline pattern when JD signals full-stack Java + React (Galvix-style posts). */
+export function headlinePatternForJob(familyHeadline: string, jobText: string): string {
+  const hay = jobText.toLowerCase();
+  const fullStack =
+    /\bfull[- ]?stack\b/.test(hay) ||
+    (/\b(java|spring boot)\b/.test(hay) && /\breact(\s+js)?\b/.test(hay));
+  if (fullStack) {
+    return "Senior Full Stack Engineer";
+  }
+  return familyHeadline;
+}

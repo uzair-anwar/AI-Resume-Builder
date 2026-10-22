@@ -66,6 +66,7 @@ export async function runStagedTailorPipeline(
           analysis,
           workingResume,
           family,
+          jobText,
         ),
       },
       workingResume,
