@@ -528,6 +528,57 @@
           "skills": []
         }
       ]
+    },
+    {
+      "id": "proj-carecentrix",
+      "name": "CareCentrix",
+      "link": "https://www.carecentrix.com/",
+      "facts": [
+        {
+          "id": "fact-pcc-1",
+          "text": "Home health, palliative care, and durable medical equipment platform optimizing discharge decisions and reducing hospital readmissions.",
+          "skills": []
+        },
+        {
+          "id": "fact-pcc-2",
+          "text": "Built customer-facing React.js and Next.js frontends with Node.js, TypeORM, and Redis backends for large healthcare datasets, caching, and predictive modeling.",
+          "skills": ["React.js", "Next.js", "Node.js", "Redis"]
+        }
+      ]
+    },
+    {
+      "id": "proj-ontab",
+      "name": "ONTAB",
+      "link": "https://ontab.com/",
+      "facts": [
+        {
+          "id": "fact-po-1",
+          "text": "Fintech platform for international investment and transaction management for finance teams.",
+          "skills": []
+        },
+        {
+          "id": "fact-po-2",
+          "text": "Developed responsive, dynamic user interfaces and integrations that improved usability for cross-border financial workflows.",
+          "skills": ["React.js"]
+        }
+      ]
+    },
+    {
+      "id": "proj-adaptec",
+      "name": "Adaptec Solutions",
+      "link": "https://adaptecsolutions.com/",
+      "facts": [
+        {
+          "id": "fact-pa-1",
+          "text": "Automation solutions for manufacturing, distribution, and warehousing operations.",
+          "skills": []
+        },
+        {
+          "id": "fact-pa-2",
+          "text": "Led a team of four on Node.js and Express backend development and React.js frontends; deployed on AWS Elastic Beanstalk, Amplify, and Cognito.",
+          "skills": ["Node.js", "Express.js", "React.js", "AWS"]
+        }
+      ]
     }
   ],
   "education": [

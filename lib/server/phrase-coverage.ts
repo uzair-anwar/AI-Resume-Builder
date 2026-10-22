@@ -20,6 +20,13 @@ import {
 
 type FactItem = MasterResume["summaryFacts"][number];
 
+function projectsForWeave(resume: MasterResume, analysis: JobAnalysis) {
+  const ids = analysis.selectedProjectIds;
+  if (!ids?.length) return resume.projects;
+  const set = new Set(ids);
+  return resume.projects.filter((p) => set.has(p.id));
+}
+
 const VERB_PHRASE = /^(improve|build|design|lead|maintain|collaborate|monitor|write|develop|deliver|ensure|provide|create|manage|support|drive|scale|optimize|optimise)\b/i;
 
 function hasPhrase(text: string, phrase: string): boolean {
@@ -97,11 +104,13 @@ function planProfilePhrasePlacements(
 ): Map<string, string[]> {
   const slots: Slot[] = [
     ...resume.experience.flatMap((e) => e.facts.map((f) => ({ factId: f.id, section: "experience" as const }))),
-    ...resume.projects.flatMap((p) => p.facts.map((f) => ({ factId: f.id, section: "project" as const }))),
+    ...projectsForWeave(resume, analysis).flatMap((p) =>
+      p.facts.map((f) => ({ factId: f.id, section: "project" as const })),
+    ),
   ];
   const facts = new Map<string, FactItem>();
   for (const e of resume.experience) for (const f of e.facts) facts.set(f.id, f);
-  for (const p of resume.projects) for (const f of p.facts) facts.set(f.id, f);
+  for (const p of projectsForWeave(resume, analysis)) for (const f of p.facts) facts.set(f.id, f);
 
   const phrases: { phrase: string; canonical: string; rank: number; gap: number }[] = [];
   for (const chip of analysis.terms) {
@@ -302,7 +311,7 @@ export function applyPhraseCoverage(
       used.add(factId);
       continue;
     }
-    const proj = resume.projects.find((p) => p.facts.some((f) => f.id === factId));
+    const proj = projectsForWeave(resume, analysis).find((p) => p.facts.some((f) => f.id === factId));
     const blockP = proj ? projects.find((p) => p.projectId === proj.id) : undefined;
     if (blockP) {
       blockP.description = weavePhrases(blockP.description, phrases);

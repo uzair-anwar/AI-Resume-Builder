@@ -82,6 +82,8 @@ export const JobAnalysisSchema = z.object({
   allowedNarrativeTerms: z.array(z.string()).optional(),
   /** Detected from the JD — never woven onto the resume (e.g. employer name). */
   hiringCompanyNames: z.array(z.string()).optional(),
+  /** Master projects chosen for this JD (max one-page slot count). */
+  selectedProjectIds: z.array(z.string()).optional(),
   atsScorecard: AtsScorecardSchema.optional(),
 });
 

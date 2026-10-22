@@ -3,7 +3,6 @@ import { TailorRequestSchema } from "@/lib/schemas/job";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
 import { tailorResume } from "@/lib/server/tailor-resume";
 import { deterministicTailor } from "@/lib/server/deterministic-tailor";
-import { analyzeJob } from "@/lib/server/analyze-job";
 import { logError, logInfo } from "@/lib/server/log";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
@@ -33,8 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json(result, { headers: PRIVATE_HEADERS });
   } catch (e) {
     logError("tailor_error");
-    const analysis = analyzeJob(parsed.data.jobDescription, resume);
-    const fallback = deterministicTailor(resume, parsed.data.jobDescription, analysis);
+    const fallback = deterministicTailor(resume, parsed.data.jobDescription);
     fallback.warnings.push(
       e instanceof Error ? e.message : "Tailoring failed. Your job description was not modified.",
     );

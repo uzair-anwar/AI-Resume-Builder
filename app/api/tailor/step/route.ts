@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { TailorStepRequestSchema } from "@/lib/schemas/tailoring-steps";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
 import { runTailorStep } from "@/lib/server/tailor-steps/run-step";
-import { analyzeJob } from "@/lib/server/analyze-job";
+import { prepareTailoringWorkspace } from "@/lib/server/tailoring-workspace";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 
@@ -19,12 +19,12 @@ export async function POST(req: Request) {
   const base = loadMasterResume();
   const override = parsed.data.profileOverride as ProfileOverride | undefined;
   const resume = mergeProfileOverride(base, override ?? null);
-  const analysis = analyzeJob(parsed.data.jobDescription, resume);
+  const { tailoring, analysis } = prepareTailoringWorkspace(resume, parsed.data.jobDescription);
 
   try {
     const result = await runTailorStep(
       parsed.data.step,
-      resume,
+      tailoring,
       parsed.data.jobDescription,
       {
         provider: parsed.data.provider,
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
         providerModels: parsed.data.providerModels,
       },
       parsed.data.previous ?? {},
+      analysis,
     );
     return NextResponse.json({ ...result, analysis }, { headers: PRIVATE_HEADERS });
   } catch (e) {

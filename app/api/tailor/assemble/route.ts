@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { TailorStepPreviousSchema } from "@/lib/schemas/tailoring-steps";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
-import { mergeResumeWithExpansionSkills } from "@/lib/server/ats-expansion";
-import { analyzeJob } from "@/lib/server/analyze-job";
+import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
+import { selectedProjectLabel } from "@/lib/server/project-select";
+import { prepareTailoringWorkspace } from "@/lib/server/tailoring-workspace";
 import { assembleResumeView, buildChanges } from "@/lib/server/assemble-resume";
 import { attachAtsScorecard } from "@/lib/server/ats-score";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
@@ -11,6 +12,7 @@ import { applyPhraseCoverage } from "@/lib/server/phrase-coverage";
 import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
 import { finalizeResumeHeadline } from "@/lib/server/headline-align";
 import { detectRoleFamily } from "@/lib/server/role-families";
+import { polishTailoringResult } from "@/lib/server/polish-resume-copy";
 import { repairTailoring } from "@/lib/server/validate-tailoring";
 import { stagedToTailoringResult } from "@/lib/server/tailor-steps/run-step";
 import { PRIVATE_HEADERS } from "@/lib/api-headers";
@@ -41,9 +43,11 @@ export async function POST(req: Request) {
   const base = loadMasterResume();
   const override = parsed.data.profileOverride as ProfileOverride | undefined;
   const resume = mergeProfileOverride(base, override ?? null);
-  const analysis = analyzeJob(parsed.data.jobDescription, resume);
-  const workingResume = mergeResumeWithExpansionSkills(resume, analysis);
-  const raw = stagedToTailoringResult(parsed.data.previous, workingResume);
+  const { master: workingResume, tailoring, analysis } = prepareTailoringWorkspace(
+    resume,
+    parsed.data.jobDescription,
+  );
+  const raw = stagedToTailoringResult(parsed.data.previous, tailoring);
   const cleaned = {
     ...raw,
     headline: nt(raw.headline),
@@ -54,23 +58,25 @@ export async function POST(req: Request) {
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const repaired = repairTailoring(cleaned, workingResume, analysis);
+  const repaired = repairTailoring(cleaned, tailoring, analysis);
   const family = detectRoleFamily(parsed.data.jobDescription);
-  const data = applyPhraseCoverage(
-    {
-      ...repaired.data,
-      headline: finalizeResumeHeadline(
-        repaired.data.headline,
-        analysis,
-        workingResume,
-        family,
-      ),
-    },
-    workingResume,
-    analysis,
+  const data = polishTailoringResult(
+    applyPhraseCoverage(
+      {
+        ...repaired.data,
+        headline: finalizeResumeHeadline(
+          repaired.data.headline,
+          analysis,
+          workingResume,
+          family,
+        ),
+      },
+      workingResume,
+      analysis,
+    ),
   );
   const report = repaired.report;
-  let resumeView = assembleResumeView(workingResume, data);
+  let resumeView = assembleResumeView(tailoring, data);
   resumeView = fitResumeViewToOnePage(resumeView, analysis);
   const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
 
@@ -81,6 +87,11 @@ export async function POST(req: Request) {
       changes: buildChanges(resume, data),
       warnings: [
         ...(parsed.data.warnings ?? []),
+        ...(resume.projects.length > RESUME_MAX_PROJECTS && analysis.selectedProjectIds?.length
+          ? [
+              `Projects on this resume (JD fit): ${selectedProjectLabel(workingResume, analysis.selectedProjectIds)}.`,
+            ]
+          : []),
         ...(report.count
           ? [`Layout guardrails adjusted ${report.count} item(s) to fit the one-page template.`]
           : []),

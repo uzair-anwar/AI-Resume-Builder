@@ -7,6 +7,7 @@ import type {
   TailorStepResponse,
 } from "@/lib/schemas/tailoring-steps";
 import { analyzeJob } from "../analyze-job";
+import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { finalizeResumeHeadline } from "../headline-align";
 import {
   EXPERIENCE_JSON_SCHEMA,
@@ -55,8 +56,9 @@ export async function runTailorStep(
   jobText: string,
   ai: TailorAiOptions,
   previous: TailorStepPrevious = {},
+  precomputedAnalysis?: JobAnalysis,
 ): Promise<TailorStepResponse> {
-  const analysis = analyzeJob(jobText, resume);
+  const analysis = precomputedAnalysis ?? analyzeJob(jobText, resume);
   const family = detectRoleFamily(jobText);
   const warnings: string[] = [];
   const partial: TailorStepPartial = {};

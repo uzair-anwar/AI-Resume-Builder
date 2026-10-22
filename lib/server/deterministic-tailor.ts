@@ -1,19 +1,18 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
-import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
+import type { TailorResponse } from "@/lib/schemas/tailoring";
 import { buildDefaultResumeView } from "@/lib/build-default-resume";
 import { attachAtsScorecard } from "./ats-score";
-import { mergeResumeWithExpansionSkills } from "./ats-expansion";
 import { coverResumeView } from "./phrase-coverage";
 import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
+import { RESUME_MAX_PROJECTS } from "@/lib/layout/constants";
 import { scoreFactRelevance } from "./select-facts";
+import { prepareTailoringWorkspace } from "./tailoring-workspace";
+import { selectedProjectLabel } from "./project-select";
+import { polishResumeView } from "./polish-resume-copy";
 
-export function deterministicTailor(
-  resume: MasterResume,
-  jobText: string,
-  analysis: JobAnalysis,
-): TailorResponse {
-  const working = mergeResumeWithExpansionSkills(resume, analysis);
+export function deterministicTailor(resume: MasterResume, jobText: string): TailorResponse {
+  const { master: working, tailoring, analysis } = prepareTailoringWorkspace(resume, jobText);
   const base = buildDefaultResumeView(working);
 
   const scoredBullets = working.experience.map((exp) => ({
@@ -35,40 +34,43 @@ export function deterministicTailor(
     bullets: facts.map((f) => ({ text: f.text, sourceFactIds: [f.id] })),
   }));
 
-  const projects = [...working.projects]
-    .sort((a, b) => {
-      const ta = a.facts.map((f) => f.text).join(" ");
-      const tb = b.facts.map((f) => f.text).join(" ");
-      return scoreFactRelevance(tb, jobText, analysis) - scoreFactRelevance(ta, jobText, analysis);
-    })
-    .map((p) => ({
-      id: p.id,
-      name: p.name,
-      link: p.link,
-      description: p.facts.map((f) => f.text).join(" "),
-      sourceFactIds: p.facts.map((f) => f.id),
-    }));
+  const projects = tailoring.projects.map((p) => ({
+    id: p.id,
+    name: p.name,
+    link: p.link,
+    description: p.facts.map((f) => f.text).join(" "),
+    sourceFactIds: p.facts.map((f) => f.id),
+  }));
 
-  const tailoredResume = fitResumeViewToOnePage(
-    coverResumeView(
-      {
-        ...base,
-        experience,
-        projects,
-      },
-      working,
+  const tailoredResume = polishResumeView(
+    fitResumeViewToOnePage(
+      coverResumeView(
+        {
+          ...base,
+          experience,
+          projects,
+        },
+        working,
+        analysis,
+      ),
       analysis,
     ),
-    analysis,
   );
+
+  const warnings = [
+    "Used deterministic reordering (AI unavailable or validation failed). Wording unchanged.",
+  ];
+  if (resume.projects.length > RESUME_MAX_PROJECTS && analysis.selectedProjectIds?.length) {
+    warnings.push(
+      `Projects on this resume (JD fit): ${selectedProjectLabel(working, analysis.selectedProjectIds)}.`,
+    );
+  }
 
   return {
     resume: tailoredResume,
     analysis: attachAtsScorecard(analysis, working, tailoredResume),
     changes: [],
-    warnings: [
-      "Used deterministic reordering (AI unavailable or validation failed). Wording unchanged.",
-    ],
+    warnings,
     usedFallback: true,
   };
 }
