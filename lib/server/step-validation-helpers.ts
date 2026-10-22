@@ -15,7 +15,12 @@ export function containsForbiddenTerm(text: string, term: string): boolean {
 }
 
 export function hasForeignTerm(text: string, analysis: JobAnalysis): boolean {
-  const missingTerms = (analysis.missingTerms ?? []).filter((t) => t.length >= 3);
+  const allow = new Set(
+    (analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()),
+  );
+  const missingTerms = (analysis.missingTerms ?? []).filter(
+    (t) => t.length >= 3 && !allow.has(t.toLowerCase()),
+  );
   return missingTerms.some((t) => containsForbiddenTerm(text, t));
 }
 

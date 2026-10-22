@@ -3,6 +3,7 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { TailorResponse } from "@/lib/schemas/tailoring";
 import { TAILOR_STEP_IDS } from "@/lib/schemas/tailoring-steps";
 import type { TailorStepPrevious } from "@/lib/schemas/tailoring-steps";
+import { mergeResumeWithExpansionSkills } from "../ats-expansion";
 import { analyzeJob } from "../analyze-job";
 import { assembleResumeView, buildChanges } from "../assemble-resume";
 import { attachAtsScorecard } from "../ats-score";
@@ -19,18 +20,19 @@ export async function runStagedTailorPipeline(
   ai: TailorAiOptions = {},
 ): Promise<TailorResponse> {
   const analysis = analyzeJob(jobText, resume);
+  const workingResume = mergeResumeWithExpansionSkills(resume, analysis);
   let state: TailorStepPrevious = {};
   const warnings: string[] = [];
   let lastAiUsage: TailorResponse["aiUsage"];
 
   for (const step of TAILOR_STEP_IDS) {
-    const result = await runTailorStep(step, resume, jobText, ai, state);
+    const result = await runTailorStep(step, workingResume, jobText, ai, state);
     state = mergePrevious(state, result.partial);
     warnings.push(...result.warnings);
     if (result.aiUsage) lastAiUsage = result.aiUsage;
   }
 
-  const raw = stagedToTailoringResult(state, resume);
+  const raw = stagedToTailoringResult(state, workingResume);
   const cleaned: typeof raw = {
     ...raw,
     headline: nt(raw.headline),
@@ -41,12 +43,12 @@ export async function runStagedTailorPipeline(
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const repaired = repairTailoring(cleaned, resume, analysis);
-  const data = applyPhraseCoverage(repaired.data, resume, analysis);
+  const repaired = repairTailoring(cleaned, workingResume, analysis);
+  const data = applyPhraseCoverage(repaired.data, workingResume, analysis);
   const report = repaired.report;
 
-  const resumeView = assembleResumeView(resume, data);
-  const scoredAnalysis = attachAtsScorecard(analysis, resume, resumeView);
+  const resumeView = assembleResumeView(workingResume, data);
+  const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
   return {
     resume: resumeView,
     analysis: scoredAnalysis,

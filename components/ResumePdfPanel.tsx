@@ -81,11 +81,13 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const role = shortJobTitleForFilename(jobTitle);
+    const role = shortJobTitleForFilename(jobTitle || analysis?.detectedTitle, {
+      hiringCompanyNames: analysis?.hiringCompanyNames,
+    });
     a.download = `${slugifyFilename([resume.person.name.replace(/\s+/g, "_"), role])}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [resume, jobTitle]);
+  }, [resume, jobTitle, analysis]);
 
   const pageBadge =
     pageCount <= 1 ? (

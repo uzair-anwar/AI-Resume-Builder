@@ -268,7 +268,18 @@
     { "id": "payments", "canonical": "Payment Systems", "aliases": ["payment processing", "payments platform", "financial systems", "financial system", "financial products", "financial product", "fintech", "money movement"], "family": "domain", "kind": "concept" },
     { "id": "healthcare", "canonical": "Healthcare Systems", "aliases": ["healthcare platform", "health tech", "healthtech", "hipaa"], "family": "domain", "kind": "concept" },
     { "id": "code-quality", "canonical": "Code Quality", "aliases": ["clean code", "code quality standards", "maintainable code"], "family": "quality", "kind": "soft" },
-    { "id": "ownership", "canonical": "End-to-End Ownership", "aliases": ["end-to-end ownership", "own features", "full lifecycle", "sdlc", "software development lifecycle"], "family": "process", "kind": "soft" }
+    { "id": "ownership", "canonical": "End-to-End Ownership", "aliases": ["end-to-end ownership", "own features", "full lifecycle", "sdlc", "software development lifecycle"], "family": "process", "kind": "soft" },
+
+    { "id": "fraud-detection", "canonical": "Fraud Detection", "aliases": ["fraud prevention", "anti-fraud", "transaction monitoring", "financial crime"], "family": "domain", "kind": "concept" },
+    { "id": "data-structures", "canonical": "Data Structures", "aliases": ["data structure", "algorithms and data structures", "algorithms", "algorithm design"], "family": "cs", "kind": "concept" },
+    { "id": "failure-modes", "canonical": "Failure Modes", "aliases": ["failure mode", "fault tolerance", "resilience patterns", "graceful degradation"], "family": "architecture", "kind": "concept" },
+    { "id": "user-management", "canonical": "User Management", "aliases": ["user administration", "identity management", "access management", "user provisioning"], "family": "architecture", "kind": "concept" },
+    { "id": "regulatory-compliance", "canonical": "Regulatory Requirements", "aliases": ["regulatory requirement", "regulatory compliance", "compliance requirements", "regulatory standards"], "family": "domain", "kind": "concept" },
+    { "id": "computer-science", "canonical": "Computer Science", "aliases": ["cs degree", "computing fundamentals"], "family": "cs", "kind": "concept" },
+    { "id": "collaboration", "canonical": "Collaboration", "aliases": ["collaborate", "collaborating", "cross-functional collaboration"], "family": "process", "kind": "soft" },
+    { "id": "innovation", "canonical": "Innovation", "aliases": ["innovative", "innovating"], "family": "process", "kind": "soft" },
+    { "id": "initiative", "canonical": "Initiative", "aliases": ["self-starter", "proactive"], "family": "process", "kind": "soft" },
+    { "id": "maintaining", "canonical": "Maintaining", "aliases": ["maintain", "maintained", "maintenance"], "family": "process", "kind": "soft" }
   ],
   "transferableGroups": [
     {

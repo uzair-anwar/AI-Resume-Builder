@@ -40,6 +40,7 @@ export const JdTermChipSchema = z.object({
   term: z.string(),
   /** Wordings that actually appear in the job description. Jobscan matches these, not our canonical name. */
   surfaceForms: z.array(z.string()).optional(),
+  termKind: z.enum(["tool", "concept", "soft", "industry"]).optional(),
   status: z.enum(["matched", "related", "missing"]),
   relatedVia: z.string().optional(),
   inTailoredResume: z.boolean().optional(),
@@ -77,6 +78,10 @@ export const JobAnalysisSchema = z.object({
   lineBudgets: LineBudgetsSchema,
   profileVocabulary: z.array(z.string()).optional(),
   missingTerms: z.array(z.string()).optional(),
+  /** JD terms intentionally woven via ATS gap-fill; must not trigger "foreign term" rejection. */
+  allowedNarrativeTerms: z.array(z.string()).optional(),
+  /** Detected from the JD — never woven onto the resume (e.g. employer name). */
+  hiringCompanyNames: z.array(z.string()).optional(),
   atsScorecard: AtsScorecardSchema.optional(),
 });
 

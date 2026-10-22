@@ -1,5 +1,13 @@
 import "server-only";
-import { findTaxonomyTermByName, loadTaxonomy, matchedSurfaces } from "./taxonomy";
+import { extractDynamicJdTerms } from "./jd-dynamic-vocab";
+import { findTaxonomyTermByName, listAllTaxonomyTerms, matchedSurfaces } from "./taxonomy";
+
+export {
+  classifyJdTermKind,
+  detectHiringCompanyNames,
+  extractDynamicJdTerms,
+  isHiringCompanyTerm,
+} from "./jd-dynamic-vocab";
 
 const STOPWORDS = new Set(
   (
@@ -86,12 +94,12 @@ function isTechShape(token: string): boolean {
 export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
   const map = new Map<string, ExtractedJdTerm>();
   const sections = splitSections(jobText);
-  const tax = loadTaxonomy();
+  const taxTerms = listAllTaxonomyTerms();
 
-  // 1. Extract known taxonomy terms & concepts per section (highest precision)
+  // 1. Extract known taxonomy + per-JD dynamic terms per section (highest precision)
   for (const { text, section } of sections) {
     const weightBase = section === "required" ? 4 : section === "preferred" ? 2 : 1;
-    for (const t of tax.terms) {
+    for (const t of taxTerms) {
       const surfaces = matchedSurfaces(text, t);
       if (surfaces.length) addTerm(map, t.canonical, weightBase + 1, section, surfaces);
     }
@@ -99,9 +107,14 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
     for (const phrase of extractPhrases(text)) addTerm(map, phrase, weightBase + 1, section);
   }
 
+  // 2. Direct JD vocabulary (lists, bullets, multi-word phrases) — any industry/stack
+  for (const dyn of extractDynamicJdTerms(jobText)) {
+    addTerm(map, dyn.term, dyn.weight, dyn.section, dyn.surfaceForms);
+  }
+
   dropEmbeddedSurfaces(map);
 
-  const canonical = new Set(tax.terms.map((t) => t.canonical.toLowerCase()));
+  const canonical = new Set(taxTerms.map((t) => t.canonical.toLowerCase()));
   return dropFragmentTerms(
     [...map.values()].filter(
       (t) =>
@@ -112,7 +125,7 @@ export function extractJdTerms(jobText: string): ExtractedJdTerm[] {
     canonical,
   )
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 32);
+    .slice(0, 56);
 }
 
 /**

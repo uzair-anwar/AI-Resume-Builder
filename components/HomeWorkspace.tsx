@@ -25,6 +25,7 @@ import {
   saveStoredTailorSession,
 } from "@/lib/client/session-result";
 import { shortJobTitleForFilename } from "@/lib/job-title";
+import { mergeResumeContactFromMaster } from "@/lib/client/merge-resume-contact";
 import { ResumeEditor } from "./ResumeEditor";
 import { ResumePdfPanel } from "./ResumePdfPanel";
 import { JdTermChips } from "./JdTermChips";
@@ -100,9 +101,12 @@ export default function HomeWorkspace() {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((data) => {
-        if (restoredFromStorage.current) return;
-        setResume(data.defaultResume);
         if (data.defaultResume && data.lineBudgets) setBudgets(data.lineBudgets);
+        setResume((prev) =>
+          prev
+            ? mergeResumeContactFromMaster(prev, data.defaultResume.person)
+            : data.defaultResume,
+        );
       })
       .catch(() => setError("Failed to load profile"));
     fetch("/api/ai-providers")
@@ -129,7 +133,9 @@ export default function HomeWorkspace() {
           restoredFromStorage.current = true;
           setCompletedPipelineKey(stored.pipelineKey);
           setJobTitle(stored.jobTitle);
-          setResume(stored.resume);
+          setResume((prev) =>
+            mergeResumeContactFromMaster(stored.resume, prev?.person ?? stored.resume.person),
+          );
           setAnalysis(stored.analysis);
           setCoverLetter(stored.coverLetter ?? null);
           setBudgets(stored.budgets ?? stored.analysis.lineBudgets);
@@ -232,9 +238,11 @@ export default function HomeWorkspace() {
         setBudgets(data.analysis.lineBudgets);
         setWarnings(data.warnings ?? []);
         setAiUsage(data.aiUsage);
-        const detected = data.analysis.detectedTitle;
-        const nextTitle = detected ? shortJobTitleForFilename(detected) : title;
-        if (detected) setJobTitle(nextTitle);
+        const hiring = data.analysis.hiringCompanyNames;
+        const nextTitle = title.trim()
+          ? shortJobTitleForFilename(title, { hiringCompanyNames: hiring })
+          : shortJobTitleForFilename(data.analysis.detectedTitle, { hiringCompanyNames: hiring });
+        if (!title.trim() && nextTitle !== "Resume") setJobTitle(nextTitle);
         setCompletedPipelineKey(pipelineKey);
         setCompletedProgressSteps((prev) => [...prev, "assemble", "preview"]);
         setActiveProgressStep(null);

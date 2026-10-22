@@ -2,12 +2,13 @@ import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import { redactContactDetails } from "./ai/redact";
+import { formatExpansionPromptBlock } from "./ats-expansion";
 import type { RoleFamily } from "./role-families";
 
 const CORE_RULES = `Ground rules (non-negotiable):
 - Use ONLY verified facts, skills, and metrics supplied below.
 - Never invent employers, titles, dates, degrees, tools, or numbers.
-- Never claim a hard technology listed under "Do not claim (unverified tools)".
+- Never claim a hard technology listed under "Do not claim (unverified tools)" unless the ATS gap-fill plan explicitly assigns it with a bridge reason (then weave the JD phrase into narrative/skills as instructed).
 - A "Terminology bridge" for a tool (marked "do NOT name <tool>") means: describe the candidate's verified equivalent work using generic capability words; never write the unverified tool's name.
 - Never present a technology as a specialty unless it is listed as strongly evidenced for this candidate.
 - You MAY and SHOULD align phrasing with JD architectural concepts, domain terms, and soft skills (e.g., distributed systems, microservices architecture, cloud infrastructure, reliability, performance optimization, cross-functional leadership) whenever the candidate's facts demonstrate that work.
@@ -48,6 +49,7 @@ export function jobTargetingBlock(
   jobText: string,
   analysis: JobAnalysis,
   family: RoleFamily,
+  resume?: import("@/lib/schemas/resume").MasterResume,
 ): string {
   const title = analysis.detectedTitle?.trim();
   return [
@@ -56,6 +58,7 @@ export function jobTargetingBlock(
     `Primary focus for this application: ${analysis.focusLabel}`,
     `Emphasis for this candidate type: ${family.summaryEmphasis}`,
     formatKeywordStrategy(analysis),
+    resume ? formatExpansionPromptBlock(resume, analysis) : "",
     "",
     "<<<JOB_DESCRIPTION>>>",
     safeJobText(jobText),
@@ -68,7 +71,7 @@ export function jobTargetingBlock(
 export function summarySystemPrompt(): string {
   return `You are a Principal Technical Recruiter and ATS Optimization Specialist writing a high-impact executive summary.
 
-Your task: write a NEW, tailored 3-sentence professional summary that maximizes ATS keyword match and recruiter conversion for the target job.
+Your task: write a NEW, tailored 3-sentence professional summary that maximizes ATS keyword match and recruiter conversion for the target job. The master profile is intentionally generic; this application is a one-page, role-specific view — prioritize this job's vocabulary over listing every past technology.
 
 3-Sentence Blueprint:
 1. Sentence 1 (Positioning & Core Stack): Mirror the target role title/seniority, state years of experience and domains from the facts, and name the candidate's PRIMARY (strongly evidenced) stack first, then 1-2 JD-matched technologies. The candidate's identity must stay consistent with their resume headline (e.g. a Node.js backend engineer stays a Node.js engineer even when the JD also lists Python).

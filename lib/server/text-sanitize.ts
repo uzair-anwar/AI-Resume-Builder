@@ -5,7 +5,10 @@ import { containsForbiddenTerm, extractNumbers } from "./step-validation-helpers
 
 export function stripForbiddenTerms(text: string, analysis: JobAnalysis): string {
   let t = text;
-  const terms = (analysis.missingTerms ?? []).filter((term) => term.length >= 3);
+  const allow = new Set((analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()));
+  const terms = (analysis.missingTerms ?? []).filter(
+    (term) => term.length >= 3 && !allow.has(term.toLowerCase()),
+  );
   for (const term of terms) {
     if (!containsForbiddenTerm(t, term)) continue;
     const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

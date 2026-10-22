@@ -58,7 +58,7 @@ Working knowledge (mention only as secondary, never as the specialty): ${tiers.w
 Verified summary facts (with per-fact JD keyword annotations):
 ${facts}
 
-${jobTargetingBlock(jobText, analysis, family)}`;
+${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }
 
 export const SUMMARY_JSON_SCHEMA = {
@@ -125,7 +125,7 @@ Skills demonstrated in this role: ${roleSkills.join(", ") || "see facts"}
 Verified facts for ${exp.company} (with per-fact JD evidence mapping):
 ${facts}
 
-${jobTargetingBlock(jobText, analysis, family)}`;
+${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }
 
 export const EXPERIENCE_JSON_SCHEMA = {
@@ -175,7 +175,7 @@ ${categories}
 Candidate skills (id: name):
 ${formatSkillCandidateList(resume, candidateIds, analysis)}
 
-${jobTargetingBlock(jobText, analysis, family)}`;
+${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }
 
 export const SKILLS_JSON_SCHEMA = {
@@ -220,7 +220,7 @@ ${phraseInstructions(proj.facts.map((f) => f.id), planPhrasePlacements(resume, a
 Verified project facts (with JD evidence mapping):
 ${facts}
 
-${jobTargetingBlock(jobText, analysis, family)}`;
+${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }
 
 export const PROJECT_JSON_SCHEMA = {
@@ -261,7 +261,7 @@ Constraints:
 - ~65 characters when possible; hard max 115.
 - Align role title with the JD while keeping seniority, followed by 2–3 JD-matched skills in parentheses.
 
-${jobTargetingBlock(jobText, analysis, family)}`;
+${jobTargetingBlock(jobText, analysis, family, resume)}`;
 }
 
 export const HEADLINE_JSON_SCHEMA = {

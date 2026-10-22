@@ -1,7 +1,14 @@
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
+import {
+  buildExpansionTargets,
+  expansionBridgeReason,
+  expansionSummaryPhrases,
+  planExpansionPhraseMap,
+} from "./ats-expansion";
 import { mapFactToJdEvidence } from "./evidence-mapper";
 import { findTaxonomyTermByName } from "./taxonomy";
+import { classifyJdTermKind, isHiringCompanyTerm } from "./jd-dynamic-vocab";
 
 type FactItem = MasterResume["summaryFacts"][number];
 
@@ -19,7 +26,7 @@ function joinAnd(parts: string[]): string {
   return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;
 }
 
-/** Adds the exact JD wording Jobscan looks for, without inventing a new claim. */
+/** Adds the exact JD wording Jobscan looks for. */
 export function weavePhrases(text: string, phrases: string[]): string {
   const missing = phrases.filter(
     (p, i) =>
@@ -41,20 +48,38 @@ function labelMatches(label: string, canonical: string): boolean {
   return head === canonical.toLowerCase();
 }
 
-function supportScore(fact: FactItem, canonical: string, analysis: JobAnalysis): number {
+function supportScore(
+  fact: FactItem,
+  canonical: string,
+  analysis: JobAnalysis,
+  resume: MasterResume,
+): number {
   const ev = mapFactToJdEvidence(fact, analysis);
   if (ev.directKeywords.some((k) => labelMatches(k, canonical))) return 5;
   if (ev.bridgedPhrases.some((b) => labelMatches(b, canonical))) return 4;
+  if (expansionBridgeReason(canonical, resume, { hiringCompanyNames: analysis.hiringCompanyNames })) return 2;
+  const chip = analysis.terms.find((t) => t.term.toLowerCase() === canonical.toLowerCase());
+  if (chip && chip.status !== "matched" && !isHiringCompanyTerm(chip.term, analysis.hiringCompanyNames ?? [])) {
+    return 2;
+  }
   return 0;
 }
 
 type Slot = { factId: string; section: "experience" | "project" };
 
-/**
- * Assigns each JD hard/soft phrase the profile can support to one experience bullet or project,
- * using the job description's own wording. Tools the candidate has not used are left out.
- */
-export function planPhrasePlacements(
+function mergePlans(a: Map<string, string[]>, b: Map<string, string[]>): Map<string, string[]> {
+  const out = new Map(a);
+  for (const [id, phrases] of b) {
+    const list = [...(out.get(id) ?? [])];
+    for (const p of phrases) {
+      if (!list.some((x) => x.toLowerCase() === p.toLowerCase())) list.push(p);
+    }
+    if (list.length) out.set(id, list);
+  }
+  return out;
+}
+
+function planProfilePhrasePlacements(
   resume: MasterResume,
   analysis: JobAnalysis,
 ): Map<string, string[]> {
@@ -68,15 +93,14 @@ export function planPhrasePlacements(
 
   const phrases: { phrase: string; canonical: string; rank: number }[] = [];
   for (const chip of analysis.terms) {
-    if (chip.status === "missing") continue;
+    if (isHiringCompanyTerm(chip.term, analysis.hiringCompanyNames ?? [])) continue;
     const tax = findTaxonomyTermByName(chip.term);
-    const kind = tax?.kind ?? "tool";
-    if (kind === "tool" && chip.status !== "matched") continue;
+    const kind = tax?.kind ?? chip.termKind ?? classifyJdTermKind(chip.term);
+    if (kind === "noise") continue;
     const rank = kind === "soft" ? 0 : kind === "concept" ? 1 : 2;
     const forms = chip.surfaceForms?.length ? chip.surfaceForms : [chip.term];
     for (const phrase of forms) {
       if (phrases.some((p) => p.phrase.toLowerCase() === phrase.toLowerCase())) continue;
-      // "technical leadership" already covers the shorter word "leadership".
       if (phrases.some((p) => p.phrase.length > phrase.length && hasPhrase(p.phrase, phrase))) continue;
       for (let i = phrases.length - 1; i >= 0; i--) {
         const prev = phrases[i]!;
@@ -100,15 +124,14 @@ export function planPhrasePlacements(
 
   let placed = 0;
   for (const item of phrases) {
-    if (placed >= 14) break;
+    if (placed >= 22) break;
     const ranked = slots
       .map((slot) => ({
         slot,
-        score: supportScore(facts.get(slot.factId)!, item.canonical, analysis),
+        score: supportScore(facts.get(slot.factId)!, item.canonical, analysis, resume),
       }))
       .filter((x) => x.score > 0 && taken(x.slot.factId) < 2)
       .sort((a, b) => {
-        // Spread phrases: projects absorb some so both sections carry JD wording.
         const projectBias = placed % 3 === 2 ? 1 : 0;
         const sec = (s: Slot) => (s.section === "project" ? projectBias : 1 - projectBias);
         return b.score + sec(b.slot) - (a.score + sec(a.slot)) || taken(a.slot.factId) - taken(b.slot.factId);
@@ -119,6 +142,13 @@ export function planPhrasePlacements(
     placed += 1;
   }
   return plan;
+}
+
+export function planPhrasePlacements(
+  resume: MasterResume,
+  analysis: JobAnalysis,
+): Map<string, string[]> {
+  return mergePlans(planProfilePhrasePlacements(resume, analysis), planExpansionPhraseMap(resume, analysis));
 }
 
 export function phraseInstructions(factIds: string[], plan: Map<string, string[]>): string {
@@ -134,7 +164,6 @@ export function phraseInstructions(factIds: string[], plan: Map<string, string[]
   ].join("\n");
 }
 
-/** Drops phrases the tailored text already contains, so a rewrite that kept the wording is left alone. */
 function withoutAlreadyPresent(plan: Map<string, string[]>, text: string): Map<string, string[]> {
   const out = new Map<string, string[]>();
   for (const [id, phrases] of plan) {
@@ -172,7 +201,14 @@ export function applyPhraseCoverage(
     ...result.projects.map((p) => p.description),
   ].join("\n");
   const plan = withoutAlreadyPresent(planPhrasePlacements(resume, analysis), existing);
-  if (!plan.size) return result;
+  const summaryPhrases = expansionSummaryPhrases(buildExpansionTargets(resume, analysis)).filter(
+    (p) => !hasPhrase(result.summary, p),
+  );
+
+  let summary = result.summary;
+  if (summaryPhrases.length) summary = weavePhrases(summary, summaryPhrases);
+
+  if (!plan.size && summary === result.summary) return result;
   const used = new Set<string>();
 
   const experience = result.experience.map((exp) => ({
@@ -188,7 +224,6 @@ export function applyPhraseCoverage(
     description: weaveOwned(p.description, p.sourceFactIds, plan, used),
   }));
 
-  // A fact the model dropped still needs its phrase. Attach it to that role's last bullet.
   for (const [factId, phrases] of plan) {
     if (used.has(factId)) continue;
     const role = resume.experience.find((e) => e.facts.some((f) => f.id === factId));
@@ -207,47 +242,42 @@ export function applyPhraseCoverage(
     }
   }
 
-  return { ...result, experience, projects };
+  return { ...result, summary, experience, projects };
 }
 
-/** Same placement pass for an already assembled resume view (deterministic fallback). */
 export function coverResumeView(
   view: ResumeView,
   resume: MasterResume,
   analysis: JobAnalysis,
 ): ResumeView {
-  const existing = [
-    view.summary,
-    ...view.experience.flatMap((e) => e.bullets.map((b) => b.text)),
-    ...view.projects.map((p) => p.description),
-  ].join("\n");
-  const plan = withoutAlreadyPresent(planPhrasePlacements(resume, analysis), existing);
-  if (!plan.size) return view;
-  const used = new Set<string>();
-  const experience = view.experience.map((exp) => ({
-    ...exp,
-    bullets: exp.bullets.map((b) => ({
-      ...b,
-      text: weaveOwned(b.text, b.sourceFactIds, plan, used),
+  const fake: TailoringResult = {
+    headline: view.headline,
+    summary: view.summary,
+    selectedSkillIds: view.skills.flatMap((c) => c.items.map((i) => i.id)),
+    skillCategoryOrder: view.skills.map((c) => c.categoryId),
+    experience: view.experience.map((e) => ({
+      experienceId: e.id,
+      bullets: e.bullets,
     })),
-  }));
-  const projects = view.projects.map((p) => ({
-    ...p,
-    description: weaveOwned(p.description, p.sourceFactIds, plan, used),
-  }));
-  for (const [factId, phrases] of plan) {
-    if (used.has(factId)) continue;
-    const role = resume.experience.find((e) => e.facts.some((f) => f.id === factId));
-    const block = role ? experience.find((e) => e.id === role.id) : undefined;
-    const bullet = block?.bullets[block.bullets.length - 1];
-    if (bullet) {
-      bullet.text = weavePhrases(bullet.text, phrases);
-      used.add(factId);
-      continue;
-    }
-    const proj = resume.projects.find((p) => p.facts.some((f) => f.id === factId));
-    const blockP = proj ? projects.find((p) => p.id === proj.id) : undefined;
-    if (blockP) blockP.description = weavePhrases(blockP.description, phrases);
-  }
-  return { ...view, experience, projects };
+    projects: view.projects.map((p) => ({
+      projectId: p.id,
+      description: p.description,
+      sourceFactIds: p.sourceFactIds,
+    })),
+    requirementNotes: [],
+    warnings: [],
+  };
+  const expanded = applyPhraseCoverage(fake, resume, analysis);
+  return {
+    ...view,
+    summary: expanded.summary,
+    experience: view.experience.map((e) => {
+      const block = expanded.experience.find((x) => x.experienceId === e.id);
+      return block ? { ...e, bullets: block.bullets } : e;
+    }),
+    projects: view.projects.map((p) => {
+      const block = expanded.projects.find((x) => x.projectId === p.id);
+      return block ? { ...p, description: block.description } : p;
+    }),
+  };
 }

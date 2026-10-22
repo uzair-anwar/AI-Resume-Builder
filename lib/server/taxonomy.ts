@@ -17,6 +17,51 @@ type TaxonomyFile = {
 
 let cached: TaxonomyFile | null = null;
 
+/** Per-request JD terms not in tech-taxonomy.json (cleared on each analyzeJob). */
+let dynamicTerms: TaxonomyTerm[] = [];
+
+export function resetDynamicTaxonomy(): void {
+  dynamicTerms = [];
+}
+
+export function registerDynamicTaxonomyTerm(
+  canonical: string,
+  kind: TaxonomyTerm["kind"] | "industry",
+  surfaceForms: string[] = [],
+): TaxonomyTerm {
+  const id =
+    canonical
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 48) || "jd-term";
+  const mappedKind: TaxonomyTerm["kind"] =
+    kind === "industry" ? "concept" : (kind ?? "concept");
+  const term: TaxonomyTerm = {
+    id: `jd-${id}`,
+    canonical: canonical.trim(),
+    aliases: surfaceForms.filter((s) => normalizeText(s) !== normalizeText(canonical)),
+    family: kind === "industry" ? "domain" : "jd-dynamic",
+    kind: mappedKind,
+  };
+  const key = normalizeText(canonical);
+  const existing = dynamicTerms.find((t) => normalizeText(t.canonical) === key);
+  if (existing) {
+    for (const a of term.aliases) {
+      if (!existing.aliases.some((x) => normalizeText(x) === normalizeText(a))) {
+        existing.aliases.push(a);
+      }
+    }
+    return existing;
+  }
+  dynamicTerms.push(term);
+  return term;
+}
+
+export function listAllTaxonomyTerms(): TaxonomyTerm[] {
+  return [...loadTaxonomy().terms, ...dynamicTerms];
+}
+
 export function loadTaxonomy(): TaxonomyFile {
   if (cached) return cached;
   const file = path.join(process.cwd(), "data", "tech-taxonomy.json");
@@ -53,12 +98,13 @@ function escapeRegExp(s: string): string {
 
 export function findTaxonomyTermByName(termOrAlias: string): TaxonomyTerm | undefined {
   const hay = normalizeText(termOrAlias);
-  const tax = loadTaxonomy();
-  return tax.terms.find(
-    (t) =>
-      normalizeText(t.canonical) === hay ||
-      t.aliases.some((a) => normalizeText(a) === hay),
-  );
+  const hit = (terms: TaxonomyTerm[]) =>
+    terms.find(
+      (t) =>
+        normalizeText(t.canonical) === hay ||
+        t.aliases.some((a) => normalizeText(a) === hay),
+    );
+  return hit(dynamicTerms) ?? hit(loadTaxonomy().terms);
 }
 
 export function collectResumeCorpus(resume: MasterResume): string {

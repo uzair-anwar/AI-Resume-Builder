@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { TailorStepPreviousSchema } from "@/lib/schemas/tailoring-steps";
 import { loadMasterResume, mergeProfileOverride } from "@/lib/server/master-resume";
+import { mergeResumeWithExpansionSkills } from "@/lib/server/ats-expansion";
 import { analyzeJob } from "@/lib/server/analyze-job";
 import { assembleResumeView, buildChanges } from "@/lib/server/assemble-resume";
 import { attachAtsScorecard } from "@/lib/server/ats-score";
@@ -38,7 +39,8 @@ export async function POST(req: Request) {
   const override = parsed.data.profileOverride as ProfileOverride | undefined;
   const resume = mergeProfileOverride(base, override ?? null);
   const analysis = analyzeJob(parsed.data.jobDescription, resume);
-  const raw = stagedToTailoringResult(parsed.data.previous, resume);
+  const workingResume = mergeResumeWithExpansionSkills(resume, analysis);
+  const raw = stagedToTailoringResult(parsed.data.previous, workingResume);
   const cleaned = {
     ...raw,
     headline: nt(raw.headline),
@@ -49,11 +51,11 @@ export async function POST(req: Request) {
     })),
     projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
   };
-  const repaired = repairTailoring(cleaned, resume, analysis);
-  const data = applyPhraseCoverage(repaired.data, resume, analysis);
+  const repaired = repairTailoring(cleaned, workingResume, analysis);
+  const data = applyPhraseCoverage(repaired.data, workingResume, analysis);
   const report = repaired.report;
-  const resumeView = assembleResumeView(resume, data);
-  const scoredAnalysis = attachAtsScorecard(analysis, resume, resumeView);
+  const resumeView = assembleResumeView(workingResume, data);
+  const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
 
   return NextResponse.json(
     {
