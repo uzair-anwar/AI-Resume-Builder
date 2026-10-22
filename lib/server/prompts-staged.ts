@@ -112,9 +112,11 @@ Dates (fixed): ${exp.startDate} – ${exp.endDate ?? "Present"}
 
 Output & Structural Requirements:
 - Return JSON object with "bullets": array of { "text", "sourceFactIds" }.
-- Preserve bullet density: return between ${minBullets} and ${exp.facts.length} bullets (~${roleLineBudget} total lines).
+- Preserve bullet density: return between ${minBullets} and ${exp.facts.length} bullets.
+- LENGTH (one-page PDF): each bullet must be 1–2 lines (~90–200 characters). At least half the bullets should be ONE tight line. Vary length (short punchy lines + a few 2-line impact lines). No run-on sentences or comma-stacked keyword lists.
 - Every bullet must cite at least one sourceFactId from ${exp.company}.
 - Actively weave each fact's [JD keywords to include] and [Terminology bridge] terms into the rewritten bullet text while keeping all metrics exact.
+- METRICS: For facts marked [has metrics], lead with the Google XYZ "measured by Y" clause using the exact numbers from the source. Across the full resume, surface at least 5 bullets that contain a verifiable number from their source facts (counts, team size, APIs, years, etc.).
 - Follow each fact's "Rewrite:" level. Most bullets should stay close to the original meaning. Only facts tagged "LOW JD overlap" may be fully rewritten (new structure and emphasis, or merged with a sibling fact via several sourceFactIds), and even then only from this role's verified facts and skills: never new tools, employers, scope claims, metrics or outcomes.
 - If a fact has no number, describe the scope or outcome the fact already implies in words. Never write a percentage, time or count that is not in the source fact.
 
@@ -211,7 +213,7 @@ Project name (fixed): ${proj.name}
 ${proj.link ? `Link (fixed): ${proj.link}` : ""}
 
 Constraints:
-- Single cohesive paragraph, max ~${maxLines + 1} lines.
+- Single cohesive paragraph, max ~${maxLines} lines (~${maxLines * 95} characters). Prefer 2–3 short sentences over one long paragraph.
 - Weave in the [JD keywords to include] and [Terminology bridge] annotations where natural.
 - "sourceFactIds" must list the fact IDs used from below.
 

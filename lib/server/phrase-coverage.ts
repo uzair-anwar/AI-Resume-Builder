@@ -9,6 +9,8 @@ import {
 import { mapFactToJdEvidence } from "./evidence-mapper";
 import { findTaxonomyTermByName } from "./taxonomy";
 import { classifyJdTermKind, isHiringCompanyTerm } from "./jd-dynamic-vocab";
+import { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/layout/text-fit";
+import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
 
 type FactItem = MasterResume["summaryFacts"][number];
 
@@ -26,21 +28,33 @@ function joinAnd(parts: string[]): string {
   return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;
 }
 
-/** Adds the exact JD wording Jobscan looks for. */
-export function weavePhrases(text: string, phrases: string[]): string {
-  const missing = phrases.filter(
-    (p, i) =>
-      !hasPhrase(text, p) &&
-      !phrases.some((other, j) => j !== i && other.length > p.length && hasPhrase(other, p)),
-  );
+/** Adds JD wording compactly so bullets stay 1–2 lines after PDF wrap. */
+export function weavePhrases(text: string, phrases: string[], maxPhrases = 2): string {
+  const missing = phrases
+    .filter(
+      (p, i) =>
+        !hasPhrase(text, p) &&
+        !phrases.some((other, j) => j !== i && other.length > p.length && hasPhrase(other, p)),
+    )
+    .sort((a, b) => a.length - b.length);
   if (!missing.length) return text;
-  const nouns = missing.filter((p) => !VERB_PHRASE.test(p));
-  const verbs = missing.filter((p) => VERB_PHRASE.test(p));
-  const bits: string[] = [];
-  if (nouns.length) bits.push(`covering ${joinAnd(nouns)}`);
-  if (verbs.length) bits.push(joinAnd(verbs.map((v) => `to ${v}`)));
+  const pick = missing.slice(0, maxPhrases);
+  const nouns = pick.filter((p) => !VERB_PHRASE.test(p));
+  const verbs = pick.filter((p) => VERB_PHRASE.test(p));
   const base = text.replace(/[.\s]+$/, "");
-  return `${base}, ${bits.join(", ")}.`;
+  if (nouns.length === 1 && !verbs.length) {
+    return `${base} (${nouns[0]}).`;
+  }
+  if (nouns.length && verbs.length) {
+    return `${base} (${nouns[0]}; ${verbs[0]}).`;
+  }
+  if (nouns.length > 1) {
+    return `${base} (${joinAnd(nouns)}).`;
+  }
+  if (verbs.length) {
+    return `${base} (${verbs.map((v) => v.replace(/^to\s+/i, "")).join("; ")}).`;
+  }
+  return text;
 }
 
 function labelMatches(label: string, canonical: string): boolean {
@@ -124,7 +138,7 @@ function planProfilePhrasePlacements(
 
   let placed = 0;
   for (const item of phrases) {
-    if (placed >= 22) break;
+    if (placed >= 16) break;
     const ranked = slots
       .map((slot) => ({
         slot,
@@ -242,7 +256,19 @@ export function applyPhraseCoverage(
     }
   }
 
-  return { ...result, summary, experience, projects };
+  const clampedExperience = experience.map((exp) => ({
+    ...exp,
+    bullets: exp.bullets.map((b, i) => ({
+      ...b,
+      text: fitToMaxBulletLines(b.text, i % 3 === 0 ? 2 : 1),
+    })),
+  }));
+  const clampedProjects = projects.map((p) => ({
+    ...p,
+    description: fitToMaxWrappedLines(p.description, 4, COLUMN_WIDTH, SIZE_BODY),
+  }));
+
+  return { ...result, summary, experience: clampedExperience, projects: clampedProjects };
 }
 
 export function coverResumeView(

@@ -62,7 +62,10 @@ export function coerceExperienceStep(
   if (!src) return null;
 
   const roleIds = new Set(src.facts.map((f) => f.id));
-  const roleBudget = src.facts.reduce((n, f) => n + countBulletLines(f.text), 0) + 2;
+  const roleBudget = Math.min(
+    src.facts.reduce((n, f) => n + Math.min(countBulletLines(f.text), 2), 0) + 1,
+    src.facts.length * 2 + 2,
+  );
   const bullets: { text: string; sourceFactIds: string[] }[] = [];
 
   const rows = parsed.success ? parsed.data.bullets : [];
@@ -77,7 +80,7 @@ export function coerceExperienceStep(
     let text = nt(b.text);
     text = stripForbiddenTerms(text, analysis);
     text = stripDisallowedNumbers(text, srcNums);
-    text = fitToMaxBulletLines(text, 4);
+    text = fitToMaxBulletLines(text, 2);
     if (!text.trim()) continue;
     bullets.push({ text, sourceFactIds: ids });
   }

@@ -11,6 +11,33 @@ export type LineBudgets = {
   projects: Record<string, number>;
 };
 
+const TAILOR_PROJECT_LINE_CAP = 4;
+const TAILOR_SUMMARY_LINE_CAP = 6;
+
+/** Tighter per-fact caps for tailoring (one-page PDF + mixed 1–2 line bullets). */
+export function applyTailorLineBudgetCaps(budgets: LineBudgets, resume: MasterResume): LineBudgets {
+  const bullets: Record<string, number> = {};
+  for (const exp of resume.experience) {
+    const dense = exp.facts.length >= 6;
+    exp.facts.forEach((f, i) => {
+      const natural = Math.min(budgets.bullets[f.id] ?? 2, 2);
+      const staggered = dense ? (i % 3 === 0 ? 2 : 1) : natural;
+      bullets[f.id] = Math.max(1, staggered);
+    });
+  }
+  const projects: Record<string, number> = {};
+  for (const [id, lines] of Object.entries(budgets.projects)) {
+    projects[id] = Math.min(lines, TAILOR_PROJECT_LINE_CAP);
+  }
+  return {
+    ...budgets,
+    summaryMaxLines: Math.min(budgets.summaryMaxLines, TAILOR_SUMMARY_LINE_CAP),
+    skillsMaxLines: budgets.skillsMaxLines,
+    bullets,
+    projects,
+  };
+}
+
 export function computeLineBudgets(resume: MasterResume): LineBudgets {
   const defaultSummary = resume.summaryFacts.map((f) => f.text).join(" ");
   const summaryMaxLines = Math.min(

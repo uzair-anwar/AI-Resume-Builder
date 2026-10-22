@@ -5,6 +5,7 @@ import { buildDefaultResumeView } from "@/lib/build-default-resume";
 import { attachAtsScorecard } from "./ats-score";
 import { mergeResumeWithExpansionSkills } from "./ats-expansion";
 import { coverResumeView } from "./phrase-coverage";
+import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
 import { scoreFactRelevance } from "./select-facts";
 
 export function deterministicTailor(
@@ -48,13 +49,16 @@ export function deterministicTailor(
       sourceFactIds: p.facts.map((f) => f.id),
     }));
 
-  const tailoredResume = coverResumeView(
-    {
-      ...base,
-      experience,
-      projects,
-    },
-    working,
+  const tailoredResume = fitResumeViewToOnePage(
+    coverResumeView(
+      {
+        ...base,
+        experience,
+        projects,
+      },
+      working,
+      analysis,
+    ),
     analysis,
   );
 

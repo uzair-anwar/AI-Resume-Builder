@@ -2,7 +2,7 @@ import "server-only";
 import "./layout-fonts";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { computeLineBudgets } from "@/lib/layout/budgets";
+import { applyTailorLineBudgetCaps, computeLineBudgets } from "@/lib/layout/budgets";
 import {
   classifyJdTermKind,
   detectHiringCompanyNames,
@@ -61,11 +61,12 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
       ? topMatched.join(" · ")
       : (detectJobTitle(jobText) ?? "General engineering");
 
+  const lineBudgets = applyTailorLineBudgetCaps(computeLineBudgets(resume), resume);
   const analysisDraft = {
     terms,
     hiringCompanyNames,
     coverage: { matched, related, missing, total: terms.length },
-    lineBudgets: computeLineBudgets(resume),
+    lineBudgets,
     focusLabel,
   } as JobAnalysis;
 
@@ -83,7 +84,7 @@ export function analyzeJob(jobText: string, resume: MasterResume): JobAnalysis {
       missing,
       total: terms.length,
     },
-    lineBudgets: computeLineBudgets(resume),
+    lineBudgets,
     profileVocabulary: [...buildProfileVocabulary(resume)],
     allowedNarrativeTerms,
     missingTerms: terms

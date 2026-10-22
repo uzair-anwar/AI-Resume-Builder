@@ -8,7 +8,7 @@ import { ResumeDocument } from "./ResumeDocument";
 import { slugifyFilename } from "@/lib/format";
 import { shortJobTitleForFilename } from "@/lib/job-title";
 import { PDFDocument } from "pdf-lib";
-import { autoFitToOnePage } from "@/lib/layout/autofit";
+import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
 
 type Props = {
   resume: ResumeView;
@@ -22,17 +22,10 @@ function pdfPreviewSrc(blobUrl: string): string {
   return `${blobUrl}#navpanes=0&toolbar=0&view=FitH&zoom=page-width`;
 }
 
-async function countPages(resume: ResumeView): Promise<number> {
-  const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
-  const pdfDoc = await PDFDocument.load(await blob.arrayBuffer());
-  return pdfDoc.getPageCount();
-}
-
 export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: Props) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [pageCount, setPageCount] = useState(1);
   const [generating, setGenerating] = useState(false);
-  const [fitting, setFitting] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,16 +58,13 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
     };
   }, [blobUrl]);
 
-  const runAutoFit = useCallback(async () => {
-    if (!onResumeChange) return;
-    setFitting(true);
-    try {
-      const fitted = await autoFitToOnePage(resume, analysis, countPages);
+  useEffect(() => {
+    if (!onResumeChange || pageCount <= 1) return;
+    const fitted = fitResumeViewToOnePage(resume, analysis);
+    if (JSON.stringify(fitted) !== JSON.stringify(resume)) {
       onResumeChange(fitted);
-    } finally {
-      setFitting(false);
     }
-  }, [resume, analysis, onResumeChange]);
+  }, [pageCount, resume, analysis, onResumeChange]);
 
   const download = useCallback(async () => {
     const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
@@ -127,16 +117,6 @@ export function ResumePdfPanel({ resume, jobTitle, analysis, onResumeChange }: P
         )}
       </div>
       <div className="flex flex-wrap gap-2">
-        {pageCount > 1 && onResumeChange ? (
-          <button
-            type="button"
-            disabled={fitting || generating}
-            onClick={() => runAutoFit()}
-            className="rounded-md border border-rose-300 px-4 py-2 text-sm text-rose-800 disabled:opacity-50 dark:border-rose-700 dark:text-rose-200"
-          >
-            {fitting ? "Auto-fitting…" : "Auto-fit to 1 page"}
-          </button>
-        ) : null}
         <button
           type="button"
           onClick={() => download()}

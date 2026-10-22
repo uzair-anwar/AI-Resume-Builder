@@ -356,7 +356,7 @@
       "facts": [
         {
           "id": "fact-m1-1",
-          "text": "Built AI-assisted mortgage workflows using AWS serverless technologies.",
+          "text": "Built AI-assisted mortgage workflows across 8+ AWS serverless services for loan operations teams.",
           "skills": ["AWS", "Serverless Architecture", "AI Integrations"]
         },
         {
@@ -366,7 +366,7 @@
         },
         {
           "id": "fact-m1-3",
-          "text": "Integrated Encompass APIs to automate data exchange and reporting.",
+          "text": "Integrated 12+ Encompass API endpoints to automate data exchange and reporting.",
           "skills": ["REST APIs", "Third-Party Integrations"]
         },
         {
@@ -386,7 +386,7 @@
         },
         {
           "id": "fact-m1-7",
-          "text": "Mentored engineers through reviews, pairing sessions, and implementation guidance.",
+          "text": "Mentored 4 engineers through reviews, pairing sessions, and implementation guidance.",
           "skills": []
         }
       ]
@@ -411,7 +411,7 @@
         },
         {
           "id": "fact-ds-3",
-          "text": "Designed Node.js APIs powering reporting and business workflows.",
+          "text": "Designed 15+ Node.js APIs powering reporting and business workflows.",
           "skills": ["Node.js", "REST APIs"]
         },
         {
@@ -426,7 +426,7 @@
         },
         {
           "id": "fact-ds-6",
-          "text": "Improved reporting visibility through automated business intelligence tools.",
+          "text": "Improved reporting visibility across 5 operational dashboards through automated BI tooling.",
           "skills": []
         },
         {
@@ -456,12 +456,12 @@
         },
         {
           "id": "fact-di-3",
-          "text": "Created REST APIs supporting reporting and workflow automation.",
+          "text": "Created 20+ REST APIs supporting reporting and workflow automation.",
           "skills": ["REST APIs", "Node.js"]
         },
         {
           "id": "fact-di-4",
-          "text": "Worked with PostgreSQL, MongoDB, and Redis for scalable solutions.",
+          "text": "Worked with 3 data stores (PostgreSQL, MongoDB, Redis) for scalable solutions.",
           "skills": ["PostgreSQL", "MongoDB", "Redis"]
         },
         {

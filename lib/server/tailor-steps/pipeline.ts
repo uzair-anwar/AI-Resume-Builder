@@ -10,6 +10,7 @@ import { attachAtsScorecard } from "../ats-score";
 import { deterministicTailor } from "../deterministic-tailor";
 import { normalizeTypography as nt } from "@/lib/text-normalize";
 import { applyPhraseCoverage } from "../phrase-coverage";
+import { fitResumeViewToOnePage } from "@/lib/layout/fit-one-page";
 import { repairTailoring } from "../validate-tailoring";
 import { mergePrevious, runTailorStep, stagedToTailoringResult } from "./run-step";
 import type { TailorAiOptions } from "./run-ai-structured";
@@ -47,7 +48,8 @@ export async function runStagedTailorPipeline(
   const data = applyPhraseCoverage(repaired.data, workingResume, analysis);
   const report = repaired.report;
 
-  const resumeView = assembleResumeView(workingResume, data);
+  let resumeView = assembleResumeView(workingResume, data);
+  resumeView = fitResumeViewToOnePage(resumeView, analysis);
   const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
   return {
     resume: resumeView,

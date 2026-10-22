@@ -309,7 +309,7 @@ export function formatFactWithEvidence(
   }
   if (includeRewriteMode) {
     hints.push(REWRITE_GUIDANCE[modeOverride ?? ev.rewriteMode]);
-    if (ev.hasMetrics) hints.push("keep every number exactly");
+    if (ev.hasMetrics) hints.push("has metrics — lead bullet with XYZ measured-by clause");
   }
   const lineTag = maxLines ? `max ~${maxLines} lines` : "";
   const meta = [lineTag, ...hints].filter(Boolean).join(" | ");

@@ -1,7 +1,7 @@
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/layout/constants";
-import { countBulletLines, countWrappedLines } from "@/lib/layout/measure";
 import { containsForbiddenTerm, extractNumbers } from "./step-validation-helpers";
+
+export { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/layout/text-fit";
 
 export function stripForbiddenTerms(text: string, analysis: JobAnalysis): string {
   let t = text;
@@ -47,29 +47,4 @@ export function stripDisallowedNumbers(text: string, allowedFrom: string[]): str
     return "";
   });
   return removed ? tidyAfterNumberStrip(out) : out.replace(/\s+/g, " ").trim();
-}
-
-export function fitToMaxWrappedLines(
-  text: string,
-  maxLines: number,
-  widthPt: number = COLUMN_WIDTH,
-  fontSize: number = SIZE_BODY,
-): string {
-  let t = text.trim();
-  if (!t || countWrappedLines(t, widthPt, fontSize) <= maxLines) return t;
-  const words = t.split(/\s+/);
-  while (words.length > 1 && countWrappedLines(words.join(" "), widthPt, fontSize) > maxLines) {
-    words.pop();
-  }
-  return words.join(" ").trim();
-}
-
-export function fitToMaxBulletLines(text: string, maxLines: number): string {
-  let t = text.trim();
-  if (!t || countBulletLines(t) <= maxLines) return t;
-  const words = t.split(/\s+/);
-  while (words.length > 1 && countBulletLines(words.join(" ")) > maxLines) {
-    words.pop();
-  }
-  return words.join(" ").trim();
 }
