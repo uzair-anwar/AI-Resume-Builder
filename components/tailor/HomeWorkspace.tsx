@@ -29,6 +29,7 @@ import { mergeResumeContactFromMaster } from "@/lib/client/profile/merge-resume-
 import { ResumePdfPanel } from "@/components/resume/ResumePdfPanel";
 import { JdTermChips } from "@/components/tailor/JdTermChips";
 import { CoverLetterPanel } from "@/components/cover-letter/CoverLetterPanel";
+import { ApplicationAnswerPanel } from "@/components/tailor/ApplicationAnswerPanel";
 import {
   TailorProgress,
   type TailorProgressStepId,
@@ -650,6 +651,19 @@ export default function HomeWorkspace() {
             onGenerate={() => void runGenerateCoverLetter()}
             onChange={handleCoverLetterChange}
             canGenerate={!loading && jobDescription.length >= 50}
+          />
+        ) : null}
+
+        {jobDescription.length >= 50 ? (
+          <ApplicationAnswerPanel
+            jobDescription={jobDescription}
+            jobTitle={jobTitle}
+            resume={resume}
+            provider={provider}
+            allowFallback={allowFallback}
+            serverProviders={serverProviders}
+            modelsByProvider={modelsByProvider}
+            tailorLoading={loading}
           />
         ) : null}
 
