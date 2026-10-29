@@ -55,6 +55,7 @@ export const JOB_BOARDS: JobBoard[] = [
   { id: "bayt", name: "Bayt", hosts: ["bayt.com"], access: "open" },
   { id: "wuzzuf", name: "Wuzzuf", hosts: ["wuzzuf.net"], access: "open" },
   { id: "gulftalent", name: "GulfTalent", hosts: ["gulftalent.com"], access: "open" },
+  { id: "zohorecruit", name: "Zoho Recruit", hosts: ["zohorecruit.com"], access: "open" },
 ];
 
 export function findJobBoard(hostname: string): JobBoard | undefined {

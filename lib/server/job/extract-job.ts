@@ -5,6 +5,7 @@ import { parseLeverUrl, fetchLever } from "./extractors/lever";
 import { parseAshbyUrl, fetchAshby } from "./extractors/ashby";
 import { extractJsonLdJobPosting } from "./extractors/jsonld";
 import { extractHtmlJobDescription, extractEmbeddedJson } from "./extractors/html";
+import { parseZohoRecruitJobId, extractZohoRecruitFromHtml } from "./extractors/zoho-recruit";
 import { detectWall, guessWallFromEmptyPage, type WallKind } from "./extractors/wall";
 import { findJobBoard, loginRequiredMessage, botBlockedMessage } from "@/lib/shared/job-boards";
 import { shortJobTitleForFilename } from "@/lib/shared/job-title";
@@ -12,7 +13,15 @@ import { shortJobTitleForFilename } from "@/lib/shared/job-title";
 export type ExtractResult = {
   title?: string;
   description: string;
-  source: "greenhouse" | "lever" | "ashby" | "jsonld" | "embedded" | "html" | "paste";
+  source:
+    | "greenhouse"
+    | "lever"
+    | "ashby"
+    | "zoho"
+    | "jsonld"
+    | "embedded"
+    | "html"
+    | "paste";
   warnings: string[];
 };
 
@@ -95,6 +104,19 @@ export async function extractJobFromUrl(urlString: string): Promise<ExtractResul
   }
   if (status >= 400) {
     throw new SafeFetchError(botBlockedMessage(board?.name), "BOT_BLOCKED");
+  }
+
+  const zohoJobId = parseZohoRecruitJobId(url);
+  if (url.hostname.toLowerCase().includes("zohorecruit.com") || zohoJobId) {
+    const zoho = extractZohoRecruitFromHtml(html, zohoJobId);
+    if (zoho) {
+      return {
+        title: withShortTitle(zoho.title),
+        description: zoho.description,
+        source: "zoho",
+        warnings,
+      };
+    }
   }
 
   const jsonld = extractJsonLdJobPosting(html);
