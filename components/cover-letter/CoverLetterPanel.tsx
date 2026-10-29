@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { pdf } from "@react-pdf/renderer";
 import type { CoverLetterVariants } from "@/lib/schemas/cover-letter";
+import { CoverLetterDocument } from "@/components/cover-letter/CoverLetterDocument";
+import { sanitizeDownloadName } from "@/lib/shared/format";
+import {
+  coverLetterDownloadStem,
+  downloadCoverLetterDoc,
+  downloadCoverLetterTxt,
+  triggerBlobDownload,
+} from "@/lib/client/cover-letter/download";
 
 type TabId = "standard" | "shortMessage" | "talkingPoints";
 
@@ -28,6 +37,7 @@ export function CoverLetterPanel({
 }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>("standard");
   const [copied, setCopied] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const activeText =
     !coverLetter
@@ -45,16 +55,29 @@ export function CoverLetterPanel({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const downloadStem = coverLetter
+    ? coverLetterDownloadStem(coverLetter.companyName, activeTab)
+    : "";
+
+  const handleDownloadPdf = async () => {
+    if (!activeText || !coverLetter) return;
+    setDownloadingPdf(true);
+    try {
+      const blob = await pdf(<CoverLetterDocument body={activeText} />).toBlob();
+      triggerBlobDownload(blob, sanitizeDownloadName(downloadStem, "pdf"));
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
+
+  const handleDownloadDoc = () => {
+    if (!activeText || !coverLetter) return;
+    downloadCoverLetterDoc(activeText, downloadStem);
+  };
+
   const handleDownloadTxt = () => {
     if (!activeText || !coverLetter) return;
-    const blob = new Blob([activeText], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    const safeCompany = coverLetter.companyName.replace(/[^A-Za-z0-9_-]+/g, "_");
-    a.href = url;
-    a.download = `Cover_Letter_${safeCompany}_${activeTab}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCoverLetterTxt(activeText, downloadStem);
   };
 
   return (
@@ -93,9 +116,16 @@ export function CoverLetterPanel({
               </button>
               <button
                 type="button"
-                onClick={handleDownloadTxt}
-                className="btn-ghost !text-xs"
+                disabled={downloadingPdf}
+                onClick={() => void handleDownloadPdf()}
+                className="btn-primary !px-3.5 !py-1.5 !text-xs"
               >
+                {downloadingPdf ? "Preparing PDF…" : "Download PDF"}
+              </button>
+              <button type="button" onClick={handleDownloadDoc} className="btn-ghost !text-xs">
+                Download .doc
+              </button>
+              <button type="button" onClick={handleDownloadTxt} className="btn-ghost !text-xs">
                 Download .txt
               </button>
             </>

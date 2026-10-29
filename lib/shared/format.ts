@@ -40,9 +40,19 @@ export function slugifyFilename(parts: string[]): string {
     .slice(0, 80);
 }
 
+/** Safe download name: strips a known suffix, slugifies, re-adds extension. */
+export function sanitizeDownloadName(stem: string, ext: string): string {
+  const normalizedExt = ext.replace(/^\./, "").toLowerCase();
+  const base = stem
+    .replace(/\.(pdf|doc|docx|txt)$/i, "")
+    .trim();
+  const cleaned = slugifyFilename([base.replace(/\s+/g, "_")]);
+  const fallback =
+    normalizedExt === "pdf" ? "Resume" : normalizedExt === "txt" ? "Cover_Letter" : "Cover_Letter";
+  return `${cleaned || fallback}.${normalizedExt}`;
+}
+
 /** Safe download name: strips .pdf suffix, slugifies, re-adds extension. */
 export function sanitizePdfDownloadName(stem: string): string {
-  const base = stem.replace(/\.pdf$/i, "").trim();
-  const cleaned = slugifyFilename([base.replace(/\s+/g, "_")]);
-  return `${cleaned || "Resume"}.pdf`;
+  return sanitizeDownloadName(stem, "pdf");
 }
