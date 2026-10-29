@@ -39,3 +39,10 @@ export function slugifyFilename(parts: string[]): string {
     .replace(/_+/g, "_")
     .slice(0, 80);
 }
+
+/** Safe download name: strips .pdf suffix, slugifies, re-adds extension. */
+export function sanitizePdfDownloadName(stem: string): string {
+  const base = stem.replace(/\.pdf$/i, "").trim();
+  const cleaned = slugifyFilename([base.replace(/\s+/g, "_")]);
+  return `${cleaned || "Resume"}.pdf`;
+}

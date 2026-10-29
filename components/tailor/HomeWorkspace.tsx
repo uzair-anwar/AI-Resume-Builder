@@ -24,7 +24,7 @@ import {
   loadStoredTailorSession,
   saveStoredTailorSession,
 } from "@/lib/client/session/session-result";
-import { shortJobTitleForFilename } from "@/lib/shared/job-title";
+import { defaultResumePdfBasename, shortJobTitleForFilename } from "@/lib/shared/job-title";
 import { mergeResumeContactFromMaster } from "@/lib/client/profile/merge-resume-contact";
 import { ResumePdfPanel } from "@/components/resume/ResumePdfPanel";
 import { JdTermChips } from "@/components/tailor/JdTermChips";
@@ -44,6 +44,8 @@ export default function HomeWorkspace() {
   const [jobUrl, setJobUrl] = useState(() => loadDraft().jobUrl ?? "");
   const [jobDescription, setJobDescription] = useState(() => loadDraft().jobDescription ?? "");
   const [jobTitle, setJobTitle] = useState(() => loadDraft().jobTitle ?? "");
+  const [pdfBasename, setPdfBasename] = useState(() => loadDraft().pdfBasename ?? "");
+  const pdfBasenameCustom = useRef(Boolean(loadDraft().pdfBasename?.trim()));
   const [provider, setProvider] = useState<AiProviderChoice>(() =>
     typeof window === "undefined" ? "auto" : loadAiProviderChoice(),
   );
@@ -98,6 +100,22 @@ export default function HomeWorkspace() {
     completedPipelineKey !== currentPipelineKey;
 
   useEffect(() => {
+    if (inputsStale) pdfBasenameCustom.current = false;
+  }, [inputsStale]);
+
+  useEffect(() => {
+    if (!resume || pdfBasenameCustom.current) return;
+    setPdfBasename(
+      defaultResumePdfBasename(resume.person.name, {
+        jobTitle,
+        resumeHeadline: resume.headline,
+        detectedTitle: analysis?.detectedTitle,
+        hiringCompanyNames: analysis?.hiringCompanyNames,
+      }),
+    );
+  }, [resume, analysis, jobTitle]);
+
+  useEffect(() => {
     fetch("/api/profile")
       .then((r) => r.json())
       .then((data) => {
@@ -133,6 +151,10 @@ export default function HomeWorkspace() {
           restoredFromStorage.current = true;
           setCompletedPipelineKey(stored.pipelineKey);
           setJobTitle(stored.jobTitle);
+          if (stored.pdfBasename?.trim()) {
+            pdfBasenameCustom.current = true;
+            setPdfBasename(stored.pdfBasename);
+          }
           setResume((prev) =>
             mergeResumeContactFromMaster(stored.resume, prev?.person ?? stored.resume.person),
           );
@@ -148,8 +170,8 @@ export default function HomeWorkspace() {
   }, []);
 
   useEffect(() => {
-    saveDraft({ jobUrl, jobDescription, jobTitle });
-  }, [jobUrl, jobDescription, jobTitle]);
+    saveDraft({ jobUrl, jobDescription, jobTitle, pdfBasename });
+  }, [jobUrl, jobDescription, jobTitle, pdfBasename]);
 
   const modelPickerProvider = resolveModelPickerProvider(
     provider,
@@ -243,12 +265,21 @@ export default function HomeWorkspace() {
           ? shortJobTitleForFilename(title, { hiringCompanyNames: hiring })
           : shortJobTitleForFilename(data.analysis.detectedTitle, { hiringCompanyNames: hiring });
         if (!title.trim() && nextTitle !== "Resume") setJobTitle(nextTitle);
+        pdfBasenameCustom.current = false;
+        const basename = defaultResumePdfBasename(data.resume.person.name, {
+          jobTitle: title.trim() || nextTitle,
+          resumeHeadline: data.resume.headline,
+          detectedTitle: data.analysis.detectedTitle,
+          hiringCompanyNames: hiring,
+        });
+        setPdfBasename(basename);
         setCompletedPipelineKey(pipelineKey);
         setCompletedProgressSteps((prev) => [...prev, "assemble", "preview"]);
         setActiveProgressStep(null);
         saveStoredTailorSession({
           pipelineKey,
-          jobTitle: nextTitle,
+          jobTitle: title.trim() || nextTitle,
+          pdfBasename: basename,
           resume: data.resume,
           analysis: data.analysis,
           budgets: data.analysis.lineBudgets,
@@ -440,12 +471,26 @@ export default function HomeWorkspace() {
         <div className="grid w-full gap-4 md:grid-cols-[minmax(0,1fr)_11rem_14rem] md:items-end">
           <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             Job URL
-            <input
-              className="input-field"
-              value={jobUrl}
-              onChange={(e) => setJobUrl(e.target.value)}
-              placeholder="https://boards.greenhouse.io/... or any job board link"
-            />
+            <div className="relative mt-0">
+              <input
+                className="input-field pr-9"
+                value={jobUrl}
+                onChange={(e) => setJobUrl(e.target.value)}
+                placeholder="https://boards.greenhouse.io/... or any job board link"
+              />
+              {jobUrl.trim() ? (
+                <button
+                  type="button"
+                  aria-label="Clear job URL"
+                  className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                  onClick={() => setJobUrl("")}
+                >
+                  <span aria-hidden className="text-lg leading-none">
+                    ×
+                  </span>
+                </button>
+              ) : null}
+            </div>
           </label>
           <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             AI provider
@@ -556,10 +601,30 @@ export default function HomeWorkspace() {
           completedSteps={completedProgressSteps}
         />
 
-        {jobTitle ? (
-          <p className="text-xs text-zinc-500">
-            PDF filename: Uzair_Anwar_{jobTitle.replace(/\s+/g, "_")}
-          </p>
+        {resume ? (
+          <label className="block max-w-xl text-sm font-medium text-zinc-800 dark:text-zinc-200">
+            PDF filename
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                className="input-field font-mono text-xs"
+                value={pdfBasename}
+                onChange={(e) => {
+                  pdfBasenameCustom.current = true;
+                  setPdfBasename(e.target.value);
+                }}
+                placeholder={defaultResumePdfBasename(resume.person.name, {
+                  jobTitle,
+                  resumeHeadline: resume.headline,
+                  detectedTitle: analysis?.detectedTitle,
+                  hiringCompanyNames: analysis?.hiringCompanyNames,
+                })}
+              />
+              <span className="shrink-0 text-xs text-zinc-500">.pdf</span>
+            </div>
+            <span className="mt-1 block text-xs font-normal text-zinc-500">
+              Default is your name plus the role title (from the tailored headline or job).
+            </span>
+          </label>
         ) : null}
 
         {aiUsage ? (
@@ -604,6 +669,7 @@ export default function HomeWorkspace() {
             jobTitle={jobTitle}
             analysis={analysis}
             budgets={budgets}
+            downloadBasename={pdfBasename}
             onResumeChange={setResume}
           />
         ) : (

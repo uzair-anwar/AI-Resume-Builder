@@ -8,8 +8,8 @@ import { SectionCard } from "@/components/ui/SectionCard";
 import { ResumeDocument } from "./ResumeDocument";
 import { ResumeEditor } from "./ResumeEditor";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
-import { slugifyFilename } from "@/lib/shared/format";
-import { shortJobTitleForFilename } from "@/lib/shared/job-title";
+import { sanitizePdfDownloadName } from "@/lib/shared/format";
+import { defaultResumePdfBasename } from "@/lib/shared/job-title";
 import { PDFDocument } from "pdf-lib";
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
   jobTitle?: string;
   analysis?: JobAnalysis | null;
   budgets?: LineBudgets;
+  downloadBasename?: string;
   onResumeChange?: (resume: ResumeView) => void;
 };
 
@@ -30,7 +31,8 @@ export function ResumePdfPanel({
   jobTitle,
   analysis,
   budgets,
-  onResumeChange,
+  onResumeChange, 
+  downloadBasename,
 }: Props) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [pageCount, setPageCount] = useState(1);
@@ -79,13 +81,16 @@ export function ResumePdfPanel({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const role = shortJobTitleForFilename(jobTitle || analysis?.detectedTitle, {
+    const fallback = defaultResumePdfBasename(resume.person.name, {
+      jobTitle,
+      resumeHeadline: resume.headline,
+      detectedTitle: analysis?.detectedTitle,
       hiringCompanyNames: analysis?.hiringCompanyNames,
     });
-    a.download = `${slugifyFilename([resume.person.name.replace(/\s+/g, "_"), role])}.pdf`;
+    a.download = sanitizePdfDownloadName(downloadBasename?.trim() || fallback);
     a.click();
     URL.revokeObjectURL(url);
-  }, [resume, jobTitle, analysis]);
+  }, [resume, jobTitle, analysis, downloadBasename]);
 
   const pageBadge =
     pageCount <= 1 ? (

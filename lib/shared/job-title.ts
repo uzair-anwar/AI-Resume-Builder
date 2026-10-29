@@ -1,3 +1,5 @@
+import { slugifyFilename } from "@/lib/shared/format";
+
 function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -36,4 +38,27 @@ export function shortJobTitleForFilename(
     .replace(/\s+/g, " ")
     .trim();
   return t.slice(0, 48) || "Resume";
+}
+
+export type ResumePdfBasenameOptions = FilenameTitleOptions & {
+  jobTitle?: string;
+  resumeHeadline?: string;
+  detectedTitle?: string;
+};
+
+/** Default PDF stem: Name_RoleTitle (always includes role when known). */
+export function defaultResumePdfBasename(
+  personName: string,
+  opts: ResumePdfBasenameOptions = {},
+): string {
+  const roleRaw =
+    opts.jobTitle?.trim() ||
+    opts.resumeHeadline?.trim() ||
+    opts.detectedTitle?.trim();
+  const role = shortJobTitleForFilename(roleRaw, opts);
+  const namePart = personName.trim().replace(/\s+/g, "_");
+  if (role === "Resume") {
+    return slugifyFilename([namePart]);
+  }
+  return slugifyFilename([namePart, role]);
 }

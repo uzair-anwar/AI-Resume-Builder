@@ -4,6 +4,7 @@ export type SessionDraft = {
   jobUrl?: string;
   jobDescription?: string;
   jobTitle?: string;
+  pdfBasename?: string;
 };
 
 export function loadDraft(): SessionDraft {

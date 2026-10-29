@@ -8,6 +8,7 @@ const KEY = "resume_tailor_last_result";
 export type StoredTailorSession = {
   pipelineKey: string;
   jobTitle: string;
+  pdfBasename?: string;
   resume: ResumeView;
   analysis: JobAnalysis;
   budgets?: LineBudgets;
