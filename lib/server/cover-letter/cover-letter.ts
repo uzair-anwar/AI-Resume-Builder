@@ -73,6 +73,7 @@ Variants to generate in JSON:
    - First-person or crisp pitch points ("Why me for this role") mapping specific JD requirements to the candidate's proven track record.
 
 Strict Grounding Rules:
+- All variants MUST be written in English only. If the job description uses another language, translate relevant terms into English while staying grounded in verified evidence.
 - Never invent employers, titles, metrics, or skills not in the provided candidate evidence.
 - Never claim technologies listed under "Do not claim".
 - No generic clichés ("I am writing to express my strong interest", "passionate team player"). Write like a pragmatic senior engineer speaking to a VP of Engineering or Founder.

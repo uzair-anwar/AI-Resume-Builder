@@ -7,6 +7,7 @@ import { formatExactJdWordingBlock } from "@/lib/server/ats/jd-exact-phrases";
 import type { RoleFamily } from "@/lib/server/ats/role-families";
 
 const CORE_RULES = `Ground rules (non-negotiable):
+- All resume copy MUST be in English (clear professional English). If the job description, annotations, or source facts use another language, translate skills, terms, and phrasing into standard English on the resume (use customary English technology names: Java, React, Spring Boot, not translated equivalents). Do not output non-English sentences or non-Latin script in headline, summary, bullets, project text, or skill-related narrative.
 - Use ONLY verified facts, skills, and metrics supplied below.
 - Never invent employers, titles, dates, degrees, tools, or numbers.
 - Never claim a hard technology listed under "Do not claim (unverified tools)" unless the ATS gap-fill plan explicitly assigns it with a bridge reason (then weave the JD phrase into narrative/skills as instructed).

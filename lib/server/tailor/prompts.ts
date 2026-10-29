@@ -13,6 +13,7 @@ Goals:
 - Lead bullets with impact and strong verbs; rephrase facts (do not copy-paste verbatim).
 
 Rules:
+- All output MUST be in English. Translate any non-English wording from the job description or facts into standard English before using it on the resume.
 - Never invent employers, titles, dates, degrees, skills, tools, or metrics.
 - Never claim job-description technologies listed as missing / not on profile.
 - Stay within strict line/character limits (one-page resume).
