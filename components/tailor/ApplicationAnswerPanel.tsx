@@ -125,8 +125,8 @@ export function ApplicationAnswerPanel({
           <h2 className="mt-1 text-base font-semibold">Recruiter question coach</h2>
           <p className="mt-1 text-xs text-zinc-500">
             Ask one application question at a time — we tailor an answer from your resume and this
-            job description (STAR for behavioral prompts, JD-aligned motivation for &quot;why
-            us&quot; questions).
+            job description (STAR for behavioral prompts, Company–Role–Contribution for &quot;why
+            us&quot; — forward-looking how you&apos;d help, not a resume recap).
           </p>
         </div>
         <span
