@@ -6,9 +6,13 @@ import { PageLoader } from "@/components/ui/PageLoader";
 import { SectionCard } from "@/components/ui/SectionCard";
 import type { MasterResume } from "@/lib/schemas/resume";
 import { loadProfileOverride, saveProfileOverride } from "@/lib/client/profile/profile-storage";
+import { loadSelectedMasterId, saveSelectedMasterId } from "@/lib/client/profile/master-selection";
+import type { MasterOption } from "@/lib/schemas/masters";
 
 export function ProfileEditor() {
   const [master, setMaster] = useState<MasterResume | null>(null);
+  const [masters, setMasters] = useState<MasterOption[]>([]);
+  const [masterId, setMasterId] = useState("");
   const [jsonText, setJsonText] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [attestName, setAttestName] = useState("");
@@ -16,20 +20,32 @@ export function ProfileEditor() {
     "proficient",
   );
 
-  useEffect(() => {
-    fetch("/api/profile")
+  function loadMaster(id: string | null) {
+    fetch(id ? `/api/profile?masterId=${encodeURIComponent(id)}` : "/api/profile")
       .then((r) => r.json())
       .then((data) => {
         setMaster(data.master);
-        const override = loadProfileOverride();
+        setMasters(data.masters ?? []);
+        setMasterId(data.masterId);
+        const override = loadProfileOverride(data.masterId);
         setJsonText(JSON.stringify(override ?? { attestedSkills: [] }, null, 2));
+        setMessage(null);
       });
+  }
+
+  useEffect(() => {
+    loadMaster(loadSelectedMasterId());
   }, []);
+
+  function selectMaster(id: string) {
+    saveSelectedMasterId(id);
+    loadMaster(id);
+  }
 
   function save() {
     try {
       const parsed = JSON.parse(jsonText);
-      saveProfileOverride(parsed);
+      saveProfileOverride(parsed, masterId);
       setMessage("Saved locally in this browser.");
     } catch {
       setMessage("Invalid JSON");
@@ -47,7 +63,7 @@ export function ProfileEditor() {
       list.push({
         id,
         name: attestName.trim(),
-        categoryId: "cat-languages",
+        categoryId: master?.skillCategories.find((c) => c.role === "languages")?.id ?? "cat-languages",
         level: attestLevel,
       });
       setJsonText(JSON.stringify({ ...parsed, attestedSkills: list }, null, 2));
@@ -67,10 +83,32 @@ export function ProfileEditor() {
           <span className="text-gradient">Profile</span>
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Master resume is server-side from <code className="rounded bg-zinc-200/60 px-1 dark:bg-zinc-800">Uzair_FullStack.pdf</code>. Overrides are stored in
-          your browser only.
+          Master resumes live server-side in{" "}
+          <code className="rounded bg-zinc-200/60 px-1 dark:bg-zinc-800">data/resumes/&lt;id&gt;/master.json</code>.
+          Overrides are stored per master in your browser only.
         </p>
       </header>
+
+      <SectionCard title="Master resume" subtitle="Overrides below apply to the selected master.">
+        <label className="block max-w-sm text-sm font-medium">
+          Master
+          <select
+            className="input-field select-field"
+            value={masterId}
+            onChange={(e) => selectMaster(e.target.value)}
+          >
+            {masters.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="mt-2 text-xs text-zinc-500">
+          {masters.find((m) => m.id === masterId)?.description ?? ""} · {master.skills.length} skills ·{" "}
+          {master.experience.length} roles · {master.projects.length} projects
+        </p>
+      </SectionCard>
 
       <SectionCard>
         <h2 className="font-medium">Add user-attested skill</h2>
@@ -85,7 +123,7 @@ export function ProfileEditor() {
             onChange={(e) => setAttestName(e.target.value)}
           />
           <select
-            className="input-field !mt-0"
+            className="input-field select-field !mt-0"
             value={attestLevel}
             onChange={(e) => setAttestLevel(e.target.value as typeof attestLevel)}
           >
@@ -124,7 +162,7 @@ export function ProfileEditor() {
           type="button"
           className="btn-ghost"
           onClick={() => {
-            saveProfileOverride(null);
+            saveProfileOverride(null, masterId);
             setJsonText(JSON.stringify({ attestedSkills: [] }, null, 2));
             setMessage("Cleared override.");
           }}

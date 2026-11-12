@@ -138,6 +138,28 @@ body {
   }
 }
 
+/* Native <select> with the same surface as .input-field; chevron inset from the right edge */
+.select-field {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 2.35rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 0.75rem;
+}
+
+.select-field:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (prefers-color-scheme: dark) {
+  .select-field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5L6 8l3.5-3.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;

@@ -1,0 +1,714 @@
+{
+  "version": 1,
+  "allowDuplicateSkills": true,
+  "person": {
+    "name": "Uzair Anwar",
+    "defaultHeadline": "Senior Frontend Engineer | React, Next.js & Angular",
+    "location": "Lahore, Pakistan",
+    "phone": "",
+    "email": "uzairanwar.online@gmail.com",
+    "github": "https://github.com/uzair-anwar",
+    "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
+  },
+  "summaryFacts": [
+    {
+      "id": "summary-1",
+      "text": "Building web applications, analytics platforms, and enterprise products for over 5+ years using React, Next.js, Angular, and TypeScript."
+    },
+    {
+      "id": "summary-2",
+      "text": "Experienced in frontend architecture, design systems, and performance-focused development across healthcare, fintech, mortgage, and SaaS domains."
+    },
+    {
+      "id": "summary-3",
+      "text": "Known for turning complex business workflows into intuitive user experiences while collaborating closely with product, design, and engineering teams."
+    }
+  ],
+  "skillCategories": [
+    {
+      "id": "cat-languages",
+      "label": "Programming Languages",
+      "role": "languages",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-frameworks",
+      "label": "Frameworks & Libraries",
+      "role": "frameworks"
+    },
+    {
+      "id": "cat-ui",
+      "label": "UI Engineering & Design Systems",
+      "role": "ui"
+    },
+    {
+      "id": "cat-architecture",
+      "label": "State Management & Architecture",
+      "role": "architecture"
+    },
+    {
+      "id": "cat-api",
+      "label": "API Development & Integrations",
+      "role": "api"
+    },
+    {
+      "id": "cat-databases",
+      "label": "Databases",
+      "role": "databases"
+    },
+    {
+      "id": "cat-cloud",
+      "label": "Cloud Platforms",
+      "role": "cloud",
+      "bulletStyle": "marker"
+    },
+    {
+      "id": "cat-devops",
+      "label": "DevOps & Testing Coverage",
+      "role": "devops"
+    },
+    {
+      "id": "cat-vcs",
+      "label": "Version Control & Project Management",
+      "role": "vcs"
+    },
+    {
+      "id": "cat-ai",
+      "label": "AI & Automation",
+      "role": "ai"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-languages-javascript",
+      "name": "JavaScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-typescript",
+      "name": "TypeScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-react-js",
+      "name": "React.js",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-next-js",
+      "name": "Next.js",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-angular",
+      "name": "Angular",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-redux",
+      "name": "Redux",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-redux-toolkit",
+      "name": "Redux Toolkit",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-ngrx",
+      "name": "NgRx",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-react-query",
+      "name": "React Query",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-tanstack-query",
+      "name": "TanStack Query",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-tailwind-css",
+      "name": "Tailwind CSS",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-material-ui",
+      "name": "Material UI",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-angular-material",
+      "name": "Angular Material",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-frameworks-bootstrap",
+      "name": "Bootstrap",
+      "categoryId": "cat-frameworks",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-design-systems",
+      "name": "Design Systems",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-component-libraries",
+      "name": "Component Libraries",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-responsive-design",
+      "name": "Responsive Design",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-accessibility-wcag",
+      "name": "Accessibility (WCAG)",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-figma-collaboration",
+      "name": "Figma Collaboration",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-ui-cross-browser-compatibility",
+      "name": "Cross-Browser Compatibility",
+      "categoryId": "cat-ui",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-redux-toolkit",
+      "name": "Redux Toolkit",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-ngrx",
+      "name": "NgRx",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-context-api",
+      "name": "Context API",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-react-query",
+      "name": "React Query",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-tanstack-query",
+      "name": "TanStack Query",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-component-architecture",
+      "name": "Component Architecture",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-architecture-micro-frontends",
+      "name": "Micro Frontends",
+      "categoryId": "cat-architecture",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-rest-apis",
+      "name": "REST APIs",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-graphql",
+      "name": "GraphQL",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-openai-apis",
+      "name": "OpenAI APIs",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-third-party-integrations",
+      "name": "Third-Party Integrations",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-postgresql",
+      "name": "PostgreSQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mongodb",
+      "name": "MongoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mysql",
+      "name": "MySQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-redis",
+      "name": "Redis",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-firebase",
+      "name": "Firebase",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-supabase",
+      "name": "Supabase",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-indexeddb",
+      "name": "IndexedDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-local-storage",
+      "name": "Local Storage",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-realtime-dbs",
+      "name": "Realtime DBs",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-azure",
+      "name": "Azure",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws",
+      "name": "AWS",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-amplify-gen-2",
+      "name": "AWS Amplify Gen 2",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-lambda",
+      "name": "AWS Lambda",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cognito",
+      "name": "AWS Cognito",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-appsync",
+      "name": "AWS AppSync",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-s3",
+      "name": "S3",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-cloudfront",
+      "name": "CloudFront",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-api-gateway",
+      "name": "API Gateway",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cdk",
+      "name": "AWS CDK",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-jest",
+      "name": "Jest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-react-testing-library",
+      "name": "React Testing Library",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-cypress",
+      "name": "Cypress",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-playwright",
+      "name": "Playwright",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-vitest",
+      "name": "Vitest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-docker",
+      "name": "Docker",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-github-actions",
+      "name": "GitHub Actions",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-ci-cd",
+      "name": "CI/CD",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-git",
+      "name": "Git",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-github",
+      "name": "GitHub",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-gitlab",
+      "name": "GitLab",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-jira",
+      "name": "Jira",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-agile-scrum",
+      "name": "Agile (Scrum)",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-openai",
+      "name": "OpenAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-deepai",
+      "name": "DeepAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-agentic-workflows",
+      "name": "Agentic Workflows",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-heygen",
+      "name": "HeyGen",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-integrations",
+      "name": "AI Integrations",
+      "categoryId": "cat-ai",
+      "aliases": []
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-micro1",
+      "company": "Micro1",
+      "title": "Senior Software Engineer (Frontend)",
+      "location": "",
+      "startDate": "2025-05",
+      "endDate": null,
+      "facts": [
+        {
+          "id": "fact-micro1-1",
+          "text": "Built React and Next.js applications for mortgage operations and reporting.",
+          "skills": [
+            "Next.js"
+          ]
+        },
+        {
+          "id": "fact-micro1-2",
+          "text": "Developed analytics dashboards for loans, branches, and portfolio performance.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-3",
+          "text": "Created AI-powered training portals integrated with HeyGen experiences.",
+          "skills": [
+            "HeyGen"
+          ]
+        },
+        {
+          "id": "fact-micro1-4",
+          "text": "Built reusable UI components adopted across multiple internal products.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-5",
+          "text": "Integrated Encompass and third-party services into business workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-6",
+          "text": "Improved page performance through SSR, SSG, and code-splitting strategies.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-7",
+          "text": "Collaborated with designers to deliver responsive and accessible interfaces.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsorb",
+      "company": "Devsorb",
+      "title": "Full Stack Software Engineer (Frontend Focus)",
+      "location": "",
+      "startDate": "2024-01",
+      "endDate": "2025-05",
+      "facts": [
+        {
+          "id": "fact-devsorb-1",
+          "text": "Built fintech dashboards for assets, liabilities, and market data tracking.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-2",
+          "text": "Developed client portals for milestones, reporting, and project visibility.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-3",
+          "text": "Created data visualization experiences supporting operational decisions.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-4",
+          "text": "Integrated APIs and external services into reporting platforms.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-4b",
+          "text": "Improved dashboard responsiveness through rendering and caching optimizations.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-5",
+          "text": "Contributed to frontend architecture and application scalability initiatives.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsinc",
+      "company": "Devsinc",
+      "title": "Software Engineer (Frontend Development)",
+      "location": "",
+      "startDate": "2021-05",
+      "endDate": "2024-01",
+      "facts": [
+        {
+          "id": "fact-devsinc-1",
+          "text": "Built healthcare and enterprise applications using React and Angular.",
+          "skills": [
+            "Angular"
+          ]
+        },
+        {
+          "id": "fact-devsinc-2",
+          "text": "Developed reusable component libraries shared across multiple projects.",
+          "skills": [
+            "Component Libraries"
+          ]
+        },
+        {
+          "id": "fact-devsinc-3",
+          "text": "Created responsive interfaces from Figma designs and product requirements.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-4",
+          "text": "Built reporting workflows supporting healthcare operations and analytics.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-5",
+          "text": "Integrated REST and GraphQL services into frontend applications.",
+          "skills": [
+            "GraphQL"
+          ]
+        },
+        {
+          "id": "fact-devsinc-5b",
+          "text": "Improved maintainability through modular architecture and shared components.",
+          "skills": [
+            "GraphQL"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-monte",
+      "name": "Monte Carlo Analytics",
+      "facts": [
+        {
+          "id": "fact-p-monte-1",
+          "text": "Financial analytics platform delivering business intelligence, operational reporting, and portfolio visibility.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-2",
+          "text": "Developed analytics dashboards and data visualizations enabling stakeholders to monitor financial and operational performance.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-3",
+          "text": "Built reusable reporting components and interactive experiences that simplified complex business data analysis.",
+          "skills": []
+        }
+      ],
+      "link": "https://main.d1wxfdobtmq35e.amplifyapp.com/"
+    },
+    {
+      "id": "proj-navitus",
+      "name": "Navitus",
+      "facts": [
+        {
+          "id": "fact-p-navitus-1",
+          "text": "Healthcare platform supporting pharmacy benefit management, member services, and healthcare operations.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-2",
+          "text": "Built customer-facing interfaces supporting healthcare workflows, reporting, and member-focused experiences.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-3",
+          "text": "Integrated APIs and operational data into scalable frontend applications used across healthcare services.",
+          "skills": []
+        }
+      ],
+      "link": "https://www.navitus.com/"
+    },
+    {
+      "id": "proj-ehata",
+      "name": "Ehata",
+      "facts": [
+        {
+          "id": "fact-p-ehata-1",
+          "text": "Property management platform focused on resident engagement, visitor management, reporting, and community operations.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-2",
+          "text": "Built responsive user interfaces supporting property workflows, visitor management, and resident interactions.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-3",
+          "text": "Developed reusable frontend modules and reporting experiences used across multiple operational features.",
+          "skills": []
+        }
+      ],
+      "link": "https://ehataview.com/"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-punjab",
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "University of the Punjab",
+      "startDate": null,
+      "endDate": null
+    }
+  ],
+  "certifications": []
+}

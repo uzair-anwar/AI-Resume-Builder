@@ -1,0 +1,45 @@
+{
+  "defaultId": "mern",
+  "resumes": [
+    {
+      "id": "mern",
+      "label": "MERN / Full Stack",
+      "templateId": "mern",
+      "file": "mern/master.json",
+      "roleFamilies": ["mern", "node-backend", "cloud", "php", "generic"],
+      "description": "Full-stack JavaScript (React, Node.js, AWS)"
+    },
+    {
+      "id": "frontend",
+      "label": "Frontend (React / Angular)",
+      "templateId": "frontend",
+      "file": "frontend/master.json",
+      "roleFamilies": ["frontend"],
+      "description": "UI engineering, React, Next.js, Angular"
+    },
+    {
+      "id": "java",
+      "label": "Java / Spring Boot",
+      "templateId": "java",
+      "file": "java/master.json",
+      "roleFamilies": ["java", "dotnet", "go"],
+      "description": "JVM backend, Spring Boot, microservices"
+    },
+    {
+      "id": "python",
+      "label": "Python / AI",
+      "templateId": "python",
+      "file": "python/master.json",
+      "roleFamilies": ["python", "ai"],
+      "description": "Python backends, LLM and AI engineering"
+    },
+    {
+      "id": "ror",
+      "label": "Ruby on Rails",
+      "templateId": "ror",
+      "file": "ror/master.json",
+      "roleFamilies": ["ruby"],
+      "description": "Rails SaaS, React, cloud"
+    }
+  ]
+}

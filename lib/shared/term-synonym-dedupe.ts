@@ -15,7 +15,8 @@ function escapeRegExp(s: string): string {
 
 function wordBoundaryPattern(form: string): RegExp {
   const esc = escapeRegExp(form);
-  return new RegExp(`(?<![A-Za-z0-9])${esc}(?![A-Za-z0-9])`, "gi");
+  // A form inside a dotted name ("Node" in "Node.js", "js" in "Node.js") is not a separate mention.
+  return new RegExp(`(?<![A-Za-z0-9])(?<![A-Za-z0-9]\\.)${esc}(?![A-Za-z0-9])(?!\\.[A-Za-z0-9])`, "gi");
 }
 
 function formPresent(text: string, form: string): boolean {

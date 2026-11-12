@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { CoverLetterResponse, CoverLetterVariants } from "@/lib/schemas/cover-letter";
+import type { OutreachEmail, OutreachEmailResponse } from "@/lib/schemas/outreach-email";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai/provider-types";
 import { resolveModelPickerProvider } from "@/lib/ai/ui-helpers";
@@ -19,6 +20,8 @@ import {
 } from "@/lib/client/ai/ai-model-storage";
 import { buildPipelineKey } from "@/lib/client/tailor/pipeline-key";
 import { loadProfileOverride } from "@/lib/client/profile/profile-storage";
+import { loadSelectedMasterId, saveSelectedMasterId } from "@/lib/client/profile/master-selection";
+import type { MasterOption } from "@/lib/schemas/masters";
 import { loadDraft, saveDraft } from "@/lib/client/session/session-draft";
 import {
   loadStoredTailorSession,
@@ -29,6 +32,7 @@ import { mergeResumeContactFromMaster } from "@/lib/client/profile/merge-resume-
 import { ResumePdfPanel } from "@/components/resume/ResumePdfPanel";
 import { JdTermChips } from "@/components/tailor/JdTermChips";
 import { CoverLetterPanel } from "@/components/cover-letter/CoverLetterPanel";
+import { OutreachEmailPanel } from "@/components/outreach/OutreachEmailPanel";
 import { ApplicationAnswerPanel } from "@/components/tailor/ApplicationAnswerPanel";
 import {
   TailorProgress,
@@ -63,6 +67,10 @@ export default function HomeWorkspace() {
   const [analysis, setAnalysis] = useState<JobAnalysis | null>(null);
   const [coverLetter, setCoverLetter] = useState<CoverLetterVariants | null>(null);
   const [coverLetterLoading, setCoverLetterLoading] = useState(false);
+  const [outreachEmail, setOutreachEmail] = useState<OutreachEmail | null>(null);
+  const [outreachEmailLoading, setOutreachEmailLoading] = useState(false);
+  const [outreachRecipientEmail, setOutreachRecipientEmail] = useState("");
+  const [outreachRecipientName, setOutreachRecipientName] = useState("");
   const [budgets, setBudgets] = useState<LineBudgets | undefined>();
   const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -74,12 +82,19 @@ export default function HomeWorkspace() {
   const [viaUrl, setViaUrl] = useState(false);
   const [runId, setRunId] = useState(0);
   const [completedPipelineKey, setCompletedPipelineKey] = useState<string | null>(null);
-  const fontsReady = useLayoutFonts();
+  const [masters, setMasters] = useState<MasterOption[]>([]);
+  const [masterId, setMasterId] = useState("");
+  const templateId = useMemo(
+    () => masters.find((m) => m.id === masterId)?.templateId,
+    [masters, masterId],
+  );
+  const fontsReady = useLayoutFonts(templateId);
   const tailorRequestId = useRef(0);
   const restoredFromStorage = useRef(false);
 
   const pipelineKeyInput = useMemo(
     () => ({
+      masterId,
       jobUrl,
       jobDescription,
       provider,
@@ -87,13 +102,13 @@ export default function HomeWorkspace() {
       modelsByProvider,
       serverProviders,
     }),
-    [jobUrl, jobDescription, provider, allowFallback, modelsByProvider, serverProviders],
+    [masterId, jobUrl, jobDescription, provider, allowFallback, modelsByProvider, serverProviders],
   );
 
   const currentPipelineKey = useMemo(() => {
-    if (!serverProviders.length) return null;
+    if (!serverProviders.length || !masterId) return null;
     return buildPipelineKey(pipelineKeyInput);
-  }, [pipelineKeyInput, serverProviders.length]);
+  }, [pipelineKeyInput, serverProviders.length, masterId]);
 
   const inputsStale =
     completedPipelineKey !== null &&
@@ -116,21 +131,39 @@ export default function HomeWorkspace() {
     );
   }, [resume, analysis, jobTitle]);
 
+  /** Loads a master's default resume, line budgets and the master list. */
+  const fetchProfile = useCallback(async (id: string | null) => {
+    const res = await fetch(id ? `/api/profile?masterId=${encodeURIComponent(id)}` : "/api/profile");
+    if (!res.ok) throw new Error("Failed to load profile");
+    return (await res.json()) as {
+      masterId: string;
+      masters: MasterOption[];
+      defaultResume: ResumeView;
+      lineBudgets?: LineBudgets;
+    };
+  }, []);
+
   useEffect(() => {
-    fetch("/api/profile")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.defaultResume && data.lineBudgets) setBudgets(data.lineBudgets);
-        setResume((prev) =>
-          prev
-            ? mergeResumeContactFromMaster(prev, data.defaultResume.person)
-            : data.defaultResume,
-        );
-      })
-      .catch(() => setError("Failed to load profile"));
-    fetch("/api/ai-providers")
-      .then((r) => r.json())
-      .then((data) => {
+    let alive = true;
+    (async () => {
+      let profile: Awaited<ReturnType<typeof fetchProfile>>;
+      try {
+        profile = await fetchProfile(loadSelectedMasterId());
+      } catch {
+        if (alive) setError("Failed to load profile");
+        return;
+      }
+      if (!alive) return;
+      setMasters(profile.masters);
+      setMasterId(profile.masterId);
+      if (profile.lineBudgets) setBudgets(profile.lineBudgets);
+      setResume((prev) =>
+        prev ? mergeResumeContactFromMaster(prev, profile.defaultResume.person) : profile.defaultResume,
+      );
+
+      try {
+        const data = await (await fetch("/api/ai-providers")).json();
+        if (!alive) return;
         const providers = (data.providers ?? []) as AiProviderCatalog[];
         setFallbackOrder(data.fallbackOrder ?? []);
         const ids = providers.map((p) => p.id);
@@ -140,6 +173,7 @@ export default function HomeWorkspace() {
 
         const draft = loadDraft();
         const key = buildPipelineKey({
+          masterId: profile.masterId,
           jobUrl: draft.jobUrl ?? "",
           jobDescription: draft.jobDescription ?? "",
           provider: loadAiProviderChoice(),
@@ -161,14 +195,54 @@ export default function HomeWorkspace() {
           );
           setAnalysis(stored.analysis);
           setCoverLetter(stored.coverLetter ?? null);
+          setOutreachEmail(stored.outreachEmail ?? null);
+          setOutreachRecipientEmail(stored.outreachRecipientEmail ?? "");
+          setOutreachRecipientName(stored.outreachRecipientName ?? "");
           setBudgets(stored.budgets ?? stored.analysis.lineBudgets);
           setWarnings(stored.warnings);
           setAiUsage(stored.aiUsage);
           setStage("done");
         }
-      })
-      .catch(() => undefined);
-  }, []);
+      } catch {
+        /* provider list is optional until the user tailors */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [fetchProfile]);
+
+  /** Switching master resumes discards the previous tailored result (it belongs to another layout). */
+  const selectMaster = useCallback(
+    async (id: string) => {
+      if (id === masterId) return;
+      saveSelectedMasterId(id);
+      tailorRequestId.current += 1;
+      setMasterId(id);
+      setLoading(false);
+      setStage("idle");
+      setError(null);
+      setErrorCode(null);
+      setAnalysis(null);
+      setCoverLetter(null);
+      setOutreachEmail(null);
+      setOutreachRecipientEmail("");
+      setOutreachRecipientName("");
+      setWarnings([]);
+      setAiUsage(undefined);
+      setCompletedPipelineKey(null);
+      setCompletedProgressSteps([]);
+      setActiveProgressStep(null);
+      try {
+        const profile = await fetchProfile(id);
+        setResume(profile.defaultResume);
+        if (profile.lineBudgets) setBudgets(profile.lineBudgets);
+      } catch {
+        setError("Failed to load the selected master resume");
+      }
+    },
+    [masterId, fetchProfile],
+  );
 
   useEffect(() => {
     saveDraft({ jobUrl, jobDescription, jobTitle, pdfBasename });
@@ -200,13 +274,14 @@ export default function HomeWorkspace() {
       setLoading(true);
       setStage("working");
       setCompletedProgressSteps(viaUrl ? ["fetch"] : []);
-      const override = loadProfileOverride();
+      const override = loadProfileOverride(masterId);
 
       const refreshPreview = async (previous: TailorStepPrevious, stepWarnings: string[]) => {
         const res = await fetch("/api/tailor/assemble", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            masterId,
             jobDescription: description,
             previous,
             warnings: stepWarnings,
@@ -223,6 +298,7 @@ export default function HomeWorkspace() {
 
       try {
         const staged = await runStagedTailorClient({
+          masterId,
           jobDescription: description,
           provider,
           allowProviderFallback: allowFallback,
@@ -244,6 +320,7 @@ export default function HomeWorkspace() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            masterId,
             jobDescription: description,
             previous: accumulated,
             warnings: stepWarnings,
@@ -258,6 +335,7 @@ export default function HomeWorkspace() {
         setResume(data.resume);
         setAnalysis(data.analysis);
         setCoverLetter(null);
+        setOutreachEmail(null);
         setBudgets(data.analysis.lineBudgets);
         setWarnings(data.warnings ?? []);
         setAiUsage(data.aiUsage);
@@ -278,6 +356,7 @@ export default function HomeWorkspace() {
         setCompletedProgressSteps((prev) => [...prev, "assemble", "preview"]);
         setActiveProgressStep(null);
         saveStoredTailorSession({
+          masterId,
           pipelineKey,
           jobTitle: title.trim() || nextTitle,
           pdfBasename: basename,
@@ -299,7 +378,7 @@ export default function HomeWorkspace() {
         if (requestId === tailorRequestId.current) setLoading(false);
       }
     },
-    [provider, allowFallback, modelsByProvider, serverProviders, viaUrl],
+    [masterId, provider, allowFallback, modelsByProvider, serverProviders, viaUrl],
   );
 
   const runGenerate = useCallback(async () => {
@@ -369,12 +448,13 @@ export default function HomeWorkspace() {
       const providerModels = Object.fromEntries(
         serverProviders.map((p) => [p.id, modelsByProvider[p.id] ?? p.defaultModelId]),
       ) as Partial<Record<AiProviderId, string>>;
-      const override = loadProfileOverride();
+      const override = loadProfileOverride(masterId);
 
       const res = await fetch("/api/cover-letter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          masterId,
           jobDescription,
           jobTitle,
           ...(resume ? { tailoredResume: resume } : {}),
@@ -401,6 +481,7 @@ export default function HomeWorkspace() {
       setCoverLetterLoading(false);
     }
   }, [
+    masterId,
     jobDescription,
     jobTitle,
     resume,
@@ -415,6 +496,91 @@ export default function HomeWorkspace() {
     const stored = loadStoredTailorSession();
     if (stored) {
       saveStoredTailorSession({ ...stored, coverLetter: next });
+    }
+  }, []);
+
+  const runGenerateOutreachEmail = useCallback(async () => {
+    if (jobDescription.length < 50) {
+      setError("Paste or extract a job description (50+ characters) before generating an email.");
+      return;
+    }
+    setOutreachEmailLoading(true);
+    setError(null);
+    try {
+      const providerModels = Object.fromEntries(
+        serverProviders.map((p) => [p.id, modelsByProvider[p.id] ?? p.defaultModelId]),
+      ) as Partial<Record<AiProviderId, string>>;
+      const override = loadProfileOverride(masterId);
+
+      const res = await fetch("/api/outreach-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          masterId,
+          jobDescription,
+          jobTitle,
+          ...(resume ? { tailoredResume: resume } : {}),
+          ...(outreachRecipientName.trim()
+            ? { recipientName: outreachRecipientName.trim() }
+            : {}),
+          provider,
+          allowProviderFallback: allowFallback,
+          providerModels,
+          ...(override ? { profileOverride: override } : {}),
+        }),
+      });
+      const data = (await res.json()) as OutreachEmailResponse & { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Email generation failed");
+      setOutreachEmail(data.email);
+
+      const stored = loadStoredTailorSession();
+      if (stored) {
+        saveStoredTailorSession({
+          ...stored,
+          outreachEmail: data.email,
+          outreachRecipientEmail,
+          outreachRecipientName,
+        });
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setOutreachEmailLoading(false);
+    }
+  }, [
+    masterId,
+    jobDescription,
+    jobTitle,
+    resume,
+    outreachRecipientName,
+    outreachRecipientEmail,
+    provider,
+    allowFallback,
+    modelsByProvider,
+    serverProviders,
+  ]);
+
+  const handleOutreachEmailChange = useCallback((next: OutreachEmail) => {
+    setOutreachEmail(next);
+    const stored = loadStoredTailorSession();
+    if (stored) {
+      saveStoredTailorSession({ ...stored, outreachEmail: next });
+    }
+  }, []);
+
+  const handleOutreachRecipientEmailChange = useCallback((v: string) => {
+    setOutreachRecipientEmail(v);
+    const stored = loadStoredTailorSession();
+    if (stored) {
+      saveStoredTailorSession({ ...stored, outreachRecipientEmail: v });
+    }
+  }, []);
+
+  const handleOutreachRecipientNameChange = useCallback((v: string) => {
+    setOutreachRecipientName(v);
+    const stored = loadStoredTailorSession();
+    if (stored) {
+      saveStoredTailorSession({ ...stored, outreachRecipientName: v });
     }
   }, []);
 
@@ -469,6 +635,23 @@ export default function HomeWorkspace() {
 
       <div className="flex w-full flex-col gap-6">
         <SectionCard title="Job & AI" subtitle="Paste a URL or description, then tailor in one click.">
+        <div className="mb-4 flex flex-wrap items-end gap-x-4 gap-y-2">
+          <label className="block min-w-[14rem] text-sm font-medium text-zinc-800 dark:text-zinc-200">
+            Master resume
+            <select
+              className="input-field select-field"
+              value={masterId}
+              disabled={loading || masters.length === 0}
+              onChange={(e) => void selectMaster(e.target.value)}
+            >
+              {masters.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <div className="grid w-full gap-4 md:grid-cols-[minmax(0,1fr)_11rem_14rem] md:items-end">
           <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             Job URL
@@ -496,7 +679,7 @@ export default function HomeWorkspace() {
           <label className="block text-sm font-medium text-zinc-800 dark:text-zinc-200">
             AI provider
             <select
-              className="input-field"
+              className="input-field select-field"
               value={provider}
               onChange={(e) => {
                 const v = e.target.value as AiProviderChoice;
@@ -521,7 +704,7 @@ export default function HomeWorkspace() {
                   {provider === "auto" ? " · Auto primary" : ""})
                 </span>
                 <select
-                  className="input-field"
+                  className="input-field select-field"
                   value={selectedModel}
                   onChange={(e) => {
                     const id = modelPickerProvider;
@@ -654,8 +837,28 @@ export default function HomeWorkspace() {
           />
         ) : null}
 
+        {jobDescription.length >= 50 || outreachEmail ? (
+          <OutreachEmailPanel
+            email={outreachEmail}
+            loading={outreachEmailLoading}
+            onGenerate={() => void runGenerateOutreachEmail()}
+            onChange={handleOutreachEmailChange}
+            canGenerate={!loading && jobDescription.length >= 50}
+            recipientEmail={outreachRecipientEmail}
+            onRecipientEmailChange={handleOutreachRecipientEmailChange}
+            recipientName={outreachRecipientName}
+            onRecipientNameChange={handleOutreachRecipientNameChange}
+            resume={resume}
+            templateId={templateId}
+            downloadBasename={pdfBasename}
+            jobTitle={jobTitle}
+            analysis={analysis}
+          />
+        ) : null}
+
         {jobDescription.length >= 50 ? (
           <ApplicationAnswerPanel
+            masterId={masterId}
             jobDescription={jobDescription}
             jobTitle={jobTitle}
             resume={resume}
@@ -680,6 +883,7 @@ export default function HomeWorkspace() {
         ) : resume ? (
           <ResumePdfPanel
             resume={resume}
+            templateId={templateId}
             jobTitle={jobTitle}
             analysis={analysis}
             budgets={budgets}

@@ -2,36 +2,41 @@ import "server-only";
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { TailoringResult } from "@/lib/schemas/tailoring";
 import { getFactById } from "./master-resume";
+import { buildSkillInputs } from "@/lib/skills/skill-inputs";
+import { activeProfile } from "@/lib/resume/layout/profile";
+
+/** Skills block of the resume view for the selected skills, in category order. */
+export function buildSkillsView(
+  resume: MasterResume,
+  selectedSkillIds: string[],
+  categoryOrder: string[],
+): ResumeView["skills"] {
+  const order = [
+    ...new Set([...categoryOrder, ...resume.skillCategories.map((c) => c.id)]),
+  ].filter((id) => resume.skillCategories.some((c) => c.id === id));
+
+  return buildSkillInputs(resume, selectedSkillIds, order).map((cat) => {
+    const def = resume.skillCategories.find((c) => c.id === cat.categoryId)!;
+    return {
+      categoryId: cat.categoryId,
+      categoryLabel: def.label,
+      role: def.role,
+      bulletStyle: def.bulletStyle,
+      items: cat.skillIds.map((id, i) => {
+        const s = resume.skills.find((x) => x.id === id)!;
+        return {
+          id: s.id,
+          name: s.name,
+          userAttested: s.userAttested,
+          ...(cat.breaks?.[i] ? { breakAfter: true } : {}),
+        };
+      }),
+    };
+  });
+}
 
 export function assembleResumeView(resume: MasterResume, tailored: TailoringResult): ResumeView {
-  const catMap = new Map(resume.skillCategories.map((c) => [c.id, c.label]));
-  const skillById = new Map(resume.skills.map((s) => [s.id, s]));
-
-  const selected = tailored.selectedSkillIds
-    .map((id) => skillById.get(id))
-    .filter(Boolean) as MasterResume["skills"];
-
-  const order = tailored.skillCategoryOrder.length
-    ? tailored.skillCategoryOrder
-    : resume.skillCategories.map((c) => c.id);
-
-  const byCat = new Map<string, ResumeView["skills"][0]>();
-  for (const catId of order) {
-    byCat.set(catId, {
-      categoryId: catId,
-      categoryLabel: catMap.get(catId) ?? catId,
-      items: [],
-    });
-  }
-  for (const s of selected) {
-    const bucket = byCat.get(s.categoryId) ?? {
-      categoryId: s.categoryId,
-      categoryLabel: catMap.get(s.categoryId) ?? s.categoryId,
-      items: [],
-    };
-    bucket.items.push({ id: s.id, name: s.name, userAttested: s.userAttested });
-    byCat.set(s.categoryId, bucket);
-  }
+  const skills = buildSkillsView(resume, tailored.selectedSkillIds, tailored.skillCategoryOrder);
 
   const experience = tailored.experience.map((e) => {
     const src = resume.experience.find((x) => x.id === e.experienceId)!;
@@ -48,12 +53,17 @@ export function assembleResumeView(resume: MasterResume, tailored: TailoringResu
 
   const projects = tailored.projects.map((p) => {
     const src = resume.projects.find((x) => x.id === p.projectId)!;
+    // Bullet-style templates print the master's project facts verbatim (they are already sized for
+    // the layout); paragraph-style templates (MERN) print the tailored description.
+    const verbatim = activeProfile().projectStyle === "bullets";
     return {
       id: src.id,
       name: src.name,
       link: src.link,
-      description: p.description,
-      sourceFactIds: p.sourceFactIds,
+      description: verbatim ? src.facts.map((f) => f.text).join(" ") : p.description,
+      tagline: src.tagline,
+      bullets: src.facts.map((f) => ({ text: f.text, sourceFactIds: [f.id] })),
+      sourceFactIds: verbatim ? src.facts.map((f) => f.id) : p.sourceFactIds,
     };
   });
 
@@ -61,7 +71,7 @@ export function assembleResumeView(resume: MasterResume, tailored: TailoringResu
     headline: tailored.headline,
     summary: tailored.summary,
     person: resume.person,
-    skills: [...byCat.values()].filter((c) => c.items.length > 0),
+    skills,
     experience,
     projects,
     education: resume.education,

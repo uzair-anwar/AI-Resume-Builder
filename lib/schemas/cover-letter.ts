@@ -25,6 +25,8 @@ export const CoverLetterRequestSchema = z.object({
     .optional(),
   allowProviderFallback: z.boolean().optional(),
   profileOverride: z.record(z.string(), z.unknown()).optional(),
+  /** Which master resume (data/resumes/index.json) this request is about. */
+  masterId: z.string().optional(),
 });
 
 export type CoverLetterRequest = z.infer<typeof CoverLetterRequestSchema>;

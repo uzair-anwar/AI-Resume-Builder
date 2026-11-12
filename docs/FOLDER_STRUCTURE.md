@@ -17,7 +17,8 @@ Feature-oriented layout for the Resume Tailor app. Next.js routes stay under `ap
 | **`profile/`** | Profile editor |
 
 ## `data/`
-- **`master-resume.json`** — Source of truth for facts, experience, projects
+- **`resumes/index.json`** — Registry of master resumes (id, label, `templateId`, role families)
+- **`resumes/<id>/master.json`** — Content only: facts, experience, projects, skills (with category `role`, `bulletStyle`, `breakAfter`)
 - **`tech-taxonomy.json`**, **`role-families.json`** — ATS / JD vocabulary
 
 ## `lib/schemas/`
@@ -28,6 +29,8 @@ Cross-cutting utilities: `format`, `text-normalize`, `format-headline`, `job-tit
 
 ## `lib/resume/`
 - **`build-default-resume.ts`** — Default view from master profile
+- **`templates/`** — One `TemplateSpec` per layout (`mern`, `frontend`, `java`, `python`, `ror`) with its `LayoutProfile`
+- **`engine/`** — Display-list engine shared by preview, one-page fit and PDF
 - **`layout/`** — One-page PDF measurement, line budgets, text fit (used by PDF + tailor)
 
 ## `lib/client/`

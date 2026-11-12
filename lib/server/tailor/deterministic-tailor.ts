@@ -9,11 +9,16 @@ import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
 import { scoreFactRelevance } from "./select-facts";
 import { prepareTailoringWorkspace } from "./tailoring-workspace";
 import { selectedProjectLabel } from "./project-select";
+import { buildSkillsView } from "@/lib/server/resume/assemble-resume";
+import { deterministicSkillOrder } from "@/lib/server/tailor/tailor-steps/build-skills";
+import { detectRoleFamily } from "@/lib/server/ats/role-families";
 import { polishResumeView } from "@/lib/server/resume/polish-resume-copy";
 
 export function deterministicTailor(resume: MasterResume, jobText: string): TailorResponse {
   const { master: working, tailoring, analysis } = prepareTailoringWorkspace(resume, jobText);
   const base = buildDefaultResumeView(tailoring);
+
+  const skillOrder = deterministicSkillOrder(tailoring, analysis, detectRoleFamily(jobText));
 
   const scoredBullets = working.experience.map((exp) => ({
     exp,
@@ -39,6 +44,8 @@ export function deterministicTailor(resume: MasterResume, jobText: string): Tail
     name: p.name,
     link: p.link,
     description: p.facts.map((f) => f.text).join(" "),
+    tagline: p.tagline,
+    bullets: p.facts.map((f) => ({ text: f.text, sourceFactIds: [f.id] })),
     sourceFactIds: p.facts.map((f) => f.id),
   }));
 
@@ -47,6 +54,11 @@ export function deterministicTailor(resume: MasterResume, jobText: string): Tail
       coverResumeView(
         {
           ...base,
+          skills: buildSkillsView(
+            tailoring,
+            skillOrder.selectedSkillIds,
+            skillOrder.skillCategoryOrder,
+          ),
           experience,
           projects,
         },

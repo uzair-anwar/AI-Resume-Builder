@@ -77,10 +77,23 @@ function slugId(term: string): string {
     .slice(0, 48);
 }
 
+const LEAD_IN =
+  /^(?:(?:strong|solid|good|working|hands-on|proven|deep)\s+)?(?:familiarity|experience|knowledge|proficiency|expertise|understanding|exposure)\s+(?:of|with|in)\s+/i;
+
 function splitListChunk(chunk: string): string[] {
   return chunk
+    // "AWS (Lambda, S3, DynamoDB)" -> "AWS, Lambda, S3, DynamoDB": a bracketed list is a list of terms
+    .replace(/\(([^)]*)\)/g, ", $1, ")
     .split(/\||;|,|\band\b|\bor\b/gi)
-    .map((s) => s.trim().replace(/^[-•*]\s*/, ""))
+    .map((s) =>
+      s
+        .trim()
+        .replace(/^[-•*]\s*/, "")
+        .replace(LEAD_IN, "")
+        .replace(/[()]/g, "")
+        .replace(/[.]+$/, "")
+        .trim(),
+    )
     .filter((s) => s.length >= 2 && s.length <= 50);
 }
 

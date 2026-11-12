@@ -32,9 +32,25 @@ const ACRONYM_TOKENS = new Set([
   "k8s",
 ]);
 
+/** Product names whose canonical casing is not a plain Capitalized word. */
+const CASE_OVERRIDES: Record<string, string> = {
+  graphql: "GraphQL",
+  mongodb: "MongoDB",
+  postgresql: "PostgreSQL",
+  javascript: "JavaScript",
+  typescript: "TypeScript",
+  dynamodb: "DynamoDB",
+  mysql: "MySQL",
+  nextjs: "NextJS",
+  rabbitmq: "RabbitMQ",
+  fastapi: "FastAPI",
+  github: "GitHub",
+};
+
 function titleCaseSegment(seg: string): string {
   if (!seg) return seg;
   const lower = seg.toLowerCase();
+  if (CASE_OVERRIDES[lower]) return CASE_OVERRIDES[lower];
   if (ACRONYM_TOKENS.has(lower)) return lower.toUpperCase();
   return lower.charAt(0).toUpperCase() + lower.slice(1);
 }

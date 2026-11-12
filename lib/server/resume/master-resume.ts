@@ -1,19 +1,13 @@
 import "server-only";
-import { readFileSync } from "fs";
-import path from "path";
 import { MasterResume, MasterResumeSchema } from "@/lib/schemas/resume";
 import type { ProfileOverride } from "@/lib/schemas/profile";
 import { ProfileOverrideSchema } from "@/lib/schemas/profile";
 import { dedupeSkills } from "@/lib/skills/dedupe-skills";
+import { loadMaster } from "./registry";
 
-let cached: MasterResume | null = null;
-
-export function loadMasterResume(): MasterResume {
-  if (cached) return cached;
-  const file = path.join(process.cwd(), "data", "master-resume.json");
-  const raw = JSON.parse(readFileSync(file, "utf8"));
-  cached = dedupeSkills(MasterResumeSchema.parse(raw));
-  return cached;
+/** Back-compat: the default master resume. Prefer `loadMaster(masterId)` from ./registry. */
+export function loadMasterResume(masterId?: string | null): MasterResume {
+  return loadMaster(masterId);
 }
 
 export function mergeProfileOverride(
@@ -57,7 +51,8 @@ export function mergeProfileOverride(
     }
   }
 
-  return dedupeSkills(MasterResumeSchema.parse(merged));
+  const out = MasterResumeSchema.parse(merged);
+  return out.allowDuplicateSkills ? out : dedupeSkills(out);
 }
 
 export function getAllFactIds(resume: MasterResume): Set<string> {

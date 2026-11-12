@@ -26,39 +26,48 @@
   "skillCategories": [
     {
       "id": "cat-languages",
-      "label": "Programming Languages"
+      "label": "Programming Languages",
+      "role": "languages"
     },
     {
       "id": "cat-frameworks",
-      "label": "Frameworks & Libraries"
+      "label": "Frameworks & Libraries",
+      "role": "frameworks"
     },
     {
       "id": "cat-architecture",
-      "label": "State Management & Architecture"
+      "label": "State Management & Architecture",
+      "role": "architecture"
     },
     {
       "id": "cat-api",
-      "label": "API Development & Integrations"
+      "label": "API Development & Integrations",
+      "role": "api"
     },
     {
       "id": "cat-databases",
-      "label": "Databases"
+      "label": "Databases",
+      "role": "databases"
     },
     {
       "id": "cat-cloud",
-      "label": "Clouds"
+      "label": "Clouds",
+      "role": "cloud"
     },
     {
       "id": "cat-devops",
-      "label": "DevOps & Testing Coverage"
+      "label": "DevOps & Testing Coverage",
+      "role": "devops"
     },
     {
       "id": "cat-vcs",
-      "label": "Version Control & Project MGMT"
+      "label": "Version Control & Project MGMT",
+      "role": "vcs"
     },
     {
       "id": "cat-ai",
-      "label": "AI & Automation"
+      "label": "AI & Automation",
+      "role": "ai"
     }
   ],
   "skills": [
@@ -66,13 +75,17 @@
       "id": "skill-javascript",
       "name": "JavaScript",
       "categoryId": "cat-languages",
-      "aliases": ["JS"]
+      "aliases": [
+        "JS"
+      ]
     },
     {
       "id": "skill-typescript",
       "name": "TypeScript",
       "categoryId": "cat-languages",
-      "aliases": ["TS"]
+      "aliases": [
+        "TS"
+      ]
     },
     {
       "id": "skill-python",
@@ -84,7 +97,9 @@
       "id": "skill-react",
       "name": "React.js",
       "categoryId": "cat-frameworks",
-      "aliases": ["React"]
+      "aliases": [
+        "React"
+      ]
     },
     {
       "id": "skill-nextjs",
@@ -96,13 +111,17 @@
       "id": "skill-node",
       "name": "Node.js",
       "categoryId": "cat-frameworks",
-      "aliases": ["Node"]
+      "aliases": [
+        "Node"
+      ]
     },
     {
       "id": "skill-express",
       "name": "Express.js",
       "categoryId": "cat-frameworks",
-      "aliases": ["Express"]
+      "aliases": [
+        "Express"
+      ]
     },
     {
       "id": "skill-tailwind",
@@ -120,7 +139,9 @@
       "id": "skill-redux",
       "name": "Redux Toolkit",
       "categoryId": "cat-architecture",
-      "aliases": ["Redux"]
+      "aliases": [
+        "Redux"
+      ]
     },
     {
       "id": "skill-context",
@@ -150,7 +171,9 @@
       "id": "skill-rest",
       "name": "REST APIs",
       "categoryId": "cat-api",
-      "aliases": ["REST"]
+      "aliases": [
+        "REST"
+      ]
     },
     {
       "id": "skill-graphql",
@@ -210,19 +233,25 @@
       "id": "skill-amplify",
       "name": "AWS Amplify Gen 2",
       "categoryId": "cat-cloud",
-      "aliases": ["Amplify Gen 2"]
+      "aliases": [
+        "Amplify Gen 2"
+      ]
     },
     {
       "id": "skill-appsync",
       "name": "AWS AppSync",
       "categoryId": "cat-cloud",
-      "aliases": ["AppSync"]
+      "aliases": [
+        "AppSync"
+      ]
     },
     {
       "id": "skill-cognito",
       "name": "AWS Cognito",
       "categoryId": "cat-cloud",
-      "aliases": ["Cognito"]
+      "aliases": [
+        "Cognito"
+      ]
     },
     {
       "id": "skill-dynamodb",
@@ -234,7 +263,9 @@
       "id": "skill-lambda",
       "name": "AWS Lambda",
       "categoryId": "cat-cloud",
-      "aliases": ["Lambda"]
+      "aliases": [
+        "Lambda"
+      ]
     },
     {
       "id": "skill-s3",
@@ -258,7 +289,9 @@
       "id": "skill-cdk",
       "name": "AWS CDK",
       "categoryId": "cat-cloud",
-      "aliases": ["CDK"]
+      "aliases": [
+        "CDK"
+      ]
     },
     {
       "id": "skill-docker",
@@ -276,7 +309,9 @@
       "id": "skill-cicd",
       "name": "CI/CD",
       "categoryId": "cat-devops",
-      "aliases": ["CI/ CD"]
+      "aliases": [
+        "CI/ CD"
+      ]
     },
     {
       "id": "skill-testing",
@@ -306,7 +341,10 @@
       "id": "skill-agile",
       "name": "Agile (Scrum)",
       "categoryId": "cat-vcs",
-      "aliases": ["Scrum", "Agile"]
+      "aliases": [
+        "Scrum",
+        "Agile"
+      ]
     },
     {
       "id": "skill-openai",
@@ -357,32 +395,50 @@
         {
           "id": "fact-m1-1",
           "text": "Built AI-assisted mortgage workflows across 8+ AWS serverless services for loan operations teams.",
-          "skills": ["AWS", "Serverless Architecture", "AI Integrations"]
+          "skills": [
+            "AWS",
+            "Serverless Architecture",
+            "AI Integrations"
+          ]
         },
         {
           "id": "fact-m1-2",
           "text": "Developed loan analytics and reporting dashboards for operational teams.",
-          "skills": ["React.js", "REST APIs"]
+          "skills": [
+            "React.js",
+            "REST APIs"
+          ]
         },
         {
           "id": "fact-m1-3",
           "text": "Integrated 12+ Encompass API endpoints to automate data exchange and reporting.",
-          "skills": ["REST APIs", "Third-Party Integrations"]
+          "skills": [
+            "REST APIs",
+            "Third-Party Integrations"
+          ]
         },
         {
           "id": "fact-m1-4",
           "text": "Created AI-powered training experiences using HeyGen workflows.",
-          "skills": ["HeyGen", "AI Integrations"]
+          "skills": [
+            "HeyGen",
+            "AI Integrations"
+          ]
         },
         {
           "id": "fact-m1-5",
           "text": "Developed financial management modules supporting loan operations.",
-          "skills": ["Node.js"]
+          "skills": [
+            "Node.js"
+          ]
         },
         {
           "id": "fact-m1-6",
           "text": "Built backend services with Node.js and Python for workflow automation.",
-          "skills": ["Node.js", "Python"]
+          "skills": [
+            "Node.js",
+            "Python"
+          ]
         },
         {
           "id": "fact-m1-7",
@@ -402,27 +458,41 @@
         {
           "id": "fact-ds-1",
           "text": "Built fintech applications for asset, liability, and market data management.",
-          "skills": ["React.js", "Node.js"]
+          "skills": [
+            "React.js",
+            "Node.js"
+          ]
         },
         {
           "id": "fact-ds-2",
           "text": "Developed analytics dashboards used for operational reporting.",
-          "skills": ["React.js"]
+          "skills": [
+            "React.js"
+          ]
         },
         {
           "id": "fact-ds-3",
           "text": "Designed 15+ Node.js APIs powering reporting and business workflows.",
-          "skills": ["Node.js", "REST APIs"]
+          "skills": [
+            "Node.js",
+            "REST APIs"
+          ]
         },
         {
           "id": "fact-ds-4",
           "text": "Integrated external financial data sources into centralized platforms.",
-          "skills": ["Third-Party Integrations", "REST APIs"]
+          "skills": [
+            "Third-Party Integrations",
+            "REST APIs"
+          ]
         },
         {
           "id": "fact-ds-5",
           "text": "Built client management systems for projects, milestones, and analytics.",
-          "skills": ["React.js", "Node.js"]
+          "skills": [
+            "React.js",
+            "Node.js"
+          ]
         },
         {
           "id": "fact-ds-6",
@@ -432,7 +502,9 @@
         {
           "id": "fact-ds-7",
           "text": "Contributed to architecture decisions and performance improvements.",
-          "skills": ["RESTful Architecture"]
+          "skills": [
+            "RESTful Architecture"
+          ]
         }
       ]
     },
@@ -447,32 +519,49 @@
         {
           "id": "fact-di-1",
           "text": "Built healthcare and enterprise applications using React and Node.js.",
-          "skills": ["React.js", "Node.js"]
+          "skills": [
+            "React.js",
+            "Node.js"
+          ]
         },
         {
           "id": "fact-di-2",
           "text": "Developed reusable frontend components adopted across projects.",
-          "skills": ["React.js"]
+          "skills": [
+            "React.js"
+          ]
         },
         {
           "id": "fact-di-3",
           "text": "Created 20+ REST APIs supporting reporting and workflow automation.",
-          "skills": ["REST APIs", "Node.js"]
+          "skills": [
+            "REST APIs",
+            "Node.js"
+          ]
         },
         {
           "id": "fact-di-4",
           "text": "Worked with 3 data stores (PostgreSQL, MongoDB, Redis) for scalable solutions.",
-          "skills": ["PostgreSQL", "MongoDB", "Redis"]
+          "skills": [
+            "PostgreSQL",
+            "MongoDB",
+            "Redis"
+          ]
         },
         {
           "id": "fact-di-5",
           "text": "Contributed to cloud deployments and CI/CD pipelines.",
-          "skills": ["CI/CD", "AWS"]
+          "skills": [
+            "CI/CD",
+            "AWS"
+          ]
         },
         {
           "id": "fact-di-6",
           "text": "Collaborated with cross-functional teams on product delivery.",
-          "skills": ["Agile (Scrum)"]
+          "skills": [
+            "Agile (Scrum)"
+          ]
         },
         {
           "id": "fact-di-7",
@@ -491,7 +580,10 @@
         {
           "id": "fact-pm-1",
           "text": "Financial analytics platform providing business intelligence, reporting, and operational visibility.",
-          "skills": ["React.js", "AWS"]
+          "skills": [
+            "React.js",
+            "AWS"
+          ]
         },
         {
           "id": "fact-pm-2",
@@ -513,7 +605,10 @@
         {
           "id": "fact-pn-2",
           "text": "Developed customer-facing features, API integrations, reporting capabilities, and cloud-based solutions that enhanced operational efficiency and user experience.",
-          "skills": ["REST APIs", "AWS"]
+          "skills": [
+            "REST APIs",
+            "AWS"
+          ]
         }
       ]
     },
@@ -542,7 +637,12 @@
         {
           "id": "fact-pcc-2",
           "text": "Built customer-facing React.js and Next.js frontends with Node.js, TypeORM, and Redis backends for large healthcare datasets, caching, and predictive modeling.",
-          "skills": ["React.js", "Next.js", "Node.js", "Redis"]
+          "skills": [
+            "React.js",
+            "Next.js",
+            "Node.js",
+            "Redis"
+          ]
         }
       ]
     },
@@ -559,7 +659,9 @@
         {
           "id": "fact-po-2",
           "text": "Developed responsive, dynamic user interfaces and integrations that improved usability for cross-border financial workflows.",
-          "skills": ["React.js"]
+          "skills": [
+            "React.js"
+          ]
         }
       ]
     },
@@ -576,7 +678,12 @@
         {
           "id": "fact-pa-2",
           "text": "Led a team of four on Node.js and Express backend development and React.js frontends; deployed on AWS Elastic Beanstalk, Amplify, and Cognito.",
-          "skills": ["Node.js", "Express.js", "React.js", "AWS"]
+          "skills": [
+            "Node.js",
+            "Express.js",
+            "React.js",
+            "AWS"
+          ]
         }
       ]
     }

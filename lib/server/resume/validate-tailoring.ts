@@ -1,12 +1,13 @@
+import { columnWidth, bodySize } from "@/lib/resume/layout/active";
 import "server-only";
 import "@/lib/server/layout-fonts";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
 import { TailoringResultSchema } from "@/lib/schemas/tailoring";
 import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
-import { COLUMN_WIDTH, SIZE_BODY, SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { summaryLineCap } from "@/lib/resume/layout/budgets";
 import { resolveProjectIdsForResume } from "@/lib/server/tailor/project-select";
-import { countSkillLines } from "@/lib/resume/layout/budgets";
+import { createSkillsFitCheck } from "@/lib/resume/layout/skill-fit";
 import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 import { getAllFactIds, getFactById } from "./master-resume";
 import {
@@ -53,9 +54,7 @@ export function repairTailoring(
 
   const factIds = getAllFactIds(resume);
   const budgets = analysis.lineBudgets;
-  const allowedLower = new Set(
-    (analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()),
-  );
+  const allowedLower = new Set((analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()));
   const missingTerms = (analysis.missingTerms ?? []).filter(
     (t) => t.length >= 3 && !allowedLower.has(t.toLowerCase()),
   );
@@ -72,7 +71,7 @@ export function repairTailoring(
   const summaryAllowedNums = resume.summaryFacts.flatMap((f) => extractNumbers(f.text));
   let summary = stripForbiddenTerms(data.summary, analysis);
   summary = stripDisallowedNumbers(summary, summaryAllowedNums);
-  summary = fitToMaxWrappedLines(summary, SUMMARY_MAX_LINES, COLUMN_WIDTH, SIZE_BODY);
+  summary = fitToMaxWrappedLines(summary, summaryLineCap(analysis.lineBudgets), columnWidth(), bodySize());
   if (!summary.trim() || hasForeign(summary)) {
     summary = defaultSummary;
     note("summary");
@@ -107,20 +106,13 @@ export function repairTailoring(
     return [...jdTerms].some((t) => name.includes(t) || t.includes(name));
   };
 
-  const linesFor = (ids: string[]) =>
-    countSkillLines(
-      catOrder.map((cid) => ({
-        categoryId: cid,
-        names: ids
-          .filter((id) => skillById.get(id)!.categoryId === cid)
-          .map((id) => skillById.get(id)!.name),
-      })),
-    );
+  const overflowFor = createSkillsFitCheck(resume, catOrder);
+  const fits = (ids: string[]) => overflowFor(ids) <= 0.5;
 
   // trim until skills fit the budget: drop JD-irrelevant skills from the end first
   let guard = 0;
   let trimmed = false;
-  while (linesFor(selected) > budgets.skillsMaxLines && guard++ < 200) {
+  while (!fits(selected) && guard++ < 200) {
     trimmed = true;
     let idx = -1;
     for (let i = selected.length - 1; i >= 0; i--) {
@@ -136,15 +128,13 @@ export function repairTailoring(
 
   // A very sparse skills block looks broken next to the template: top it up with the
   // most JD-relevant remaining skills (then profile order) until it is ~70% of the budget.
-  const target = budgets.skillsMaxLines;
-  if (linesFor(selected) < target) {
+  if (fits(selected)) {
     const rest = resume.skills
       .map((s) => s.id)
       .filter((id) => !selected.includes(id) && !hasForeign(skillById.get(id)!.name));
     rest.sort((a, b) => Number(isRelevantSkill(b)) - Number(isRelevantSkill(a)));
     for (const id of rest) {
-      if (linesFor(selected) >= target) break;
-      if (linesFor([...selected, id]) <= budgets.skillsMaxLines) selected.push(id);
+      if (fits([...selected, id])) selected.push(id);
     }
   }
 
@@ -186,8 +176,10 @@ export function repairTailoring(
         bullets.push({ text, sourceFactIds: ids });
       }
     }
-    if (!bullets.length) {
-      for (const f of src.facts) bullets.push({ text: f.text, sourceFactIds: [f.id] });
+    // Facts the AI left out come back verbatim; the one-page fit drops the weakest if space runs out.
+    const covered = new Set(bullets.flatMap((b) => b.sourceFactIds));
+    for (const f of src.facts) {
+      if (!covered.has(f.id)) bullets.push({ text: f.text, sourceFactIds: [f.id] });
     }
     return { experienceId: src.id, bullets };
   });
@@ -206,20 +198,20 @@ export function repairTailoring(
     const srcIds = src.facts.map((f) => f.id);
     const max = (budgets.projects[projectId] ?? 5) + 1;
     const srcNums = extractNumbers(original);
-    let sanitized =
+    const sanitized =
       description !== null
         ? fitToMaxWrappedLines(
             stripDisallowedNumbers(stripForbiddenTerms(description, analysis), srcNums),
             max,
-            COLUMN_WIDTH,
-            SIZE_BODY,
+            columnWidth(),
+            bodySize(),
           )
         : null;
     const ok =
       sanitized !== null &&
       sanitized.trim() &&
       !hasForeign(sanitized) &&
-      countWrappedLines(sanitized, COLUMN_WIDTH, SIZE_BODY) <= max &&
+      countWrappedLines(sanitized, columnWidth(), bodySize()) <= max &&
       extractNumbers(sanitized).every((n) => srcNums.includes(n));
     if (description !== null && !ok) {
       note(`project ${projectId}`);

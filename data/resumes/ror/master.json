@@ -1,0 +1,900 @@
+{
+  "version": 1,
+  "allowDuplicateSkills": true,
+  "person": {
+    "name": "Uzair Anwar",
+    "defaultHeadline": "Senior Software Engineer | Ruby on Rails, React & Cloud",
+    "location": "Pakistan",
+    "phone": "",
+    "email": "uzairanwar.online@gmail.com",
+    "github": "https://github.com/uzair-anwar",
+    "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
+  },
+  "summaryFacts": [
+    {
+      "id": "summary-1",
+      "text": "Building scalable SaaS platforms and backend systems that turn complex business requirements into reliable, customer-focused software."
+    },
+    {
+      "id": "summary-2",
+      "text": "Over 5 years of experience designing modern web applications, developing secure backend services, and delivering cloud-native solutions using Ruby on Rails, React, Node.js, Python, and AWS."
+    },
+    {
+      "id": "summary-3",
+      "text": "Experienced across fintech, healthcare, mortgage, and SaaS products, combining strong product engineering, scalable architecture, and AI integrations to build software that performs reliably in production and grows with business needs."
+    }
+  ],
+  "skillCategories": [
+    {
+      "id": "cat-languages",
+      "label": "Core Languages",
+      "role": "languages",
+      "bulletStyle": "marker"
+    },
+    {
+      "id": "cat-ruby",
+      "label": "Ruby Ecosystem",
+      "role": "ruby",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-frontend",
+      "label": "Frontend Development",
+      "role": "frontend",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-backend",
+      "label": "Backend Engineering",
+      "role": "backend",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-api",
+      "label": "API Development & Integrations",
+      "role": "api",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-ai",
+      "label": "AI & Automation",
+      "role": "ai",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-databases",
+      "label": "Databases",
+      "role": "databases",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-cloud",
+      "label": "Cloud Platforms",
+      "role": "cloud",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-devops",
+      "label": "DevOps & Testing",
+      "role": "devops",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-vcs",
+      "label": "Version Control & Project Management",
+      "role": "vcs",
+      "bulletStyle": "inline"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-languages-ruby",
+      "name": "Ruby",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-python",
+      "name": "Python",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-java",
+      "name": "Java",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-javascript",
+      "name": "JavaScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-typescript",
+      "name": "TypeScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-ruby-on-rails",
+      "name": "Ruby on Rails",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-active-record",
+      "name": "Active Record",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-sidekiq",
+      "name": "Sidekiq",
+      "categoryId": "cat-ruby",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ruby-rspec",
+      "name": "RSpec",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-puma",
+      "name": "Puma",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-bundler",
+      "name": "Bundler",
+      "categoryId": "cat-ruby",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ruby-action-cable",
+      "name": "Action Cable",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-hotwire",
+      "name": "Hotwire",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-turbo",
+      "name": "Turbo",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-ruby-stimulus",
+      "name": "Stimulus",
+      "categoryId": "cat-ruby",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-react-js",
+      "name": "React.js",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-next-js",
+      "name": "Next.js",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-redux-toolkit",
+      "name": "Redux Toolkit",
+      "categoryId": "cat-frontend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-frontend-context-api",
+      "name": "Context API",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-react-query",
+      "name": "React Query",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-html5",
+      "name": "HTML5",
+      "categoryId": "cat-frontend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-frontend-css3",
+      "name": "CSS3",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-tailwind-css",
+      "name": "Tailwind CSS",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-material-ui",
+      "name": "Material UI",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-frontend-bootstrap",
+      "name": "Bootstrap",
+      "categoryId": "cat-frontend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-node-js",
+      "name": "Node.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-express-js",
+      "name": "Express.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-fastapi",
+      "name": "FastAPI",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-django",
+      "name": "Django",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-flask",
+      "name": "Flask",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-rest-apis",
+      "name": "REST APIs",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-graphql",
+      "name": "GraphQL",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-microservices",
+      "name": "Microservices",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-clean-architecture",
+      "name": "Clean Architecture",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-domain-driven-design",
+      "name": "Domain-Driven Design",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-system-design",
+      "name": "System Design",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-rest-apis",
+      "name": "REST APIs",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-graphql",
+      "name": "GraphQL",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-oauth-2-0",
+      "name": "OAuth 2.0",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-jwt-authentication",
+      "name": "JWT Authentication",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-websockets",
+      "name": "WebSockets",
+      "categoryId": "cat-api",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-api-third-party-api-integration",
+      "name": "Third-Party API Integration",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-openai",
+      "name": "OpenAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langchain",
+      "name": "LangChain",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langgraph",
+      "name": "LangGraph",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-crewai",
+      "name": "CrewAI",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-llamaindex",
+      "name": "LlamaIndex",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-agents",
+      "name": "AI Agents",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-prompt-engineering",
+      "name": "Prompt Engineering",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-retrieval-augmented-generation-rag",
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-ai-automation",
+      "name": "AI Automation",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-deepai",
+      "name": "DeepAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-postgresql",
+      "name": "PostgreSQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mysql",
+      "name": "MySQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-redis",
+      "name": "Redis",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mongodb",
+      "name": "MongoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws",
+      "name": "AWS",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-lambda",
+      "name": "AWS Lambda",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-api-gateway",
+      "name": "API Gateway",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cognito",
+      "name": "AWS Cognito",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-s3",
+      "name": "S3",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-bedrock",
+      "name": "AWS Bedrock",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-sagemaker",
+      "name": "AWS SageMaker",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-eventbridge",
+      "name": "AWS EventBridge",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-step-functions",
+      "name": "AWS Step Functions",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cdk",
+      "name": "AWS CDK",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-amplify-gen-2",
+      "name": "AWS Amplify Gen 2",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-azure",
+      "name": "Azure",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-docker",
+      "name": "Docker",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-kubernetes",
+      "name": "Kubernetes",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-maven",
+      "name": "Maven",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-gradle",
+      "name": "Gradle",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-github-actions",
+      "name": "GitHub Actions",
+      "categoryId": "cat-devops",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-devops-ci-cd",
+      "name": "CI/CD",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-junit",
+      "name": "JUnit",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-mockito",
+      "name": "Mockito",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-pytest",
+      "name": "Pytest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-postman",
+      "name": "Postman",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-git",
+      "name": "Git",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-github",
+      "name": "GitHub",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-gitlab",
+      "name": "GitLab",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-jira",
+      "name": "Jira",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-agile-scrum",
+      "name": "Agile (Scrum)",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-kanban",
+      "name": "Kanban",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-micro1",
+      "company": "Micro1",
+      "title": "Senior Software Engineer (Product Engineering)",
+      "location": "",
+      "startDate": "2025-05",
+      "endDate": null,
+      "facts": [
+        {
+          "id": "fact-micro1-1",
+          "text": "Delivered 18+ Ruby on Rails services powering SaaS platforms.",
+          "skills": [
+            "Ruby",
+            "Ruby on Rails"
+          ]
+        },
+        {
+          "id": "fact-micro1-2",
+          "text": "Built 20+ REST APIs supporting customer-facing applications.",
+          "skills": [
+            "REST APIs"
+          ]
+        },
+        {
+          "id": "fact-micro1-3",
+          "text": "Developed React features for AI-driven business workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-4",
+          "text": "Engineered Node.js services for scalable backend integrations.",
+          "skills": [
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-micro1-5",
+          "text": "Built Python services enabling intelligent workflow automation.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-micro1-6",
+          "text": "Automated 25+ operational processes through backend solutions.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-7",
+          "text": "Integrated Encompass with secure Rails-based business systems.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-8",
+          "text": "Designed AWS cloud services supporting distributed applications.",
+          "skills": [
+            "AWS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "exp-devsorb",
+      "company": "Devsorb",
+      "title": "Full Stack Software Engineer",
+      "location": "",
+      "startDate": "2024-01",
+      "endDate": "2025-05",
+      "facts": [
+        {
+          "id": "fact-devsorb-1",
+          "text": "Delivered 15+ Ruby on Rails APIs for fintech SaaS platforms.",
+          "skills": [
+            "Ruby",
+            "Ruby on Rails"
+          ]
+        },
+        {
+          "id": "fact-devsorb-2",
+          "text": "Built React dashboards supporting business and client operations.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-3",
+          "text": "Developed Node.js services for secure backend integrations.",
+          "skills": [
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-devsorb-4",
+          "text": "Delivered Python utilities automating reporting and data workflows.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsorb-5",
+          "text": "Integrated 10+ third-party financial and analytics platforms.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-6",
+          "text": "Engineered PostgreSQL data models for scalable business systems.",
+          "skills": [
+            "PostgreSQL"
+          ]
+        },
+        {
+          "id": "fact-devsorb-7",
+          "text": "Improved platform performance through efficient backend design.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-8",
+          "text": "Built reusable services accelerating feature delivery across products.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsinc",
+      "company": "Devsinc",
+      "title": "Software Engineer",
+      "location": "",
+      "startDate": "2021-05",
+      "endDate": "2024-01",
+      "facts": [
+        {
+          "id": "fact-devsinc-1",
+          "text": "Built Ruby on Rails services for enterprise healthcare platforms.",
+          "skills": [
+            "Ruby",
+            "Ruby on Rails"
+          ]
+        },
+        {
+          "id": "fact-devsinc-2",
+          "text": "Developed React interfaces supporting operational workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-3",
+          "text": "Delivered secure REST APIs for healthcare business systems.",
+          "skills": [
+            "REST APIs"
+          ]
+        },
+        {
+          "id": "fact-devsinc-4",
+          "text": "Engineered Node.js services for backend business integrations.",
+          "skills": [
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-devsinc-5",
+          "text": "Built Python automation tools improving internal processes.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsinc-6",
+          "text": "Designed PostgreSQL schemas supporting enterprise applications.",
+          "skills": [
+            "PostgreSQL"
+          ]
+        },
+        {
+          "id": "fact-devsinc-7",
+          "text": "Optimized backend performance for high-volume user requests.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-8",
+          "text": "Improved development speed through reusable application modules.",
+          "skills": []
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-monte",
+      "name": "Monte Carlo Analytics",
+      "facts": [
+        {
+          "id": "fact-p-monte-1",
+          "text": "Developed scalable data pipelines processing business insights.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-2",
+          "text": "Engineered backend services for financial reporting and analytics.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-3",
+          "text": "Integrated multiple enterprise data sources into unified dashboards.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-4",
+          "text": "Optimized analytics performance for large-scale financial workloads.",
+          "skills": []
+        }
+      ],
+      "tagline": "Financial Analytics & Business Intelligence Platform",
+      "link": "https://main.d1wxfdobtmq35e.amplifyapp.com/"
+    },
+    {
+      "id": "proj-navitus",
+      "name": "Navitus",
+      "facts": [
+        {
+          "id": "fact-p-navitus-1",
+          "text": "Integrated secure APIs across enterprise healthcare ecosystems.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-2",
+          "text": "Built reliable workflows for reporting and operational automation.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-3",
+          "text": "Improved platform scalability for high-volume business transactions.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-4",
+          "text": "Developed scalable backend services supporting healthcare operations.",
+          "skills": []
+        }
+      ],
+      "tagline": "Enterprise Healthcare & Pharmacy Benefits Platform",
+      "link": "https://www.navitus.com/"
+    },
+    {
+      "id": "proj-ehata",
+      "name": "Ehata",
+      "facts": [
+        {
+          "id": "fact-p-ehata-1",
+          "text": "Built secure integrations with cloud-based enterprise services.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-2",
+          "text": "Optimized reporting through efficient backend data processing.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-3",
+          "text": "Delivered 12+ REST APIs powering customer-facing business workflows.",
+          "skills": [
+            "REST APIs"
+          ]
+        },
+        {
+          "id": "fact-p-ehata-4",
+          "text": "Engineered scalable SaaS services supporting resident and community operations.",
+          "skills": []
+        }
+      ],
+      "tagline": "Smart Property Management & Community Operations Platform",
+      "link": "https://ehataview.com/"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-punjab",
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "University of the Punjab",
+      "startDate": null,
+      "endDate": null
+    }
+  ],
+  "certifications": []
+}

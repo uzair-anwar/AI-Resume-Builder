@@ -7,6 +7,7 @@ import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai
 import { loadProfileOverride } from "@/lib/client/profile/profile-storage";
 
 type Props = {
+  masterId?: string;
   jobDescription: string;
   jobTitle?: string;
   resume: ResumeView | null;
@@ -42,6 +43,7 @@ function CopyIcon({ className }: { className?: string }) {
 }
 
 export function ApplicationAnswerPanel({
+  masterId,
   jobDescription,
   jobTitle,
   resume,
@@ -79,12 +81,13 @@ export function ApplicationAnswerPanel({
       const providerModels = Object.fromEntries(
         serverProviders.map((p) => [p.id, modelsByProvider[p.id] ?? p.defaultModelId]),
       ) as Partial<Record<AiProviderId, string>>;
-      const override = loadProfileOverride();
+      const override = loadProfileOverride(masterId);
 
       const res = await fetch("/api/application-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          masterId,
           question: q,
           jobDescription,
           jobTitle,

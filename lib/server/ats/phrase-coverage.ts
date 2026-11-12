@@ -1,3 +1,4 @@
+import { columnWidth, bodySize } from "@/lib/resume/layout/active";
 import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailoringResult } from "@/lib/schemas/tailoring";
 import {
@@ -11,12 +12,9 @@ import { findTaxonomyTermByName } from "./taxonomy";
 import { classifyJdTermKind, isHiringCompanyTerm } from "./jd-dynamic-vocab";
 import { buildJdPhraseTargets, preferredJdSurface } from "./jd-exact-phrases";
 import { fitToMaxBulletLines, fitToMaxWrappedLines } from "@/lib/resume/layout/text-fit";
-import {
-  COLUMN_WIDTH,
-  SIZE_BODY,
-  TAILOR_BULLET_MAX_LINES,
-  TAILOR_PROJECT_MAX_LINES,
-} from "@/lib/resume/layout/constants";
+import { tailorCaps } from "@/lib/resume/layout/profile";
+import { summaryLineCap } from "@/lib/resume/layout/budgets";
+import { countBulletLines } from "@/lib/resume/layout/measure";
 
 type FactItem = MasterResume["summaryFacts"][number];
 
@@ -27,7 +25,8 @@ function projectsForWeave(resume: MasterResume, analysis: JobAnalysis) {
   return resume.projects.filter((p) => set.has(p.id));
 }
 
-const VERB_PHRASE = /^(improve|build|design|lead|maintain|collaborate|monitor|write|develop|deliver|ensure|provide|create|manage|support|drive|scale|optimize|optimise)\b/i;
+const VERB_PHRASE =
+  /^(improve|build|design|lead|maintain|collaborate|monitor|write|develop|deliver|ensure|provide|create|manage|support|drive|scale|optimize|optimise)\b/i;
 
 function hasPhrase(text: string, phrase: string): boolean {
   if (phrase.length < 2) return false;
@@ -54,9 +53,15 @@ export function weavePhrases(text: string, phrases: string[], maxPhrases = 3): s
   const pick = missing.slice(0, maxPhrases);
   const nouns = pick.filter((p) => !VERB_PHRASE.test(p));
   const verbs = pick.filter((p) => VERB_PHRASE.test(p));
-  const base = text.replace(/[.\s]+$/, "");
+  let base = text.replace(/[.\s]+$/, "");
   const bits: string[] = [];
-  if (nouns.length) bits.push(`including ${joinAnd(nouns)}`);
+  // Already ends with ", including A and B": extend that list instead of adding a second clause.
+  const existing = base.match(/^([\s\S]*?),\s*including\s+([^.]+)$/);
+  const merged = existing
+    ? [...existing[2]!.split(/,\s*|\s+and\s+/).map((x) => x.trim()).filter(Boolean), ...nouns]
+    : nouns;
+  if (existing && nouns.length) base = existing[1]!;
+  if (merged.length) bits.push(`including ${joinAnd(merged)}`);
   if (verbs.length) bits.push(joinAnd(verbs.map((v) => `ability to ${v.replace(/^to\s+/i, "")}`)));
   if (!bits.length) return text;
   return `${base}, ${bits.join(", ")}.`;
@@ -76,9 +81,14 @@ function supportScore(
   const ev = mapFactToJdEvidence(fact, analysis);
   if (ev.directKeywords.some((k) => labelMatches(k, canonical))) return 5;
   if (ev.bridgedPhrases.some((b) => labelMatches(b, canonical))) return 4;
-  if (expansionBridgeReason(canonical, resume, { hiringCompanyNames: analysis.hiringCompanyNames })) return 2;
+  if (expansionBridgeReason(canonical, resume, { hiringCompanyNames: analysis.hiringCompanyNames }))
+    return 2;
   const chip = analysis.terms.find((t) => t.term.toLowerCase() === canonical.toLowerCase());
-  if (chip && chip.status !== "matched" && !isHiringCompanyTerm(chip.term, analysis.hiringCompanyNames ?? [])) {
+  if (
+    chip &&
+    chip.status !== "matched" &&
+    !isHiringCompanyTerm(chip.term, analysis.hiringCompanyNames ?? [])
+  ) {
     return 2;
   }
   return 0;
@@ -103,7 +113,9 @@ function planProfilePhrasePlacements(
   analysis: JobAnalysis,
 ): Map<string, string[]> {
   const slots: Slot[] = [
-    ...resume.experience.flatMap((e) => e.facts.map((f) => ({ factId: f.id, section: "experience" as const }))),
+    ...resume.experience.flatMap((e) =>
+      e.facts.map((f) => ({ factId: f.id, section: "experience" as const })),
+    ),
     ...projectsForWeave(resume, analysis).flatMap((p) =>
       p.facts.map((f) => ({ factId: f.id, section: "project" as const })),
     ),
@@ -124,10 +136,12 @@ function planProfilePhrasePlacements(
     const forms = surface ? [surface] : chip.surfaceForms?.length ? chip.surfaceForms : [chip.term];
     for (const phrase of forms) {
       if (phrases.some((p) => p.phrase.toLowerCase() === phrase.toLowerCase())) continue;
-      if (phrases.some((p) => p.phrase.length > phrase.length && hasPhrase(p.phrase, phrase))) continue;
+      if (phrases.some((p) => p.phrase.length > phrase.length && hasPhrase(p.phrase, phrase)))
+        continue;
       for (let i = phrases.length - 1; i >= 0; i--) {
         const prev = phrases[i]!;
-        if (phrase.length > prev.phrase.length && hasPhrase(phrase, prev.phrase)) phrases.splice(i, 1);
+        if (phrase.length > prev.phrase.length && hasPhrase(phrase, prev.phrase))
+          phrases.splice(i, 1);
       }
       phrases.push({ phrase, canonical: chip.term, rank, gap });
     }
@@ -157,7 +171,10 @@ function planProfilePhrasePlacements(
       .sort((a, b) => {
         const projectBias = placed % 3 === 2 ? 1 : 0;
         const sec = (s: Slot) => (s.section === "project" ? projectBias : 1 - projectBias);
-        return b.score + sec(b.slot) - (a.score + sec(a.slot)) || taken(a.slot.factId) - taken(b.slot.factId);
+        return (
+          b.score + sec(b.slot) - (a.score + sec(a.slot)) ||
+          taken(a.slot.factId) - taken(b.slot.factId)
+        );
       });
     const best = ranked[0] ?? {
       slot: slots[placed % slots.length]!,
@@ -226,7 +243,10 @@ export function planPhrasePlacements(
   resume: MasterResume,
   analysis: JobAnalysis,
 ): Map<string, string[]> {
-  return mergePlans(planProfilePhrasePlacements(resume, analysis), planExpansionPhraseMap(resume, analysis));
+  return mergePlans(
+    planProfilePhrasePlacements(resume, analysis),
+    planExpansionPhraseMap(resume, analysis),
+  );
 }
 
 export function phraseInstructions(factIds: string[], plan: Map<string, string[]>): string {
@@ -286,14 +306,23 @@ export function applyPhraseCoverage(
   let summary = result.summary;
   if (summaryPhrases.length) summary = weavePhrases(summary, summaryPhrases);
 
+  const bulletCap = (b: { sourceFactIds: string[] }) => {
+    const caps = tailorCaps();
+    const budget = b.sourceFactIds
+      .map((id) => analysis.lineBudgets?.bullets[id])
+      .filter((n): n is number => typeof n === "number");
+    return caps.exactBullets && budget.length ? Math.max(...budget) : caps.bulletMax;
+  };
   const used = new Set<string>();
 
   const experience = result.experience.map((exp) => ({
     ...exp,
-    bullets: exp.bullets.map((b) => ({
-      ...b,
-      text: weaveOwned(b.text, b.sourceFactIds, plan, used),
-    })),
+    bullets: exp.bullets.map((b) => {
+      const woven = weaveOwned(b.text, b.sourceFactIds, plan, used);
+      // On tight templates a bullet may not grow: keep the original wording if the phrase does not fit.
+      const tooLong = tailorCaps().exactBullets && countBulletLines(woven) > bulletCap(b);
+      return { ...b, text: tooLong ? b.text : woven };
+    }),
   }));
 
   const projects = result.projects.map((p) => ({
@@ -311,7 +340,9 @@ export function applyPhraseCoverage(
       used.add(factId);
       continue;
     }
-    const proj = projectsForWeave(resume, analysis).find((p) => p.facts.some((f) => f.id === factId));
+    const proj = projectsForWeave(resume, analysis).find((p) =>
+      p.facts.some((f) => f.id === factId),
+    );
     const blockP = proj ? projects.find((p) => p.projectId === proj.id) : undefined;
     if (blockP) {
       blockP.description = weavePhrases(blockP.description, phrases);
@@ -319,36 +350,56 @@ export function applyPhraseCoverage(
     }
   }
 
+  const clampSummary = (text: string) =>
+    analysis.lineBudgets
+      ? fitToMaxWrappedLines(text, summaryLineCap(analysis.lineBudgets), columnWidth(), bodySize())
+      : text;
   const clampedExperience = experience.map((exp) => ({
     ...exp,
     bullets: exp.bullets.map((b) => ({
       ...b,
-      text: fitToMaxBulletLines(b.text, TAILOR_BULLET_MAX_LINES),
+      text: fitToMaxBulletLines(b.text, bulletCap(b)),
     })),
   }));
   const clampedProjects = projects.map((p) => ({
     ...p,
-    description: fitToMaxWrappedLines(p.description, TAILOR_PROJECT_MAX_LINES, COLUMN_WIDTH, SIZE_BODY),
+    description: fitToMaxWrappedLines(
+      p.description,
+      tailorCaps().projectMax,
+      columnWidth(),
+      bodySize(),
+    ),
   }));
 
   const withExact = enforceJdExactSurfaces(
-    { ...result, summary, experience: clampedExperience, projects: clampedProjects },
+    {
+      ...result,
+      summary: clampSummary(summary),
+      experience: clampedExperience,
+      projects: clampedProjects,
+    },
     resume,
     analysis,
   );
 
   return {
     ...withExact,
+    summary: clampSummary(withExact.summary),
     experience: withExact.experience.map((exp) => ({
       ...exp,
       bullets: exp.bullets.map((b) => ({
         ...b,
-        text: fitToMaxBulletLines(b.text, TAILOR_BULLET_MAX_LINES),
+        text: fitToMaxBulletLines(b.text, bulletCap(b)),
       })),
     })),
     projects: withExact.projects.map((p) => ({
       ...p,
-      description: fitToMaxWrappedLines(p.description, TAILOR_PROJECT_MAX_LINES, COLUMN_WIDTH, SIZE_BODY),
+      description: fitToMaxWrappedLines(
+        p.description,
+        tailorCaps().projectMax,
+        columnWidth(),
+        bodySize(),
+      ),
     })),
   };
 }

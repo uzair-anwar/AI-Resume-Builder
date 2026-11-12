@@ -7,7 +7,7 @@ const JUNK_START =
   /^(join(\s+us)?|when|what|write|you|your|our|this|the|at\s+a|days|if|as\s+a|in[- ]?person|customers|chalk|point\s+of|capabilities|focusing|use[- ]cases|with\s+ml|this\s+role|we\s+are|you\s+will|about\s+the|the\s+role|as\s+our|help\s+us|work\s+with)\b/i;
 
 const JUNK_CONTAINS =
-  /\b(days?\s+a\s+week|re[- ]?flexible|in[- ]?person\s+as|customers\s+and\s+prospects|write\s+code\s+to|years?\s+experience\s+of\s+professional|technical\s+and\s+non[- ]technical|what\s+we|join\s+us)\b/i;
+  /\b(days?\s+a\s+week|re[- ]?flexible|in[- ]?person\s+as|customers\s+and\s+prospects|write\s+code\s+to|years?\s+experience\s+of\s+professional|technical\s+and\s+non[- ]technical|what\s+we|join\s+us|such\s+as)\b/i;
 
 const JUNK_END = /\b(as|and|or|the|you|we|our|in|on|at|to|with|for|a|an)$/i;
 
@@ -23,6 +23,9 @@ export function isQualityJdTerm(term: string): boolean {
   const words = t.split(/\s+/);
 
   if (words.length > 6) return false;
+  // Half of a bracketed list ("AWS (Lambda", "DynamoDB)") or a sentence lead-in is not a real term.
+  if ((t.match(/\(/g)?.length ?? 0) !== (t.match(/\)/g)?.length ?? 0)) return false;
+  if (/^(?:strong\s+|solid\s+|good\s+|working\s+)?(?:knowledge|familiarity|experience|proficiency|expertise|understanding)\s+(?:of|with|in)\b/i.test(t)) return false;
   if (JUNK_START.test(lower) || JUNK_CONTAINS.test(lower)) return false;
   if (JUNK_END.test(lower)) return false;
   if (/[?!]/.test(t)) return false;

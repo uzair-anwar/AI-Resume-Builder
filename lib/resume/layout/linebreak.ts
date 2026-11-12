@@ -1,5 +1,5 @@
 import { normalizeTypography } from "@/lib/shared/text-normalize";
-import { textWidth, type FontStyleKey } from "./fonts";
+import { textWidth, type FontStyleKey, type FontFamilyKey } from "./fonts";
 
 export type LayoutLine = {
   /** Units separated by (justifiable) spaces. A unit may hold several pieces glued by hyphens. */
@@ -17,6 +17,7 @@ export function breakLines(
   maxWidth: number,
   size: number,
   style: FontStyleKey = "regular",
+  family?: FontFamilyKey,
 ): LayoutLine[] {
   const tokens = normalizeTypography(text).replace(/\s+/g, " ").trim().split(" ").filter(Boolean);
   if (!tokens.length) return [];
@@ -37,7 +38,7 @@ export function breakLines(
       const candidate = glue
         ? [...units.slice(0, -1), units[units.length - 1] + part]
         : [...units, part];
-      if (textWidth(lineText(candidate), size, style) <= maxWidth + 0.01) {
+      if (textWidth(lineText(candidate), size, style, family) <= maxWidth + 0.01) {
         units = candidate;
       } else {
         lines.push(units);
@@ -55,6 +56,7 @@ export function countLines(
   maxWidth: number,
   size: number,
   style: FontStyleKey = "regular",
+  family?: FontFamilyKey,
 ): number {
-  return breakLines(text, maxWidth, size, style).length;
+  return breakLines(text, maxWidth, size, style, family).length;
 }

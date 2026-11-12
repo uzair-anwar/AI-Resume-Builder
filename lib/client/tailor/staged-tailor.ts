@@ -15,6 +15,7 @@ export const TAILOR_STEP_ORDER: TailorStepId[] = [
 ];
 
 export type StagedTailorOptions = {
+  masterId?: string;
   jobDescription: string;
   provider: AiProviderChoice;
   allowProviderFallback: boolean;
@@ -62,6 +63,7 @@ export async function runStagedTailorClient(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         step,
+        masterId: opts.masterId,
         jobDescription: opts.jobDescription,
         provider: opts.provider,
         allowProviderFallback: opts.allowProviderFallback,

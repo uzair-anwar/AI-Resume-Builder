@@ -10,7 +10,8 @@ import { ResumeEditor } from "./ResumeEditor";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import { sanitizePdfDownloadName } from "@/lib/shared/format";
 import { defaultResumePdfBasename } from "@/lib/shared/job-title";
-import { PDFDocument } from "pdf-lib";
+import { layoutResume } from "@/lib/resume/engine/layout";
+import { getTemplate } from "@/lib/resume/templates/registry";
 
 type Props = {
   resume: ResumeView;
@@ -18,6 +19,8 @@ type Props = {
   analysis?: JobAnalysis | null;
   budgets?: LineBudgets;
   downloadBasename?: string;
+  /** Template (master resume) used to draw this resume. */
+  templateId?: string;
   onResumeChange?: (resume: ResumeView) => void;
 };
 
@@ -31,11 +34,12 @@ export function ResumePdfPanel({
   jobTitle,
   analysis,
   budgets,
-  onResumeChange, 
+  onResumeChange,
   downloadBasename,
+  templateId,
 }: Props) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [pageCount, setPageCount] = useState(1);
+  const [overflowPt, setOverflowPt] = useState(0);
   const [generating, setGenerating] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -46,11 +50,9 @@ export function ResumePdfPanel({
       setGenerating(true);
       setPreviewError(null);
       try {
-        const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
+        setOverflowPt(layoutResume(resume, getTemplate(templateId)).overflow);
+        const blob = await pdf(<ResumeDocument resume={resume} templateId={templateId} />).toBlob();
         if (cancelled) return;
-        const bytes = await blob.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(bytes);
-        setPageCount(pdfDoc.getPageCount());
         const url = URL.createObjectURL(blob);
         setBlobUrl((prev) => {
           if (prev) URL.revokeObjectURL(prev);
@@ -68,7 +70,7 @@ export function ResumePdfPanel({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [resume]);
+  }, [resume, templateId]);
 
   useEffect(() => {
     return () => {
@@ -77,7 +79,7 @@ export function ResumePdfPanel({
   }, [blobUrl]);
 
   const download = useCallback(async () => {
-    const blob = await pdf(<ResumeDocument resume={resume} />).toBlob();
+    const blob = await pdf(<ResumeDocument resume={resume} templateId={templateId} />).toBlob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -90,16 +92,17 @@ export function ResumePdfPanel({
     a.download = sanitizePdfDownloadName(downloadBasename?.trim() || fallback);
     a.click();
     URL.revokeObjectURL(url);
-  }, [resume, jobTitle, analysis, downloadBasename]);
+  }, [resume, jobTitle, analysis, downloadBasename, templateId]);
 
   const pageBadge =
-    pageCount <= 1 ? (
+    overflowPt <= 0 ? (
       <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
         1 page
       </span>
     ) : (
       <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-800 dark:bg-rose-900 dark:text-rose-200">
-        {pageCount} pages — overflow
+        Overflows the page by ~{Math.ceil(overflowPt / getTemplate(templateId).profile.lineHeight)}{" "}
+        lines
       </span>
     );
 

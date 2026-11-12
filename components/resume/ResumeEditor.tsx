@@ -1,9 +1,12 @@
 "use client";
 
+import { columnWidth, bodySize } from "@/lib/resume/layout/active";
+import { activeProfile } from "@/lib/resume/layout/profile";
+
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
-import { COLUMN_WIDTH, RESUME_MAX_PROJECTS, SIZE_BODY } from "@/lib/resume/layout/constants";
+import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
 import { plainFromRich } from "@/lib/shared/rich-text";
 import { RichTextField } from "@/components/resume/RichTextField";
 
@@ -24,6 +27,7 @@ function lineLabel(current: number, max: number) {
 
 export function ResumeEditor({ resume, onChange, budgets }: Props) {
   const summaryMax = budgets?.summaryMaxLines ?? 9;
+  const bulletProjects = activeProfile().projectStyle === "bullets";
   const projectsOnResume = resume.projects.slice(0, RESUME_MAX_PROJECTS);
 
   return (
@@ -49,7 +53,7 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
             <span className="flex w-full justify-between gap-2">
               Summary{" "}
               {lineLabel(
-                countWrappedLines(plainFromRich(resume.summary), COLUMN_WIDTH, SIZE_BODY),
+                countWrappedLines(plainFromRich(resume.summary), columnWidth(), bodySize()),
                 summaryMax,
               )}
             </span>
@@ -203,19 +207,62 @@ export function ResumeEditor({ resume, onChange, budgets }: Props) {
                     }}
                   />
                 </label>
-                <RichTextField
-                  label="Description"
-                  value={p.description}
-                  onChange={(description) => {
-                    onChange({
-                      ...resume,
-                      projects: resume.projects.map((x) =>
-                        x.id === p.id ? { ...x, description } : x,
-                      ),
-                    });
-                  }}
-                  rows={4}
-                />
+                {bulletProjects ? (
+                  <>
+                    <label className="mb-2 block text-xs">
+                      <span className="text-zinc-500">Tagline (under the project name)</span>
+                      <input
+                        className="input-field mt-0.5"
+                        value={p.tagline ?? ""}
+                        onChange={(e) => {
+                          const tagline = e.target.value;
+                          onChange({
+                            ...resume,
+                            projects: resume.projects.map((x) =>
+                              x.id === p.id ? { ...x, tagline: tagline || undefined } : x,
+                            ),
+                          });
+                        }}
+                      />
+                    </label>
+                    {(p.bullets ?? []).map((b, bi) => (
+                      <div key={bi} className="mt-2">
+                        <RichTextField
+                          label={`Bullet ${bi + 1}`}
+                          value={b.text}
+                          onChange={(text) => {
+                            const bullets = (p.bullets ?? []).map((bb, j) =>
+                              j === bi ? { ...bb, text } : bb,
+                            );
+                            onChange({
+                              ...resume,
+                              projects: resume.projects.map((x) =>
+                                x.id === p.id
+                                  ? { ...x, bullets, description: bullets.map((bb) => bb.text).join(" ") }
+                                  : x,
+                              ),
+                            });
+                          }}
+                          rows={3}
+                        />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <RichTextField
+                    label="Description"
+                    value={p.description}
+                    onChange={(description) => {
+                      onChange({
+                        ...resume,
+                        projects: resume.projects.map((x) =>
+                          x.id === p.id ? { ...x, description } : x,
+                        ),
+                      });
+                    }}
+                    rows={4}
+                  />
+                )}
               </div>
             ))}
           </div>

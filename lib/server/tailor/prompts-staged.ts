@@ -1,8 +1,8 @@
 import "server-only";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { maxCharsForLines } from "@/lib/resume/layout/budgets";
-import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
+import { maxCharsForLines, summaryLineCap } from "@/lib/resume/layout/budgets";
+import { activeProfile } from "@/lib/resume/layout/profile";
 import { redactContactDetails } from "@/lib/server/ai/redact";
 import { formatFactWithEvidence, planRewriteModes } from "@/lib/server/ats/evidence-mapper";
 import { phraseInstructions, planPhrasePlacements } from "@/lib/server/ats/phrase-coverage";
@@ -41,12 +41,13 @@ export function summaryUserPrompt(
     .join("\n");
   const tiers = skillEvidenceTiers(resume);
   const hasNumbers = resume.summaryFacts.some((f) => /\d/.test(f.text.replace(/\d\+?\s*years?/i, "")));
-  const maxChars = maxCharsForLines(SUMMARY_MAX_LINES);
+  const summaryLines = summaryLineCap(analysis.lineBudgets);
+  const maxChars = maxCharsForLines(summaryLines);
 
   return `Write a tailored 3-sentence professional summary for this job application.
 
 Constraints:
-- Max ${SUMMARY_MAX_LINES} lines (~${maxChars} characters).
+- Max ${summaryLines} lines (~${maxChars} characters).
 - Synthesize and rephrase the facts below; do not return the raw facts joined by spaces.
 - Weave in JD keywords from the ATS Keyword Plan and EXACT JOB DESCRIPTION WORDING block — use the same spelling as the job description (summary counts for soft skills like communication, teamwork, analytical skills).
 - Sentence 1 must name the candidate's PRIMARY stack (strongest evidenced technologies below), then add JD-matched technologies. Never open with "specializing in" a technology listed under "Working knowledge".
@@ -217,15 +218,20 @@ export function projectUserPrompt(
   const facts = proj.facts
     .map((f) => formatFactWithEvidence(f, analysis, undefined, redactContactDetails(f.text)))
     .join("\n");
+  const bulletsOnPdf = activeProfile().projectStyle === "bullets";
   const maxLines = analysis.lineBudgets.projects[projectId] ?? 5;
+  const formatNote = bulletsOnPdf
+    ? `- This template prints ${proj.facts.length} fixed bullet(s) from the master facts (tagline unchanged). Return one paragraph that synthesizes the same points for ATS scoring; it must stay within ~${maxLines} wrapped lines and may not add facts beyond those listed.`
+    : `- Single cohesive paragraph, max ~${maxLines} lines (~${maxLines * 110} characters). Use 3–4 complete sentences ending with periods; never truncate mid-sentence.`;
 
   return `Rewrite the project description for ${proj.name} to highlight relevance to the target job.
 
 Project name (fixed): ${proj.name}
 ${proj.link ? `Link (fixed): ${proj.link}` : ""}
+${proj.tagline ? `Tagline on PDF (fixed): ${proj.tagline}` : ""}
 
 Constraints:
-- Single cohesive paragraph, max ~${maxLines} lines (~${maxLines * 110} characters). Use 3–4 complete sentences ending with periods; never truncate mid-sentence. Weave JD keywords into the narrative (not a list).
+${formatNote}
 - Weave in the [JD keywords to include] and [Terminology bridge] annotations where natural.
 - "sourceFactIds" must list the fact IDs used from below.
 

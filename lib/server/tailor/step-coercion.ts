@@ -1,8 +1,9 @@
+import { columnWidth, bodySize } from "@/lib/resume/layout/active";
 import { z } from "zod";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/resume/layout/constants";
+import { summaryLineCap } from "@/lib/resume/layout/budgets";
+
 import { countBulletLines } from "@/lib/resume/layout/measure";
 import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 import type { RoleFamily } from "@/lib/server/ats/role-families";
@@ -46,7 +47,7 @@ export function coerceSummaryStep(
   let summary = nt(parsed.data.summary);
   summary = stripForbiddenTerms(summary, analysis);
   summary = stripDisallowedNumbers(summary, allowedNums);
-  summary = fitToMaxWrappedLines(summary, SUMMARY_MAX_LINES, COLUMN_WIDTH, SIZE_BODY);
+  summary = fitToMaxWrappedLines(summary, summaryLineCap(analysis.lineBudgets), columnWidth(), bodySize());
   if (!summary.trim()) return null;
   return { summary };
 }
@@ -162,7 +163,7 @@ export function coerceProjectStep(
   let description = nt(parsed.data.description);
   description = stripForbiddenTerms(description, analysis);
   description = stripDisallowedNumbers(description, srcNums);
-  description = fitToMaxWrappedLines(description, max, COLUMN_WIDTH, SIZE_BODY);
+  description = fitToMaxWrappedLines(description, max, columnWidth(), bodySize());
   if (!description.trim()) return null;
 
   return { description, sourceFactIds: ids };

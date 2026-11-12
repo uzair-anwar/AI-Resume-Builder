@@ -1,10 +1,19 @@
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { countSkillLines } from "@/lib/resume/layout/budgets";
+import { createSkillsFitCheck } from "@/lib/resume/layout/skill-fit";
 import { relatedVia } from "@/lib/server/ats/profile-vocab";
 import type { RoleFamily } from "@/lib/server/ats/role-families";
 import { buildSkillResolver } from "@/lib/skills/skill-resolver";
+import { categoryIdsForRole, skillHasRole } from "@/lib/skills/category-roles";
 import { hasForeignTerm } from "@/lib/server/tailor/step-validation-helpers";
+
+/** Category roles whose skills can anchor the summary as the candidate's primary stack. */
+const STACK_ROLES = ["languages", "frameworks", "cloud", "databases"];
+
+/** Category ids of this master for a role family's priority list (legacy `cat-x` ids or roles). */
+function priorityCategories(resume: MasterResume, family: RoleFamily): string[] {
+  return [...new Set(family.priorityCategoryIds.flatMap((r) => categoryIdsForRole(resume, r)))];
+}
 
 function wordIn(haystack: string, needle: string): boolean {
   if (needle.length < 2) return false;
@@ -85,9 +94,8 @@ export function skillEvidenceWeights(resume: MasterResume): Map<string, number> 
 /** Strongest evidenced skills across the profile (e.g. Node.js, React.js, AWS), used to anchor the summary. */
 export function primaryStackNames(resume: MasterResume, limit = 4): string[] {
   const weights = skillEvidenceWeights(resume);
-  const eligible = new Set(["cat-languages", "cat-frameworks", "cat-cloud", "cat-databases"]);
   return resume.skills
-    .filter((s) => eligible.has(s.categoryId) && (weights.get(s.id) ?? 0) > 0)
+    .filter((s) => skillHasRole(resume, s.categoryId, STACK_ROLES) && (weights.get(s.id) ?? 0) > 0)
     .sort((a, b) => (weights.get(b.id) ?? 0) - (weights.get(a.id) ?? 0))
     .slice(0, limit)
     .map((s) => s.name);
@@ -99,9 +107,8 @@ export function primaryStackNames(resume: MasterResume, limit = 4): string[] {
  */
 export function skillEvidenceTiers(resume: MasterResume): { strong: string[]; working: string[] } {
   const weights = skillEvidenceWeights(resume);
-  const eligible = new Set(["cat-languages", "cat-frameworks", "cat-cloud", "cat-databases"]);
   const ranked = resume.skills
-    .filter((s) => eligible.has(s.categoryId) && (weights.get(s.id) ?? 0) > 0)
+    .filter((s) => skillHasRole(resume, s.categoryId, STACK_ROLES) && (weights.get(s.id) ?? 0) > 0)
     .sort((a, b) => (weights.get(b.id) ?? 0) - (weights.get(a.id) ?? 0));
   return {
     strong: ranked.filter((s) => (weights.get(s.id) ?? 0) >= 3).map((s) => s.name),
@@ -130,7 +137,7 @@ function scoreSkills(
   for (const [id, w] of skillEvidenceWeights(resume)) bump(id, Math.min(5, w * 1.2));
 
   if (family) {
-    const prio = family.priorityCategoryIds;
+    const prio = priorityCategories(resume, family);
     for (const s of resume.skills) {
       const pos = prio.indexOf(s.categoryId);
       if (pos >= 0) bump(s.id, Math.max(0.5, 2 - pos * 0.4));
@@ -174,7 +181,7 @@ export function buildSkillCandidateSet(
     if (matchedCats.has(s.categoryId)) push(s.id);
   }
 
-  for (const catId of family.priorityCategoryIds) {
+  for (const catId of priorityCategories(resume, family)) {
     for (const s of resume.skills) {
       if (s.categoryId === catId) push(s.id);
     }
@@ -202,7 +209,7 @@ export function trimAndFillSkills(
     const id = resolve(raw);
     if (!id || selected.includes(id)) continue;
     const nameKey = skillById.get(id)!.name.toLowerCase();
-    if (nameSeen.has(nameKey)) continue;
+    if (!resume.allowDuplicateSkills && nameSeen.has(nameKey)) continue;
     nameSeen.add(nameKey);
     selected.push(id);
   }
@@ -211,17 +218,10 @@ export function trimAndFillSkills(
   }
 
   const catOrder = resume.skillCategories.map((c) => c.id);
-  const linesFor = (ids: string[]) =>
-    countSkillLines(
-      catOrder.map((cid) => ({
-        categoryId: cid,
-        names: ids
-          .filter((id) => skillById.get(id)?.categoryId === cid)
-          .map((id) => skillById.get(id)!.name),
-      })),
-    );
+  // Exact: lays the page out with the template and measures how far these skills push it down.
+  const overflowFor = createSkillsFitCheck(resume, catOrder);
+  const fits = (ids: string[]) => overflowFor(ids) <= 0.5;
 
-  const budget = analysis.lineBudgets.skillsMaxLines;
   const score = scoreSkills(resume, analysis, family);
   // Tiny order bias keeps the AI/relevance order as a tie-breaker.
   const orderBias = new Map(selected.map((id, i) => [id, (selected.length - i) / (selected.length * 100)]));
@@ -233,7 +233,7 @@ export function trimAndFillSkills(
     .filter((id) => {
       if (selected.includes(id)) return false;
       const nameKey = skillById.get(id)!.name.toLowerCase();
-      return !nameSeen.has(nameKey) && !hasForeignTerm(skillById.get(id)!.name, analysis);
+      return (resume.allowDuplicateSkills || !nameSeen.has(nameKey)) && !hasForeignTerm(skillById.get(id)!.name, analysis);
     })
     .sort((a, b) => keepScore(b) - keepScore(a));
   for (const id of rest) {
@@ -244,7 +244,7 @@ export function trimAndFillSkills(
   // Trim: remove the least valuable skill that does not take its category below the floor.
   let guard = 0;
   for (const floor of CATEGORY_FLOORS) {
-    while (linesFor(selected) > budget && guard++ < 400) {
+    while (!fits(selected) && guard++ < 400) {
       const counts = new Map<string, number>();
       for (const id of selected) {
         const c = skillById.get(id)!.categoryId;
@@ -259,7 +259,7 @@ export function trimAndFillSkills(
       if (victim === undefined) break;
       selected = selected.filter((id) => id !== victim);
     }
-    if (linesFor(selected) <= budget) break;
+    if (fits(selected)) break;
   }
 
   // Order inside the block: strongest first (stable), so each category leads with its best skills.

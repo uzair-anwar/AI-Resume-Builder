@@ -13,7 +13,12 @@
     "test": "node --import tsx --test 'lib/**/*.test.ts' 'lib/server/**/*.test.ts'"
   },
   "dependencies": {
+    "@fontsource/alegreya": "^5.3.0",
+    "@fontsource/crimson-text": "^5.3.0",
+    "@fontsource/jost": "^5.3.0",
+    "@fontsource/lobster": "^5.3.0",
     "@fontsource/pt-serif": "^5.3.0",
+    "@fontsource/source-sans-pro": "^5.3.0",
     "@react-pdf/renderer": "^4.9.0",
     "cheerio": "^1.2.0",
     "fontkit": "^2.0.4",
@@ -33,6 +38,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "pdfjs-dist": "^6.5.438",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",

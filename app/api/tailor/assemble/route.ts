@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { TailorStepPreviousSchema } from "@/lib/schemas/tailoring-steps";
-import { loadMasterResume, mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { mergeProfileOverride } from "@/lib/server/resume/master-resume";
+import { loadMaster } from "@/lib/server/resume/registry";
+import { withMaster } from "@/lib/server/layout-context";
 import { RESUME_MAX_PROJECTS } from "@/lib/resume/layout/constants";
 import { limitTailoringProjects, selectedProjectLabel } from "@/lib/server/tailor/project-select";
 import { prepareTailoringWorkspace } from "@/lib/server/tailor/tailoring-workspace";
@@ -22,6 +24,7 @@ const BodySchema = z.object({
   jobDescription: z.string().min(50),
   previous: TailorStepPreviousSchema,
   profileOverride: z.record(z.string(), z.unknown()).optional(),
+  masterId: z.string().optional(),
   warnings: z.array(z.string()).optional(),
   aiUsage: z
     .object({
@@ -37,73 +40,79 @@ export async function POST(req: Request) {
   const json = await req.json().catch(() => null);
   const parsed = BodySchema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400, headers: PRIVATE_HEADERS });
+    return NextResponse.json(
+      { error: "Invalid request" },
+      { status: 400, headers: PRIVATE_HEADERS },
+    );
   }
 
-  const base = loadMasterResume();
-  const override = parsed.data.profileOverride as ProfileOverride | undefined;
-  const resume = mergeProfileOverride(base, override ?? null);
-  const { master: workingResume, tailoring, analysis } = prepareTailoringWorkspace(
-    resume,
-    parsed.data.jobDescription,
-  );
-  const raw = stagedToTailoringResult(parsed.data.previous, tailoring);
-  const cleaned = {
-    ...raw,
-    headline: nt(raw.headline),
-    summary: nt(raw.summary),
-    experience: raw.experience.map((e) => ({
-      ...e,
-      bullets: e.bullets.map((b) => ({ ...b, text: nt(b.text) })),
-    })),
-    projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
-  };
-  const repaired = repairTailoring(
-    limitTailoringProjects(cleaned, tailoring, analysis),
-    tailoring,
-    analysis,
-  );
-  const family = detectRoleFamily(parsed.data.jobDescription);
-  const data = polishTailoringResult(
-    applyPhraseCoverage(
-      {
-        ...repaired.data,
-        headline: finalizeResumeHeadline(
-          repaired.data.headline,
-          analysis,
-          workingResume,
-          family,
-          parsed.data.jobDescription,
-        ),
-      },
-      workingResume,
+  return withMaster(parsed.data.masterId, async () => {
+    const base = loadMaster(parsed.data.masterId);
+    const override = parsed.data.profileOverride as ProfileOverride | undefined;
+    const resume = mergeProfileOverride(base, override ?? null);
+    const {
+      master: workingResume,
+      tailoring,
       analysis,
-    ),
-    workingResume,
-  );
-  const report = repaired.report;
-  let resumeView = assembleResumeView(tailoring, data);
-  resumeView = fitResumeViewToOnePage(resumeView, analysis);
-  const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
+    } = prepareTailoringWorkspace(resume, parsed.data.jobDescription);
+    const raw = stagedToTailoringResult(parsed.data.previous, tailoring);
+    const cleaned = {
+      ...raw,
+      headline: nt(raw.headline),
+      summary: nt(raw.summary),
+      experience: raw.experience.map((e) => ({
+        ...e,
+        bullets: e.bullets.map((b) => ({ ...b, text: nt(b.text) })),
+      })),
+      projects: raw.projects.map((p) => ({ ...p, description: nt(p.description) })),
+    };
+    const repaired = repairTailoring(
+      limitTailoringProjects(cleaned, tailoring, analysis),
+      tailoring,
+      analysis,
+    );
+    const family = detectRoleFamily(parsed.data.jobDescription);
+    const data = polishTailoringResult(
+      applyPhraseCoverage(
+        {
+          ...repaired.data,
+          headline: finalizeResumeHeadline(
+            repaired.data.headline,
+            analysis,
+            workingResume,
+            family,
+            parsed.data.jobDescription,
+          ),
+        },
+        workingResume,
+        analysis,
+      ),
+      workingResume,
+    );
+    const report = repaired.report;
+    let resumeView = assembleResumeView(tailoring, data);
+    resumeView = fitResumeViewToOnePage(resumeView, analysis);
+    const scoredAnalysis = attachAtsScorecard(analysis, workingResume, resumeView);
 
-  return NextResponse.json(
-    {
-      resume: resumeView,
-      analysis: scoredAnalysis,
-      changes: buildChanges(resume, data),
-      warnings: [
-        ...(parsed.data.warnings ?? []),
-        ...(resume.projects.length > RESUME_MAX_PROJECTS && analysis.selectedProjectIds?.length
-          ? [
-              `Projects on this resume (JD fit): ${selectedProjectLabel(workingResume, analysis.selectedProjectIds)}.`,
-            ]
-          : []),
-        ...(report.count
-          ? [`Layout guardrails adjusted ${report.count} item(s) to fit the one-page template.`]
-          : []),
-      ],
-      aiUsage: parsed.data.aiUsage,
-    },
-    { headers: PRIVATE_HEADERS },
-  );
+    return NextResponse.json(
+      {
+        resume: resumeView,
+        analysis: scoredAnalysis,
+        changes: buildChanges(resume, data),
+        warnings: [
+          ...(parsed.data.warnings ?? []),
+          ...(resume.projects.length > RESUME_MAX_PROJECTS && analysis.selectedProjectIds?.length
+            ? [
+                `Projects on this resume (JD fit): ${selectedProjectLabel(workingResume, analysis.selectedProjectIds)}.`,
+              ]
+            : []),
+          ...(report.count
+            ? [`Layout guardrails adjusted ${report.count} item(s) to fit the one-page template.`]
+            : []),
+        ],
+        aiUsage: parsed.data.aiUsage,
+      },
+      { headers: PRIVATE_HEADERS },
+    );
+  });
 }

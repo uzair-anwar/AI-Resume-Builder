@@ -1,8 +1,9 @@
+import { columnWidth, bodySize } from "@/lib/resume/layout/active";
 import { z } from "zod";
 import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import { SUMMARY_MAX_LINES } from "@/lib/resume/layout/constants";
-import { COLUMN_WIDTH, SIZE_BODY } from "@/lib/resume/layout/constants";
+import { summaryLineCap } from "@/lib/resume/layout/budgets";
+
 import { countBulletLines, countWrappedLines } from "@/lib/resume/layout/measure";
 import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 
@@ -16,10 +17,8 @@ function getAllFactIds(resume: MasterResume): Set<string> {
 
 function getFactById(resume: MasterResume, id: string): string | undefined {
   for (const f of resume.summaryFacts) if (f.id === id) return f.text;
-  for (const e of resume.experience)
-    for (const f of e.facts) if (f.id === id) return f.text;
-  for (const p of resume.projects)
-    for (const f of p.facts) if (f.id === id) return f.text;
+  for (const e of resume.experience) for (const f of e.facts) if (f.id === id) return f.text;
+  for (const p of resume.projects) for (const f of p.facts) if (f.id === id) return f.text;
   return undefined;
 }
 import {
@@ -75,10 +74,13 @@ export function validateSummaryStep(
   const allowedNums = resume.summaryFacts.flatMap((f) => extractNumbers(f.text));
   if (
     hasForeignTerm(summary, analysis) ||
-    countWrappedLines(summary, COLUMN_WIDTH, SIZE_BODY) > SUMMARY_MAX_LINES ||
+    countWrappedLines(summary, columnWidth(), bodySize()) > summaryLineCap(analysis.lineBudgets) ||
     !numbersAllowedInText(summary, allowedNums)
   ) {
-    return { ok: false, issues: [{ code: "SUMMARY", message: "Summary failed safety or length checks" }] };
+    return {
+      ok: false,
+      issues: [{ code: "SUMMARY", message: "Summary failed safety or length checks" }],
+    };
   }
   const tiers = skillEvidenceTiers(resume);
   const primary = tiers.strong.slice(0, 3);
@@ -117,10 +119,12 @@ export function validateExperienceStep(
   resume: MasterResume,
   analysis: JobAnalysis,
   experienceId: string,
-): { ok: true; data: { bullets: { text: string; sourceFactIds: string[] }[] } } | {
-  ok: false;
-  issues: ValidationIssue[];
-} {
+):
+  | { ok: true; data: { bullets: { text: string; sourceFactIds: string[] }[] } }
+  | {
+      ok: false;
+      issues: ValidationIssue[];
+    } {
   const parsed = ExperienceSchema.safeParse(raw);
   if (!parsed.success) {
     return { ok: false, issues: [{ code: "SCHEMA", message: parsed.error.message.slice(0, 300) }] };
@@ -137,7 +141,9 @@ export function validateExperienceStep(
   const bullets: { text: string; sourceFactIds: string[] }[] = [];
 
   for (const b of parsed.data.bullets) {
-    const ids = b.sourceFactIds.filter((id) => factIds.has(id) && src.facts.some((f) => f.id === id));
+    const ids = b.sourceFactIds.filter(
+      (id) => factIds.has(id) && src.facts.some((f) => f.id === id),
+    );
     if (!ids.length) continue;
     const text = nt(b.text);
     const srcNums = ids.flatMap((id) => extractNumbers(getFactById(resume, id) ?? ""));
@@ -215,10 +221,12 @@ export function validateProjectStep(
   resume: MasterResume,
   analysis: JobAnalysis,
   projectId: string,
-): { ok: true; data: { description: string; sourceFactIds: string[] } } | {
-  ok: false;
-  issues: ValidationIssue[];
-} {
+):
+  | { ok: true; data: { description: string; sourceFactIds: string[] } }
+  | {
+      ok: false;
+      issues: ValidationIssue[];
+    } {
   const parsed = ProjectSchema.safeParse(raw);
   if (!parsed.success) {
     return { ok: false, issues: [{ code: "SCHEMA", message: parsed.error.message.slice(0, 300) }] };
@@ -234,7 +242,7 @@ export function validateProjectStep(
   const srcNums = extractNumbers(original);
   if (
     hasForeignTerm(description, analysis) ||
-    countWrappedLines(description, COLUMN_WIDTH, SIZE_BODY) > max ||
+    countWrappedLines(description, columnWidth(), bodySize()) > max ||
     !numbersAllowedInText(description, srcNums)
   ) {
     return { ok: false, issues: [{ code: "PROJ", message: "Project description failed checks" }] };
@@ -259,11 +267,17 @@ export function validateHeadlineStep(
   }
   const headline = nt(parsed.data.headline);
   if (hasForeignTerm(headline, analysis)) {
-    return { ok: false, issues: [{ code: "HEADLINE", message: "Headline contains unverified terms" }] };
+    return {
+      ok: false,
+      issues: [{ code: "HEADLINE", message: "Headline contains unverified terms" }],
+    };
   }
   const defaultSeniority = resume.person.defaultHeadline.split("(")[0].trim().toLowerCase();
   if (!headline.toLowerCase().includes(defaultSeniority.split(" ")[0])) {
-    return { ok: false, issues: [{ code: "HEADLINE", message: "Headline must keep seniority level" }] };
+    return {
+      ok: false,
+      issues: [{ code: "HEADLINE", message: "Headline must keep seniority level" }],
+    };
   }
   return { ok: true, data: { headline } };
 }

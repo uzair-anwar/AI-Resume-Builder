@@ -18,7 +18,7 @@ export function isPlausibleJobTitle(line: string): boolean {
 
 /** Pull a short role title (3–6 words) from noisy JD text. */
 export function extractRoleTitleFromText(raw: string): string | undefined {
-  let t = raw.trim().split("\n")[0]!.trim();
+  const t = raw.trim().split("\n")[0]!.trim();
   if (isPlausibleJobTitle(t)) return compactRoleTitle(t);
 
   const patterns = [
@@ -35,7 +35,7 @@ export function extractRoleTitleFromText(raw: string): string | undefined {
 
 /** Keep seniority + role; cap length for resume headline (not filename). */
 export function compactRoleTitle(raw: string, maxWords = 6): string {
-  let t = raw
+  const t = raw
     .trim()
     .replace(/^position\s*title\s*:\s*/i, "")
     .replace(/^job\s*title\s*:\s*/i, "")

@@ -17,7 +17,7 @@ If you only want to **use** the app after someone else set it up, skip to [How t
 
 ## What the app does (in plain language)
 
-1. **Starts from your real profile** — name, jobs, projects, and facts in `data/master-resume.json` (plus optional browser overrides on **Profile**).
+1. **Starts from your real profile** — name, jobs, projects, and facts in one of several master resumes under `data/resumes/<id>/master.json` (pick which one in the **Job & AI** card; optional per-master browser overrides on **Profile**).
 2. **Reads the job** — from a job board URL (Greenhouse, Lever, Ashby, and others when possible) or from text you paste.
 3. **Analyzes the posting** — JD terms as **matched**, **related**, or **missing**, with an internal **ATS match scorecard** (keywords in narrative, skills, title alignment, structure/metrics).
 4. **Uses AI in staged steps** (progress bar):
@@ -170,7 +170,7 @@ components/
   resume/                 # Editor, PDF preview, ResumeDocument
   cover-letter/           # Cover letter panel
   profile/                # Profile editor
-data/                     # master-resume.json, tech-taxonomy.json, role-families.json
+data/                     # resumes/index.json + resumes/<id>/master.json, tech-taxonomy.json, role-families.json
 lib/
   schemas/                # Zod: resume, tailoring, cover-letter, …
   shared/                   # format, normalize, job-title, synonym dedupe
@@ -197,7 +197,8 @@ scripts/                  # import-path helpers after refactors
 | `lib/server/tailor/tailoring-workspace.ts` | Master profile + top-3 project slice per JD |
 | `lib/server/ats/analyze-job.ts` | JD analysis + line budgets |
 | `lib/client/session/session-result.ts` | Browser cache of last tailor run |
-| `data/master-resume.json` | Default master resume on disk |
+| `data/resumes/index.json` | Registry of master resumes (id, label, template, role families) |
+| `data/resumes/<id>/master.json` | Content of one master resume (facts, skills, projects) — layout lives in `lib/resume/templates/` |
 
 ---
 
@@ -238,4 +239,4 @@ Hobby plan may hit function timeouts on long AI chains; tune `AI_MAX_ELAPSED_MS`
 
 ## License and credits
 
-Built for personal resume tailoring with a fixed PDF template (PT Serif, two-column layout). Edit `data/master-resume.json` and profile overrides for your own background.
+Built for personal resume tailoring with several fixed PDF templates (MERN, Frontend, Java, Python, Ruby on Rails — each keeps its own fonts and layout). Edit `data/resumes/<id>/master.json` and profile overrides for your own background. To add a resume: add a `master.json`, register it in `data/resumes/index.json`, and point `templateId` at an existing or new template in `lib/resume/templates/`.

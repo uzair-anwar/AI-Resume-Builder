@@ -9,6 +9,7 @@ import {
   getVerifiedTaxonomyIds,
 } from "./taxonomy";
 import { relatedVia } from "./profile-vocab";
+import { pickCategoryId } from "@/lib/skills/category-roles";
 
 export type ExpansionChannel = "summary" | "experience" | "project" | "skills";
 
@@ -170,18 +171,22 @@ export function expansionSkillInjections(
   const ctx = expansionCtx(analysis);
   const existing = new Set(resume.skills.map((s) => s.name.toLowerCase()));
   const out: MasterResume["skills"] = [];
-  const catByFamily: Record<string, string> = {
-    cloud: "cat-cloud",
-    devops: "cat-devops",
-    data: "cat-databases",
-    api: "cat-api",
-    js: "cat-frameworks",
-    python: "cat-languages",
-    process: "cat-vcs",
-    architecture: "cat-architecture",
-    ai: "cat-ai",
-    domain: "cat-architecture",
-    "jd-dynamic": "cat-architecture",
+  const roleByFamily: Record<string, string[]> = {
+    cloud: ["cloud"],
+    devops: ["devops", "cloud"],
+    data: ["databases"],
+    api: ["api", "backend"],
+    js: ["frameworks", "frontend", "backend"],
+    python: ["languages"],
+    process: ["vcs", "devops"],
+    architecture: ["architecture", "backend"],
+    ai: ["ai", "llm"],
+    domain: ["architecture", "backend"],
+    "jd-dynamic": ["architecture", "backend", "devops"],
+  };
+  const categoryFor = (family: string | undefined): string => {
+    const [first, ...rest] = roleByFamily[family ?? "jd-dynamic"] ?? roleByFamily["jd-dynamic"]!;
+    return pickCategoryId(resume, first!, ...rest);
   };
 
   for (const chip of analysis.terms) {
@@ -193,7 +198,10 @@ export function expansionSkillInjections(
     if (kind !== "soft" && !expansionBridgeReason(chip.term, resume, ctx)) continue;
     if (kind === "soft" && !resume.experience.length) continue;
 
-    const display = chip.surfaceForms?.[0] ?? tax?.canonical ?? chip.term;
+    // A soft skill is shown by its noun form ("Collaboration"), never by a JD verb ("collaborate").
+    if (kind === "soft" && !tax && /(?:ing|ate|ize|ise)$/i.test(chip.term)) continue;
+    const display =
+      kind === "soft" ? (tax?.canonical ?? chip.term) : (chip.surfaceForms?.[0] ?? tax?.canonical ?? chip.term);
     const name = display.length <= 42 ? display : tax?.canonical ?? chip.term;
     if (existing.has(name.toLowerCase())) continue;
 
@@ -202,8 +210,7 @@ export function expansionSkillInjections(
     out.push({
       id,
       name,
-      categoryId:
-        kind === "soft" ? "cat-vcs" : catByFamily[tax?.family ?? "jd-dynamic"] ?? "cat-architecture",
+      categoryId: kind === "soft" ? pickCategoryId(resume, "vcs", "devops") : categoryFor(tax?.family),
       aliases: (chip.surfaceForms ?? []).filter((f) => f.toLowerCase() !== name.toLowerCase()),
       userAttested: false,
     });

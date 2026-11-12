@@ -24,6 +24,8 @@ export const TailorRequestSchema = z.object({
   allowProviderFallback: z.boolean().optional(),
   geminiOptIn: z.boolean().optional(),
   profileOverride: z.record(z.string(), z.unknown()).optional(),
+  /** Which master resume (data/resumes/index.json) this request is about. */
+  masterId: z.string().optional(),
 });
 
 export type TailorRequest = z.infer<typeof TailorRequestSchema>;

@@ -2,15 +2,18 @@ import type { MasterResume, ResumeView } from "@/lib/schemas/resume";
 
 export function buildDefaultResumeView(resume: MasterResume): ResumeView {
   const catMap = new Map(resume.skillCategories.map((c) => [c.id, c.label]));
+  const catDef = new Map(resume.skillCategories.map((c) => [c.id, c]));
   const byCat = new Map<string, ResumeView["skills"][0]>();
 
   for (const s of resume.skills) {
     const bucket = byCat.get(s.categoryId) ?? {
       categoryId: s.categoryId,
       categoryLabel: catMap.get(s.categoryId) ?? s.categoryId,
+      role: catDef.get(s.categoryId)?.role,
+      bulletStyle: catDef.get(s.categoryId)?.bulletStyle,
       items: [],
     };
-    bucket.items.push({ id: s.id, name: s.name, userAttested: s.userAttested });
+    bucket.items.push({ id: s.id, name: s.name, userAttested: s.userAttested, breakAfter: s.breakAfter });
     byCat.set(s.categoryId, bucket);
   }
 
@@ -35,6 +38,8 @@ export function buildDefaultResumeView(resume: MasterResume): ResumeView {
       name: p.name,
       link: p.link,
       description: p.facts.map((f) => f.text).join(" "),
+      tagline: p.tagline,
+      bullets: p.facts.map((f) => ({ text: f.text, sourceFactIds: [f.id] })),
       sourceFactIds: p.facts.map((f) => f.id),
     })),
     education: resume.education,

@@ -1,14 +1,17 @@
-import { COLUMN_WIDTH, SIZE_BODY, BULLET_INDENT } from "./constants";
+import { activeProfile, tailorCaps } from "./profile";
 import { countBulletLines, countWrappedLines } from "./measure";
 import { breakLines } from "./linebreak";
 
-function splitSentences(text: string): string[] {
-  const parts = text.match(/[^.!?]+[.!?]+(?:\s+|$)|[^.!?]+$/g) ?? [text];
-  return parts.map((s) => s.trim()).filter(Boolean);
+/** Splits on sentence ends only (a "." inside "Next.js" or "3.5" is not a sentence end). */
+export function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+(?=[A-Z0-9"'(])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function bulletWidth(): number {
-  return COLUMN_WIDTH - BULLET_INDENT;
+  return activeProfile().bulletWidth;
 }
 
 function wrappedLineCount(text: string, widthPt: number, fontSize: number): number {
@@ -16,7 +19,8 @@ function wrappedLineCount(text: string, widthPt: number, fontSize: number): numb
 }
 
 function lastLineWordCount(text: string, widthPt: number): number {
-  const lines = breakLines(text, widthPt, SIZE_BODY, "regular");
+  const p = activeProfile();
+  const lines = breakLines(text, widthPt, p.bodySize, "regular", p.fontFamily);
   if (!lines.length) return 0;
   return lines[lines.length - 1]!.text.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -26,7 +30,7 @@ function fitByCompleteSentences(
   text: string,
   maxLines: number,
   widthPt: number,
-  fontSize: number = SIZE_BODY,
+  fontSize: number = activeProfile().bodySize,
 ): string {
   const sentences = splitSentences(text);
   if (!sentences.length) return text.trim();
@@ -47,20 +51,34 @@ function fitByCompleteSentences(
   return fitByWordTrim(first, maxLines, widthPt, fontSize);
 }
 
+/** Removes a trailing connector/comma left by trimming ("..., including S3 and" -> "..., including S3"). */
+function stripDanglingTail(text: string): string {
+  let out = text.trim();
+  for (let i = 0; i < 6; i++) {
+    const next = out
+      .replace(/[,;:\s]+$/, "")
+      .replace(/\s+(?:and|or|with|including|of|to|the|a|an|in|for|on|by|as|via|using|across|from)$/i, "")
+      .replace(/,\s*(?:including|ability to)$/i, "");
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 function fitByWordTrim(
   text: string,
   maxLines: number,
   widthPt: number,
-  fontSize: number = SIZE_BODY,
+  fontSize: number = activeProfile().bodySize,
 ): string {
-  let t = text.trim();
+  const t = text.trim();
   if (!t || wrappedLineCount(t, widthPt, fontSize) <= maxLines) return t;
   const words = t.split(/\s+/);
   while (words.length > 1 && wrappedLineCount(words.join(" "), widthPt, fontSize) > maxLines) {
     words.pop();
   }
-  let out = words.join(" ").trim();
-  if (out && !/[.!?]$/.test(out) && text.includes(".")) {
+  let out = stripDanglingTail(words.join(" ").trim());
+  if (!tailorCaps().exactBullets && out && !/[.!?]$/.test(out) && text.includes(".")) {
     const idx = text.indexOf(out);
     const rest = text.slice(idx + out.length);
     const nextEnd = rest.search(/[.!?]/);
@@ -69,6 +87,7 @@ function fitByWordTrim(
       if (wrappedLineCount(completed, widthPt, fontSize) <= maxLines + 1) out = completed;
     }
   }
+  if (out && /[.!?]$/.test(t) && !/[.!?]$/.test(out)) out += ".";
   return out;
 }
 
@@ -90,8 +109,8 @@ function relaxOrphanWidow(
 export function fitToMaxWrappedLines(
   text: string,
   maxLines: number,
-  widthPt: number = COLUMN_WIDTH,
-  fontSize: number = SIZE_BODY,
+  widthPt: number = activeProfile().summaryWidth,
+  fontSize: number = activeProfile().bodySize,
 ): string {
   let t = text.trim();
   if (!t || wrappedLineCount(t, widthPt, fontSize) <= maxLines) {
@@ -114,15 +133,15 @@ export function fitToMaxBulletLines(text: string, maxLines: number): string {
     return relaxOrphanWidow(t, maxLines, width, () => countBulletLines(t));
   }
 
-  t = fitByCompleteSentences(t, maxLines, width, SIZE_BODY);
+  t = fitByCompleteSentences(t, maxLines, width, activeProfile().bodySize);
   if (count() <= maxLines) {
     return relaxOrphanWidow(t, maxLines, width, count);
   }
 
-  if (count() === maxLines + 1 && lastLineWordCount(t, width) <= 2) {
+  if (!tailorCaps().exactBullets && count() === maxLines + 1 && lastLineWordCount(t, width) <= 2) {
     return t;
   }
 
-  t = fitByWordTrim(t, maxLines, width, SIZE_BODY);
+  t = fitByWordTrim(t, maxLines, width, activeProfile().bodySize);
   return relaxOrphanWidow(t, maxLines, width, count);
 }

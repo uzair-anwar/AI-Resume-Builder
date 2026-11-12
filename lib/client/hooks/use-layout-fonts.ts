@@ -1,24 +1,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fontsLoaded, loadFontsInBrowser } from "@/lib/resume/layout/fonts";
+import { fontsLoaded, loadFontsInBrowser, type FontFamilyKey } from "@/lib/resume/layout/fonts";
+import { getTemplate } from "@/lib/resume/templates/registry";
+import { setActiveProfile } from "@/lib/resume/layout/profile";
 
-/** Loads PT Serif for exact text measuring (line counters and PDF line layout). */
-export function useLayoutFonts(): boolean {
-  const [ready, setReady] = useState(() => fontsLoaded());
+/**
+ * Activates the template's layout profile and loads its font files (needed for exact text measuring
+ * and for react-pdf). Returns true once measuring is accurate for that template.
+ */
+export function useLayoutFonts(templateId?: string): boolean {
+  const spec = getTemplate(templateId);
+  const families: FontFamilyKey[] = [spec.profile.fontFamily, ...(spec.extraFonts ?? [])];
+  const key = families.join(",");
+  setActiveProfile(spec.profile);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
   useEffect(() => {
-    if (ready) return;
+    if (families.every((f) => fontsLoaded(f))) return;
     let alive = true;
-    loadFontsInBrowser()
+    loadFontsInBrowser(families)
       .catch(() => undefined)
       .finally(() => {
-        if (alive) setReady(true);
+        if (alive) setLoadedKey(key);
       });
     return () => {
       alive = false;
     };
-  }, [ready]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
-  return ready;
+  return loadedKey === key || families.every((f) => fontsLoaded(f));
 }
+

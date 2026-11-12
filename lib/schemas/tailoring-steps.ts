@@ -51,6 +51,8 @@ export const TailorStepRequestSchema = z.object({
   allowProviderFallback: z.boolean().optional(),
   previous: TailorStepPreviousSchema.optional(),
   profileOverride: z.record(z.string(), z.unknown()).optional(),
+  /** Which master resume (data/resumes/index.json) this request is about. */
+  masterId: z.string().optional(),
 });
 
 export type TailorStepRequest = z.infer<typeof TailorStepRequestSchema>;

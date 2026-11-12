@@ -1,0 +1,868 @@
+{
+  "version": 1,
+  "allowDuplicateSkills": true,
+  "person": {
+    "name": "Uzair Anwar",
+    "defaultHeadline": "Senior Software Engineer | Java, Spring Boot & Cloud",
+    "location": "Pakistan",
+    "phone": "",
+    "email": "uzairanwar.online@gmail.com",
+    "github": "https://github.com/uzair-anwar",
+    "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
+  },
+  "summaryFacts": [
+    {
+      "id": "summary-1",
+      "text": "Building enterprise-grade backend platforms that transform complex business requirements into scalable, reliable, and cloud-native software solutions."
+    },
+    {
+      "id": "summary-2",
+      "text": "Over 5 years of experience designing distributed systems, developing secure backend services, and delivering high-performance applications using Java, Spring Boot, Python, AWS, and modern microservice architectures."
+    },
+    {
+      "id": "summary-3",
+      "text": "Experienced across fintech, healthcare, mortgage, and SaaS domains, combining strong backend engineering with AI integrations, cloud technologies, and scalable system design to deliver production-ready software that solves real business challenges."
+    }
+  ],
+  "skillCategories": [
+    {
+      "id": "cat-languages",
+      "label": "Core Languages",
+      "role": "languages",
+      "bulletStyle": "marker"
+    },
+    {
+      "id": "cat-backend",
+      "label": "Backend Engineering",
+      "role": "backend",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-ai",
+      "label": "AI Engineering",
+      "role": "ai",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-llm",
+      "label": "LLM Platforms",
+      "role": "llm",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-messaging",
+      "label": "Messaging & Distributed Systems",
+      "role": "messaging",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-databases",
+      "label": "Databases",
+      "role": "databases",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-cloud",
+      "label": "Cloud Platforms",
+      "role": "cloud",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-devops",
+      "label": "DevOps & Testing",
+      "role": "devops",
+      "bulletStyle": "inline"
+    },
+    {
+      "id": "cat-vcs",
+      "label": "Version Control & Project Management",
+      "role": "vcs",
+      "bulletStyle": "inline"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-languages-java",
+      "name": "Java",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-python",
+      "name": "Python",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-javascript",
+      "name": "JavaScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-typescript",
+      "name": "TypeScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-sql",
+      "name": "SQL",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-spring-boot",
+      "name": "Spring Boot",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-spring-mvc",
+      "name": "Spring MVC",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-spring-security",
+      "name": "Spring Security",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-spring-data-jpa",
+      "name": "Spring Data JPA",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-hibernate",
+      "name": "Hibernate",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-fastapi",
+      "name": "FastAPI",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-django",
+      "name": "Django",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-django-rest-framework",
+      "name": "Django REST Framework",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-flask",
+      "name": "Flask",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-node-js",
+      "name": "Node.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-express-js",
+      "name": "Express.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-microservices",
+      "name": "Microservices",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-distributed-systems",
+      "name": "Distributed Systems",
+      "categoryId": "cat-backend",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-backend-clean-architecture",
+      "name": "Clean Architecture",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-domain-driven-design",
+      "name": "Domain-Driven Design",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-system-design",
+      "name": "System Design",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-agents",
+      "name": "AI Agents",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langchain",
+      "name": "LangChain",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langgraph",
+      "name": "LangGraph",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-crewai",
+      "name": "CrewAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-autogen",
+      "name": "AutoGen",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-llamaindex",
+      "name": "LlamaIndex",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-semantic-kernel",
+      "name": "Semantic Kernel",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-retrieval-augmented-generation-rag",
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-prompt-engineering",
+      "name": "Prompt Engineering",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-automation",
+      "name": "AI Automation",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-model-context-protocol-mcp",
+      "name": "Model Context Protocol (MCP)",
+      "categoryId": "cat-ai",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-ai-function-calling",
+      "name": "Function Calling",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-openai",
+      "name": "OpenAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-anthropic-claude",
+      "name": "Anthropic Claude",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-google-gemini",
+      "name": "Google Gemini",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-groq",
+      "name": "Groq",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-hugging-face",
+      "name": "Hugging Face",
+      "categoryId": "cat-llm",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-llm-ollama",
+      "name": "Ollama",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-azure-openai",
+      "name": "Azure OpenAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-deepai",
+      "name": "DeepAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-apache-kafka",
+      "name": "Apache Kafka",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-rabbitmq",
+      "name": "RabbitMQ",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-aws-sqs",
+      "name": "AWS SQS",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-amazon-eventbridge",
+      "name": "Amazon EventBridge",
+      "categoryId": "cat-messaging",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-messaging-aws-step-functions",
+      "name": "AWS Step Functions",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-celery",
+      "name": "Celery",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-event-driven-architecture",
+      "name": "Event-Driven Architecture",
+      "categoryId": "cat-messaging",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-messaging-background-processing",
+      "name": "Background Processing",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-postgresql",
+      "name": "PostgreSQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mysql",
+      "name": "MySQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mongodb",
+      "name": "MongoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-redis",
+      "name": "Redis",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws",
+      "name": "AWS",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-lambda",
+      "name": "AWS Lambda",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-api-gateway",
+      "name": "API Gateway",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cognito",
+      "name": "AWS Cognito",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-s3",
+      "name": "S3",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-bedrock",
+      "name": "AWS Bedrock",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-sagemaker",
+      "name": "AWS SageMaker",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-eventbridge",
+      "name": "AWS EventBridge",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-step-functions",
+      "name": "AWS Step Functions",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cdk",
+      "name": "AWS CDK",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-amplify-gen-2",
+      "name": "AWS Amplify Gen 2",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-azure",
+      "name": "Azure",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-docker",
+      "name": "Docker",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-kubernetes",
+      "name": "Kubernetes",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-maven",
+      "name": "Maven",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-gradle",
+      "name": "Gradle",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-github-actions",
+      "name": "GitHub Actions",
+      "categoryId": "cat-devops",
+      "aliases": [],
+      "breakAfter": true
+    },
+    {
+      "id": "skill-devops-ci-cd",
+      "name": "CI/CD",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-junit",
+      "name": "JUnit",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-mockito",
+      "name": "Mockito",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-pytest",
+      "name": "Pytest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-postman",
+      "name": "Postman",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-git",
+      "name": "Git",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-github",
+      "name": "GitHub",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-gitlab",
+      "name": "GitLab",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-jira",
+      "name": "Jira",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-agile-scrum",
+      "name": "Agile (Scrum)",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-kanban",
+      "name": "Kanban",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-micro1",
+      "company": "Micro1",
+      "title": "Senior Software Engineer (Backend & Cloud)",
+      "location": "",
+      "startDate": "2025-05",
+      "endDate": null,
+      "facts": [
+        {
+          "id": "fact-micro1-1",
+          "text": "Delivered 20+ Java APIs for secure business applications.",
+          "skills": [
+            "Java"
+          ]
+        },
+        {
+          "id": "fact-micro1-2",
+          "text": "Built Python services enabling AI-driven business automation.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-micro1-3",
+          "text": "Integrated OpenAI solutions into enterprise backend workflows.",
+          "skills": [
+            "OpenAI"
+          ]
+        },
+        {
+          "id": "fact-micro1-4",
+          "text": "Developed Java microservices supporting mortgage operations.",
+          "skills": [
+            "Java",
+            "Microservices"
+          ]
+        },
+        {
+          "id": "fact-micro1-5",
+          "text": "Built AWS serverless applications using Lambda and API Gateway.",
+          "skills": [
+            "AWS",
+            "API Gateway"
+          ]
+        },
+        {
+          "id": "fact-micro1-6",
+          "text": "Automated 25+ operational workflows through backend services.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-7",
+          "text": "Integrated Encompass with scalable Java-based backend systems.",
+          "skills": [
+            "Java"
+          ]
+        },
+        {
+          "id": "fact-micro1-8",
+          "text": "Designed 18+ Spring Boot services powering enterprise platforms.",
+          "skills": [
+            "Spring Boot"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "exp-devsorb",
+      "company": "Devsorb",
+      "title": "Full Stack Software Engineer",
+      "location": "",
+      "startDate": "2024-01",
+      "endDate": "2025-05",
+      "facts": [
+        {
+          "id": "fact-devsorb-1",
+          "text": "Delivered 15+ Java APIs supporting fintech platforms.",
+          "skills": [
+            "Java"
+          ]
+        },
+        {
+          "id": "fact-devsorb-2",
+          "text": "Built Spring Boot services for financial business workflows.",
+          "skills": [
+            "Spring Boot"
+          ]
+        },
+        {
+          "id": "fact-devsorb-3",
+          "text": "Developed Python services for reporting and data processing.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsorb-4",
+          "text": "Engineered Node.js APIs supporting SaaS applications.",
+          "skills": [
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-devsorb-5",
+          "text": "Integrated 10+ third-party financial platforms securely.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-6",
+          "text": "Built scalable reporting pipelines for market analytics.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-7",
+          "text": "Designed reusable services reducing duplicate business logic.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-8",
+          "text": "Optimized backend performance through asynchronous processing.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsinc",
+      "company": "Devsinc",
+      "title": "Software Engineer",
+      "location": "",
+      "startDate": "2021-05",
+      "endDate": "2024-01",
+      "facts": [
+        {
+          "id": "fact-devsinc-1",
+          "text": "Engineered secure REST APIs for healthcare workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-2",
+          "text": "Developed 12+ Java APIs for healthcare applications.",
+          "skills": [
+            "Java"
+          ]
+        },
+        {
+          "id": "fact-devsinc-3",
+          "text": "Built Spring Boot backend services for enterprise systems.",
+          "skills": [
+            "Spring Boot"
+          ]
+        },
+        {
+          "id": "fact-devsinc-4",
+          "text": "Delivered Python services supporting business automation.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsinc-5",
+          "text": "Integrated cloud services with enterprise backend platforms.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-6",
+          "text": "Optimized SQL queries supporting high-volume transactions.",
+          "skills": [
+            "SQL"
+          ]
+        },
+        {
+          "id": "fact-devsinc-7",
+          "text": "Designed reusable backend modules improving development speed.",
+          "skills": []
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-monte",
+      "name": "Monte Carlo Analytics",
+      "facts": [
+        {
+          "id": "fact-p-monte-1",
+          "text": "Engineered backend services for financial analytics platforms.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-2",
+          "text": "Integrated multiple enterprise data sources into unified services.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-3",
+          "text": "Developed reporting pipelines processing complex financial datasets.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-4",
+          "text": "Improved analytics performance through optimized backend architecture.",
+          "skills": []
+        }
+      ],
+      "tagline": "Financial Analytics & Business Intelligence Platform",
+      "link": "https://main.d1wxfdobtmq35e.amplifyapp.com/"
+    },
+    {
+      "id": "proj-navitus",
+      "name": "Navitus",
+      "facts": [
+        {
+          "id": "fact-p-navitus-1",
+          "text": "Built secure API integrations across healthcare ecosystems.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-2",
+          "text": "Processed high-volume healthcare transactions efficiently.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-3",
+          "text": "Developed enterprise backend services for healthcare operations.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-4",
+          "text": "Designed scalable workflows for reporting and business processes.",
+          "skills": []
+        }
+      ],
+      "tagline": "Enterprise Healthcare & Pharmacy Benefits Platform",
+      "link": "https://www.navitus.com/"
+    },
+    {
+      "id": "proj-ehata",
+      "name": "Ehata",
+      "facts": [
+        {
+          "id": "fact-p-ehata-1",
+          "text": "Delivered 12+ REST APIs supporting business-critical workflows.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-2",
+          "text": "Integrated cloud services with secure enterprise applications.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-3",
+          "text": "Automated reporting through optimized backend data pipelines.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-4",
+          "text": "Engineered scalable backend services for resident and visitor operations.",
+          "skills": []
+        }
+      ],
+      "tagline": "Property Management & Community Operations Platform",
+      "link": "https://ehataview.com/"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-punjab",
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "University of the Punjab",
+      "startDate": null,
+      "endDate": null
+    }
+  ],
+  "certifications": []
+}

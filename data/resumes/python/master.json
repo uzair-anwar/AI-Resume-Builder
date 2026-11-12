@@ -1,0 +1,960 @@
+{
+  "version": 1,
+  "allowDuplicateSkills": true,
+  "person": {
+    "name": "Uzair Anwar",
+    "defaultHeadline": "Senior AI Software Engineer | Python, LLM & Cloud",
+    "location": "Pakistan",
+    "phone": "",
+    "email": "uzairanwar.online@gmail.com",
+    "github": "https://github.com/uzair-anwar",
+    "linkedin": "https://www.linkedin.com/in/uzair-anwar/"
+  },
+  "summaryFacts": [
+    {
+      "id": "summary-1",
+      "text": "Helping businesses transform complex ideas into intelligent, production-ready software through AI, cloud-native backend systems, and scalable Python solutions."
+    },
+    {
+      "id": "summary-2",
+      "text": "Over 5 years of experience designing backend architectures, building AI-powered applications, and delivering secure, high-performance services using Python, FastAPI, AWS, and modern LLM technologies."
+    },
+    {
+      "id": "summary-3",
+      "text": "Experienced across fintech, healthcare, mortgage, and SaaS products, with a strong focus on automation, distributed systems, and building software that scales from concept to production."
+    }
+  ],
+  "skillCategories": [
+    {
+      "id": "cat-languages",
+      "label": "Core Languages",
+      "role": "languages"
+    },
+    {
+      "id": "cat-backend",
+      "label": "Backend Engineering",
+      "role": "backend"
+    },
+    {
+      "id": "cat-ai",
+      "label": "AI Engineering",
+      "role": "ai"
+    },
+    {
+      "id": "cat-llm",
+      "label": "LLM Platforms",
+      "role": "llm"
+    },
+    {
+      "id": "cat-ml",
+      "label": "Machine Learning & Data Engineering",
+      "role": "ml"
+    },
+    {
+      "id": "cat-api",
+      "label": "API Development & Integrations",
+      "role": "api"
+    },
+    {
+      "id": "cat-databases",
+      "label": "Databases",
+      "role": "databases"
+    },
+    {
+      "id": "cat-vector",
+      "label": "Vector Databases & Semantic Search",
+      "role": "vector"
+    },
+    {
+      "id": "cat-cloud",
+      "label": "Cloud Platforms",
+      "role": "cloud"
+    },
+    {
+      "id": "cat-devops",
+      "label": "DevOps & Testing",
+      "role": "devops"
+    },
+    {
+      "id": "cat-messaging",
+      "label": "Background Processing & Event-Driven Systems",
+      "role": "messaging"
+    },
+    {
+      "id": "cat-vcs",
+      "label": "Version Control & Project Management",
+      "role": "vcs"
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-languages-python",
+      "name": "Python",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-java",
+      "name": "Java",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-javascript",
+      "name": "JavaScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-typescript",
+      "name": "TypeScript",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-languages-sql",
+      "name": "SQL",
+      "categoryId": "cat-languages",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-fastapi",
+      "name": "FastAPI",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-django",
+      "name": "Django",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-django-rest-framework",
+      "name": "Django REST Framework",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-flask",
+      "name": "Flask",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-spring-boot",
+      "name": "Spring Boot",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-node-js",
+      "name": "Node.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-express-js",
+      "name": "Express.js",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-microservices",
+      "name": "Microservices",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-distributed-systems",
+      "name": "Distributed Systems",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-clean-architecture",
+      "name": "Clean Architecture",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-domain-driven-design",
+      "name": "Domain-Driven Design",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-backend-system-design",
+      "name": "System Design",
+      "categoryId": "cat-backend",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-agents",
+      "name": "AI Agents",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-agentic-ai",
+      "name": "Agentic AI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langchain",
+      "name": "LangChain",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-langgraph",
+      "name": "LangGraph",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-crewai",
+      "name": "CrewAI",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-autogen",
+      "name": "AutoGen",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-llamaindex",
+      "name": "LlamaIndex",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-semantic-kernel",
+      "name": "Semantic Kernel",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-prompt-engineering",
+      "name": "Prompt Engineering",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-retrieval-augmented-generation-rag",
+      "name": "Retrieval-Augmented Generation (RAG)",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-model-context-protocol-mcp",
+      "name": "Model Context Protocol (MCP)",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-ai-automation",
+      "name": "AI Automation",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-ai-function-calling",
+      "name": "Function Calling",
+      "categoryId": "cat-ai",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-openai",
+      "name": "OpenAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-anthropic-claude",
+      "name": "Anthropic Claude",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-google-gemini",
+      "name": "Google Gemini",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-groq",
+      "name": "Groq",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-hugging-face",
+      "name": "Hugging Face",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-ollama",
+      "name": "Ollama",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-azure-openai",
+      "name": "Azure OpenAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-llm-deepai",
+      "name": "DeepAI",
+      "categoryId": "cat-llm",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-scikit-learn",
+      "name": "Scikit-learn",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-tensorflow",
+      "name": "TensorFlow",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-pytorch",
+      "name": "PyTorch",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-pandas",
+      "name": "Pandas",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-numpy",
+      "name": "NumPy",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-feature-engineering",
+      "name": "Feature Engineering",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-data-processing",
+      "name": "Data Processing",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-ml-model-integration",
+      "name": "Model Integration",
+      "categoryId": "cat-ml",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-rest-apis",
+      "name": "REST APIs",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-graphql",
+      "name": "GraphQL",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-openapi",
+      "name": "OpenAPI",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-websockets",
+      "name": "WebSockets",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-oauth-2-0",
+      "name": "OAuth 2.0",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-jwt-authentication",
+      "name": "JWT Authentication",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-api-third-party-api-integration",
+      "name": "Third-Party API Integration",
+      "categoryId": "cat-api",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-postgresql",
+      "name": "PostgreSQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mongodb",
+      "name": "MongoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-mysql",
+      "name": "MySQL",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-redis",
+      "name": "Redis",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-databases-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-databases",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-pinecone",
+      "name": "Pinecone",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-chromadb",
+      "name": "ChromaDB",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-weaviate",
+      "name": "Weaviate",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-faiss",
+      "name": "FAISS",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-pgvector",
+      "name": "pgvector",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-vector-embeddings",
+      "name": "Vector Embeddings",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-vector-semantic-search",
+      "name": "Semantic Search",
+      "categoryId": "cat-vector",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws",
+      "name": "AWS",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-lambda",
+      "name": "AWS Lambda",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-api-gateway",
+      "name": "API Gateway",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-bedrock",
+      "name": "AWS Bedrock",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-sagemaker",
+      "name": "AWS SageMaker",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cognito",
+      "name": "AWS Cognito",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-dynamodb",
+      "name": "DynamoDB",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-s3",
+      "name": "S3",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-cloudfront",
+      "name": "CloudFront",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-eventbridge",
+      "name": "AWS EventBridge",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-step-functions",
+      "name": "AWS Step Functions",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-cdk",
+      "name": "AWS CDK",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-aws-amplify-gen-2",
+      "name": "AWS Amplify Gen 2",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-cloud-azure",
+      "name": "Azure",
+      "categoryId": "cat-cloud",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-docker",
+      "name": "Docker",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-kubernetes",
+      "name": "Kubernetes",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-github-actions",
+      "name": "GitHub Actions",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-ci-cd",
+      "name": "CI/CD",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-pytest",
+      "name": "Pytest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-postman",
+      "name": "Postman",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-jest",
+      "name": "Jest",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-devops-github-copilot",
+      "name": "GitHub Copilot",
+      "categoryId": "cat-devops",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-celery",
+      "name": "Celery",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-rabbitmq",
+      "name": "RabbitMQ",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-apache-kafka",
+      "name": "Apache Kafka",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-aws-sqs",
+      "name": "AWS SQS",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-amazon-eventbridge",
+      "name": "Amazon EventBridge",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-aws-step-functions",
+      "name": "AWS Step Functions",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-background-workers",
+      "name": "Background Workers",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-messaging-event-driven-architecture",
+      "name": "Event-Driven Architecture",
+      "categoryId": "cat-messaging",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-git",
+      "name": "Git",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-github",
+      "name": "GitHub",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-gitlab",
+      "name": "GitLab",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-jira",
+      "name": "Jira",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-agile-scrum",
+      "name": "Agile (Scrum)",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    },
+    {
+      "id": "skill-vcs-kanban",
+      "name": "Kanban",
+      "categoryId": "cat-vcs",
+      "aliases": []
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-micro1",
+      "company": "Micro1",
+      "title": "Senior Software Engineer (AI & Backend)",
+      "location": "",
+      "startDate": "2025-05",
+      "endDate": null,
+      "facts": [
+        {
+          "id": "fact-micro1-1",
+          "text": "Engineered intelligent reporting services for loan analytics.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-2",
+          "text": "Built *AWS* serverless solutions using Lambda and API Gateway.",
+          "skills": [
+            "AWS",
+            "API Gateway"
+          ]
+        },
+        {
+          "id": "fact-micro1-3",
+          "text": "Integrated Encompass with secure enterprise *backend* services.",
+          "skills": []
+        },
+        {
+          "id": "fact-micro1-4",
+          "text": "Delivered 20+ Python APIs powering AI-driven business services.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-micro1-5",
+          "text": "Built FastAPI microservices for scalable cloud-native applications.",
+          "skills": [
+            "FastAPI",
+            "Microservices"
+          ]
+        },
+        {
+          "id": "fact-micro1-6",
+          "text": "Integrated OpenAI and LLM workflows into production platforms.",
+          "skills": [
+            "OpenAI"
+          ]
+        },
+        {
+          "id": "fact-micro1-7",
+          "text": "Designed 20+ AI agent workflows for mortgage and business automation.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsorb",
+      "company": "Devsorb",
+      "title": "Full Stack Software Engineer",
+      "location": "",
+      "startDate": "2024-01",
+      "endDate": "2025-05",
+      "facts": [
+        {
+          "id": "fact-devsorb-1",
+          "text": "Delivered 15+ Python APIs for fintech and analytics platforms.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsorb-2",
+          "text": "Built FastAPI services for financial reporting and data processing.",
+          "skills": [
+            "FastAPI",
+            "Data Processing"
+          ]
+        },
+        {
+          "id": "fact-devsorb-3",
+          "text": "Developed Java and Node.js services for backend integrations.",
+          "skills": [
+            "Java",
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-devsorb-4",
+          "text": "Designed reporting pipelines for assets, liabilities, and market data.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-5",
+          "text": "Integrated 10+ external financial and business data providers.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-6",
+          "text": "Automated reporting workflows used across multiple client accounts.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsorb-7",
+          "text": "Processed large financial datasets through scalable backend services.",
+          "skills": []
+        }
+      ]
+    },
+    {
+      "id": "exp-devsinc",
+      "company": "Devsinc",
+      "title": "Software Engineer",
+      "location": "",
+      "startDate": "2021-05",
+      "endDate": "2024-01",
+      "facts": [
+        {
+          "id": "fact-devsinc-1",
+          "text": "Developed 10+ Python APIs for healthcare and enterprise applications.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-devsinc-2",
+          "text": "Built Django and Flask services for operational business workflows.",
+          "skills": [
+            "Django",
+            "Flask"
+          ]
+        },
+        {
+          "id": "fact-devsinc-3",
+          "text": "Implemented Java and Node.js modules for enterprise integrations.",
+          "skills": [
+            "Java",
+            "Node.js"
+          ]
+        },
+        {
+          "id": "fact-devsinc-4",
+          "text": "Designed reusable backend components shared across multiple projects.",
+          "skills": []
+        },
+        {
+          "id": "fact-devsinc-5",
+          "text": "Integrated PostgreSQL, MongoDB, and Redis into scalable services.",
+          "skills": [
+            "PostgreSQL",
+            "MongoDB",
+            "Redis"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-monte",
+      "name": "Monte Carlo Analytics",
+      "facts": [
+        {
+          "id": "fact-p-monte-1",
+          "text": "Built Python analytics services processing financial datasets.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-p-monte-2",
+          "text": "Developed reporting pipelines for portfolio and business insights.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-3",
+          "text": "Automated data aggregation across multiple business sources.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-monte-4",
+          "text": "Optimized *backend* performance for large-scale analytics workloads.",
+          "skills": []
+        }
+      ],
+      "tagline": "Financial Analytics & Business Intelligence Platform",
+      "link": "https://main.d1wxfdobtmq35e.amplifyapp.com/"
+    },
+    {
+      "id": "proj-navitus",
+      "name": "Navitus",
+      "facts": [
+        {
+          "id": "fact-p-navitus-1",
+          "text": "Developed Python services supporting healthcare business operations.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-p-navitus-2",
+          "text": "Built secure API integrations across enterprise healthcare systems.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-3",
+          "text": "Designed scalable *backend* workflows for operational reporting.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-navitus-4",
+          "text": "Processed high-volume healthcare data through reliable services.",
+          "skills": []
+        }
+      ],
+      "tagline": "Enterprise Healthcare & Pharmacy Benefits Platform",
+      "link": "https://www.navitus.com/"
+    },
+    {
+      "id": "proj-ehata",
+      "name": "Ehata",
+      "facts": [
+        {
+          "id": "fact-p-ehata-1",
+          "text": "Integrated secure business workflows with scalable cloud services.",
+          "skills": []
+        },
+        {
+          "id": "fact-p-ehata-2",
+          "text": "Improved reporting through automated data processing pipelines.",
+          "skills": [
+            "Data Processing"
+          ]
+        },
+        {
+          "id": "fact-p-ehata-3",
+          "text": "Engineered Python *backend* services supporting resident and visitor workflows.",
+          "skills": [
+            "Python"
+          ]
+        },
+        {
+          "id": "fact-p-ehata-4",
+          "text": "Delivered 10+ REST APIs powering operational and management features.",
+          "skills": [
+            "REST APIs"
+          ]
+        }
+      ],
+      "tagline": "Property Management & Community Operations Platform",
+      "link": "https://ehataview.com/"
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-punjab",
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "University of the Punjab",
+      "startDate": null,
+      "endDate": null
+    }
+  ],
+  "certifications": []
+}

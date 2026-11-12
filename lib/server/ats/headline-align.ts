@@ -3,6 +3,7 @@ import type { MasterResume } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
 import type { RoleFamily } from "./role-families";
 import { toResumeHeadlineCase } from "@/lib/shared/format-headline";
+import { activeProfile } from "@/lib/resume/layout/profile";
 import {
   compactRoleTitle,
   extractRoleTitleFromText,
@@ -64,6 +65,24 @@ function optionalStackSuffix(analysis: JobAnalysis, coreTitle: string, maxLen = 
 /**
  * Resume headline = short JD-aligned role (3–6 words), not JD section headers or keyword dumps.
  */
+/** Applies the template's headline style: "Title (A · B)" stays, or becomes "Title | A, B & C". */
+function applyHeadlineStyle(headline: string): string {
+  const { style, maxChars } = activeProfile().headline;
+  if (style === "paren") return headline;
+  const m = headline.match(/^(.+?)\s*\(([^)]*)\)\s*$/);
+  if (!m) return headline.slice(0, maxChars).trim();
+  const core = m[1]!.trim();
+  const chips = m[2]!.split("·").map((c) => c.trim()).filter(Boolean);
+  const join = (list: string[]) =>
+    list.length > 1 ? `${list.slice(0, -1).join(", ")} & ${list[list.length - 1]}` : list[0] ?? "";
+  while (chips.length) {
+    const out = `${core} | ${join(chips)}`;
+    if (out.length <= maxChars) return out;
+    chips.pop();
+  }
+  return core;
+}
+
 export function finalizeResumeHeadline(
   aiHeadline: string,
   analysis: JobAnalysis,
@@ -94,7 +113,7 @@ export function finalizeResumeHeadline(
     return m;
   });
 
-  return toResumeHeadlineCase(out.slice(0, max));
+  return applyHeadlineStyle(toResumeHeadlineCase(out.slice(0, max)));
 }
 
 /** @deprecated Use finalizeResumeHeadline */

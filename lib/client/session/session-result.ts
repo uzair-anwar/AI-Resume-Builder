@@ -1,11 +1,14 @@
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { CoverLetterVariants } from "@/lib/schemas/cover-letter";
+import type { OutreachEmail } from "@/lib/schemas/outreach-email";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
 
 const KEY = "resume_tailor_last_result";
 
 export type StoredTailorSession = {
+  /** Master resume this session was generated from (absent in sessions saved before multi-master → "mern"). */
+  masterId?: string;
   pipelineKey: string;
   jobTitle: string;
   pdfBasename?: string;
@@ -15,6 +18,9 @@ export type StoredTailorSession = {
   warnings: string[];
   aiUsage?: TailorResponse["aiUsage"];
   coverLetter?: CoverLetterVariants | null;
+  outreachEmail?: OutreachEmail | null;
+  outreachRecipientEmail?: string;
+  outreachRecipientName?: string;
 };
 
 export function loadStoredTailorSession(): StoredTailorSession | null {

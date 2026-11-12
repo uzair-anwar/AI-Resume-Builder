@@ -15,9 +15,7 @@ export function containsForbiddenTerm(text: string, term: string): boolean {
 }
 
 export function hasForeignTerm(text: string, analysis: JobAnalysis): boolean {
-  const allow = new Set(
-    (analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()),
-  );
+  const allow = new Set((analysis.allowedNarrativeTerms ?? []).map((t) => t.toLowerCase()));
   const missingTerms = (analysis.missingTerms ?? []).filter(
     (t) => t.length >= 3 && !allow.has(t.toLowerCase()),
   );
@@ -33,10 +31,7 @@ export function defaultSummaryText(resume: MasterResume): string {
   return resume.summaryFacts.map((f) => f.text).join(" ");
 }
 
-export function resolveSkillIds(
-  resume: MasterResume,
-  rawIds: string[],
-): string[] {
+export function resolveSkillIds(resume: MasterResume, rawIds: string[]): string[] {
   const resolve = buildSkillResolver(resume);
   const out: string[] = [];
   for (const raw of rawIds) {

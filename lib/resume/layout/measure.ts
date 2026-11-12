@@ -1,15 +1,18 @@
-import { COLUMN_WIDTH, SIZE_BODY, BULLET_INDENT } from "./constants";
+import { activeProfile } from "./profile";
 import { countLines } from "./linebreak";
 
-/** Exact (PT Serif metrics) wrapped line count, same algorithm the PDF uses. */
-export function countWrappedLines(
-  text: string,
-  widthPt: number,
-  fontSize: number = SIZE_BODY,
-): number {
-  return countLines(text, widthPt, fontSize, "regular");
+/** Exact wrapped line count (active template's font metrics), same algorithm the PDF uses. */
+export function countWrappedLines(text: string, widthPt: number, fontSize?: number): number {
+  const p = activeProfile();
+  return countLines(text, widthPt, fontSize ?? p.bodySize, "regular", p.fontFamily);
 }
 
 export function countBulletLines(text: string): number {
-  return countLines(text, COLUMN_WIDTH - BULLET_INDENT, SIZE_BODY, "regular");
+  const p = activeProfile();
+  return countLines(text, p.bulletWidth, p.bodySize, "regular", p.fontFamily);
+}
+
+export function countProjectBulletLines(text: string): number {
+  const p = activeProfile();
+  return countLines(text, p.projectBulletWidth, p.bodySize, "regular", p.fontFamily);
 }

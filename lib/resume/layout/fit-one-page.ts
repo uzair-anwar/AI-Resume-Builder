@@ -1,15 +1,13 @@
+import { columnWidth, bodySize } from "./active";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
-import {
-  TAILOR_BULLET_MAX_LINES,
-  TAILOR_BULLET_MIN_LINES,
-  TAILOR_PROJECT_MAX_LINES,
-  TAILOR_SUMMARY_MAX_LINES,
-  SUMMARY_MAX_LINES,
-  SIZE_BODY,
-  COLUMN_WIDTH,
-} from "./constants";
-import { resumeExceedsOnePage } from "./page-estimate";
+import { SUMMARY_MAX_LINES } from "./constants";
+import { tailorCaps } from "./profile";
+import { resumeOverflowPt } from "./page-estimate";
+
+/** Baselines snap to a 0.75pt grid, so up to one grid step of overflow still prints on the page. */
+const OVERFLOW_TOLERANCE_PT = 0.75;
+const resumeExceedsOnePage = (resume: ResumeView) => resumeOverflowPt(resume) > OVERFLOW_TOLERANCE_PT;
 import { fitToMaxBulletLines, fitToMaxWrappedLines } from "./text-fit";
 import { scoreFactRelevance } from "@/lib/shared/relevance";
 
@@ -45,6 +43,37 @@ function dropLowestBullet(resume: ResumeView, analysis?: JobAnalysis | null): Re
   return { ...resume, experience };
 }
 
+/** Drops the last (weakest) skill of the fullest category, keeping at least one per category. */
+function dropWeakestSkill(resume: ResumeView): ResumeView | null {
+  let best = -1;
+  resume.skills.forEach((c, i) => {
+    if (c.items.length > 1 && (best < 0 || c.items.length > resume.skills[best]!.items.length)) best = i;
+  });
+  if (best < 0) return null;
+  return {
+    ...resume,
+    skills: resume.skills.map((c, i) => (i === best ? { ...c, items: c.items.slice(0, -1) } : c)),
+  };
+}
+
+/**
+ * One step towards fitting the page: drop the least relevant bullet, or — when the overflowing
+ * column does not contain experience (e.g. a long skills column) — the weakest skill.
+ * Returns null when no step reduces the overflow.
+ */
+function dropToFit(resume: ResumeView, analysis?: JobAnalysis | null): ResumeView | null {
+  const before = resumeOverflowPt(resume);
+  const bullet = dropLowestBullet(resume, analysis);
+  if (bullet && resumeOverflowPt(bullet) < before - 0.01) return bullet;
+  // Skills may need several removals before a line disappears.
+  let skills = dropWeakestSkill(resume);
+  for (let i = 0; skills && i < 6; i++) {
+    if (resumeOverflowPt(skills) < before - 0.01) return skills;
+    skills = dropWeakestSkill(skills);
+  }
+  return null;
+}
+
 function trimToLineCaps(
   resume: ResumeView,
   bulletMax: number,
@@ -53,7 +82,7 @@ function trimToLineCaps(
 ): ResumeView {
   return {
     ...resume,
-    summary: fitToMaxWrappedLines(resume.summary, summaryMax, COLUMN_WIDTH, SIZE_BODY),
+    summary: fitToMaxWrappedLines(resume.summary, summaryMax, columnWidth(), bodySize()),
     experience: resume.experience.map((exp) => ({
       ...exp,
       bullets: exp.bullets.map((b) => ({
@@ -63,7 +92,7 @@ function trimToLineCaps(
     })),
     projects: resume.projects.map((p) => ({
       ...p,
-      description: fitToMaxWrappedLines(p.description, projectMax, COLUMN_WIDTH, SIZE_BODY),
+      description: fitToMaxWrappedLines(p.description, projectMax, columnWidth(), bodySize()),
     })),
   };
 }
@@ -81,7 +110,7 @@ export function fitResumeViewToOnePage(
   let guard = 0;
 
   while (resumeExceedsOnePage(current) && guard++ < maxIterations) {
-    const dropped = dropLowestBullet(current, analysis);
+    const dropped = dropToFit(current, analysis);
     if (dropped) {
       current = dropped;
       continue;
@@ -91,6 +120,11 @@ export function fitResumeViewToOnePage(
 
   if (!resumeExceedsOnePage(current)) return current;
 
+  const caps = tailorCaps();
+  const TAILOR_BULLET_MAX_LINES = caps.bulletMax;
+  const TAILOR_BULLET_MIN_LINES = caps.bulletMin;
+  const TAILOR_PROJECT_MAX_LINES = caps.projectMax;
+  const TAILOR_SUMMARY_MAX_LINES = caps.summaryMax;
   const trimSteps = [
     {
       bullet: TAILOR_BULLET_MAX_LINES,
@@ -116,7 +150,7 @@ export function fitResumeViewToOnePage(
 
   guard = 0;
   while (resumeExceedsOnePage(current) && guard++ < 8) {
-    const dropped = dropLowestBullet(current, analysis);
+    const dropped = dropToFit(current, analysis);
     if (!dropped) break;
     current = dropped;
   }
