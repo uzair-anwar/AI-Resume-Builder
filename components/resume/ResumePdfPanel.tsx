@@ -24,9 +24,9 @@ type Props = {
   onResumeChange?: (resume: ResumeView) => void;
 };
 
-/** Chrome / Edge PDF viewer: hide thumbnails, fit page to width. */
+/** Chrome / Edge PDF viewer: hide chrome, fit entire page (no in-frame scroll). */
 function pdfPreviewSrc(blobUrl: string): string {
-  return `${blobUrl}#navpanes=0&toolbar=0&view=FitH&zoom=page-width`;
+  return `${blobUrl}#navpanes=0&toolbar=0&scrollbar=0&view=Fit`;
 }
 
 export function ResumePdfPanel({
@@ -107,6 +107,7 @@ export function ResumePdfPanel({
     );
 
   const previewUrl = blobUrl ? pdfPreviewSrc(blobUrl) : null;
+  const page = getTemplate(templateId).page;
 
   return (
     <SectionCard
@@ -138,29 +139,30 @@ export function ResumePdfPanel({
       }
     >
       <div
-        className="w-full overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-inner dark:border-zinc-700/80 dark:bg-zinc-900"
-        style={{ minHeight: "min(92vh, 1056px)" }}
+        className="relative w-full overflow-hidden rounded-xl border border-zinc-200/80 bg-white shadow-inner dark:border-zinc-700/80 dark:bg-zinc-900"
+        style={{ aspectRatio: `${page.width} / ${page.height}` }}
       >
-        {previewError ? (
-          <p className="p-6 text-sm text-rose-600 dark:text-rose-400" role="alert">
-            {previewError}
-          </p>
-        ) : previewUrl ? (
+        {previewUrl ? (
           <embed
             type="application/pdf"
             title="Resume PDF preview"
             src={previewUrl}
-            className="block h-[min(92vh,1056px)] w-full border-0"
+            className="absolute inset-0 h-full w-full border-0"
           />
-        ) : (
-          <p className="flex items-center gap-2 p-6 text-sm text-zinc-500">
+        ) : null}
+        {previewError ? (
+          <p className="absolute inset-0 flex items-center justify-center p-6 text-sm text-rose-600 dark:text-rose-400" role="alert">
+            {previewError}
+          </p>
+        ) : !previewUrl ? (
+          <p className="absolute inset-0 flex items-center justify-center gap-2 p-6 text-sm text-zinc-500">
             <span
               className="h-4 w-4 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent"
               aria-hidden
             />
             Generating preview…
           </p>
-        )}
+        ) : null}
       </div>
 
       {editMode && onResumeChange ? (
