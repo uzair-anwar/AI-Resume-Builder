@@ -5,6 +5,7 @@ import type { ResumeView } from "@/lib/schemas/resume";
 import type { JobAnalysis, TailorResponse } from "@/lib/schemas/tailoring";
 import type { CoverLetterResponse, CoverLetterVariants } from "@/lib/schemas/cover-letter";
 import type { OutreachEmail, OutreachEmailResponse } from "@/lib/schemas/outreach-email";
+import { formatPlainEmailBody } from "@/lib/shared/email-body-format";
 import type { LineBudgets } from "@/lib/resume/layout/budgets";
 import type { AiProviderCatalog, AiProviderChoice, AiProviderId } from "@/lib/ai/provider-types";
 import { resolveModelPickerProvider } from "@/lib/ai/ui-helpers";
@@ -531,7 +532,10 @@ export default function HomeWorkspace() {
       });
       const data = (await res.json()) as OutreachEmailResponse & { error?: string };
       if (!res.ok) throw new Error(data.error ?? "Email generation failed");
-      setOutreachEmail(data.email);
+      setOutreachEmail({
+        ...data.email,
+        body: formatPlainEmailBody(data.email.body),
+      });
 
       const stored = loadStoredTailorSession();
       if (stored) {

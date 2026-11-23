@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { formatPlainEmailBody } from "@/lib/shared/email-body-format";
 import type { ResumeView } from "@/lib/schemas/resume";
 import type { OutreachEmail } from "@/lib/schemas/outreach-email";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
@@ -44,13 +45,25 @@ export function OutreachEmailPanel({
 }: Props) {
   const router = useRouter();
   const [downloading, setDownloading] = useState(false);
+  const [smtpReady, setSmtpReady] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendMessage, setSendMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/outreach-email/send")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setSmtpReady(Boolean(d?.smtpConfigured)))
+      .catch(() => setSmtpReady(false));
+  }, []);
+
+  const formattedBody = email ? formatPlainEmailBody(email.body) : "";
 
   const openGmail = () => {
     if (!email) return;
     const url = buildGmailComposeUrl({
       to: recipientEmail,
       subject: email.subject,
-      body: email.body,
+      body: formattedBody,
     });
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -65,6 +78,39 @@ export function OutreachEmailPanel({
       resumeBasename: downloadBasename,
     });
     router.push("/outreach/compose");
+  };
+
+  const handleFormatBody = () => {
+    if (!email) return;
+    onChange({ ...email, body: formatPlainEmailBody(email.body) });
+  };
+
+  const handleSendSmtp = async () => {
+    if (!email || !recipientEmail.trim()) {
+      setSendMessage("Add a recipient email before sending.");
+      return;
+    }
+    setSending(true);
+    setSendMessage(null);
+    try {
+      const res = await fetch("/api/outreach-email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: recipientEmail.trim(),
+          subject: email.subject,
+          body: formattedBody,
+          recipientName: recipientName.trim() || undefined,
+        }),
+      });
+      const data = (await res.json()) as { error?: string; ok?: boolean };
+      if (!res.ok) throw new Error(data.error ?? "Send failed");
+      setSendMessage("Email sent from your SMTP account. Attach the resume in your Sent folder if needed.");
+    } catch (e) {
+      setSendMessage((e as Error).message);
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleDownloadResume = async () => {
@@ -83,8 +129,8 @@ export function OutreachEmailPanel({
         <div>
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application email</h3>
           <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-            Short, specific cold email (subject + ~5 sentences) from your master and tailored resume—then
-            open Gmail to send. Add the PDF attachment there; links cannot attach files.
+            Short cold email from your master and tailored resume. Open in Gmail (with line breaks) or send via
+            SMTP if configured in .env. PDF must still be attached manually for now.
           </p>
         </div>
         <button
@@ -134,11 +180,25 @@ export function OutreachEmailPanel({
               className="input-field min-h-[12rem] text-sm leading-relaxed"
               value={email.body}
               onChange={(e) => onChange({ ...email, body: e.target.value })}
+              onBlur={handleFormatBody}
             />
           </label>
           <div className="mt-4 flex flex-wrap gap-2">
             <button type="button" className="btn-primary !text-sm" onClick={openGmail}>
               Open in Gmail
+            </button>
+            {smtpReady ? (
+              <button
+                type="button"
+                className="btn-primary !text-sm"
+                disabled={sending || !recipientEmail.trim()}
+                onClick={() => void handleSendSmtp()}
+              >
+                {sending ? "Sending…" : "Send via SMTP"}
+              </button>
+            ) : null}
+            <button type="button" className="btn-ghost !text-sm" onClick={handleFormatBody}>
+              Fix paragraph breaks
             </button>
             <button type="button" className="btn-ghost !text-sm" onClick={openComposePage}>
               Open compose helper page
@@ -158,7 +218,7 @@ export function OutreachEmailPanel({
                   ? buildMailtoUrl({
                       to: recipientEmail,
                       subject: email.subject,
-                      body: email.body,
+                      body: formattedBody,
                     })
                   : "#"
               }
@@ -166,10 +226,22 @@ export function OutreachEmailPanel({
               Default mail app
             </a>
           </div>
-          <p className="mt-3 text-xs text-zinc-500">
-            Recommended: download resume PDF, open in Gmail, then attach the file in Gmail’s compose
-            window.
-          </p>
+          {sendMessage ? (
+            <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400" role="status">
+              {sendMessage}
+            </p>
+          ) : null}
+          {!smtpReady ? (
+            <p className="mt-3 text-xs text-zinc-500">
+              To send from the app, set <code className="text-[10px]">SMTP_PASS</code> (Gmail App Password) in{" "}
+              <code className="text-[10px]">.env</code> or Vercel. Otherwise use Open in Gmail.
+            </p>
+          ) : (
+            <p className="mt-3 text-xs text-zinc-500">
+              SMTP is enabled on this server. Download the resume PDF and attach it when replying, or send via Gmail
+              after opening compose.
+            </p>
+          )}
         </>
       ) : (
         <p className="text-sm text-zinc-500">

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/ui/AppShell";
 import { loadOutreachEmailDraft, type OutreachEmailDraft } from "@/lib/client/outreach/draft-storage";
 import { buildGmailComposeUrl, buildMailtoUrl } from "@/lib/client/outreach/gmail-compose";
+import { formatPlainEmailBody } from "@/lib/shared/email-body-format";
 
 export default function OutreachComposePage() {
   const [draft, setDraft] = useState<OutreachEmailDraft | null>(null);
@@ -30,10 +31,11 @@ export default function OutreachComposePage() {
     );
   }
 
+  const body = formatPlainEmailBody(draft.body);
   const gmailUrl = buildGmailComposeUrl({
     to: draft.to,
     subject: draft.subject,
-    body: draft.body,
+    body,
   });
 
   return (
@@ -61,7 +63,7 @@ export default function OutreachComposePage() {
           <p className="text-sm font-medium">{draft.subject}</p>
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Body</p>
           <pre className="whitespace-pre-wrap rounded-xl border border-zinc-200/80 bg-white/50 p-4 text-sm leading-relaxed dark:border-zinc-700/80 dark:bg-zinc-900/40">
-            {draft.body}
+            {body}
           </pre>
           <div className="flex flex-wrap gap-2 pt-2">
             <a
@@ -76,7 +78,7 @@ export default function OutreachComposePage() {
               href={buildMailtoUrl({
                 to: draft.to,
                 subject: draft.subject,
-                body: draft.body,
+                body,
               })}
               className="btn-ghost !text-sm"
             >
@@ -85,7 +87,7 @@ export default function OutreachComposePage() {
             <button
               type="button"
               className="btn-ghost !text-sm"
-              onClick={() => void navigator.clipboard.writeText(`${draft.subject}\n\n${draft.body}`)}
+              onClick={() => void navigator.clipboard.writeText(`${draft.subject}\n\n${body}`)}
             >
               Copy subject + body
             </button>

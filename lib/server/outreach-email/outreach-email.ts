@@ -9,9 +9,14 @@ import { detectJobTitle } from "@/lib/server/ats/jd-extract";
 import { formatKeywordStrategy, safeJobText } from "@/lib/server/tailor/prompt-context";
 import { stripForbiddenTerms } from "@/lib/server/text-sanitize";
 import {
+  outreachBodyQualityIssues,
+  sanitizeOutreachBody,
+} from "@/lib/server/outreach-email/outreach-body-quality";
+import {
   runStructuredAiCall,
   type TailorAiOptions,
 } from "@/lib/server/tailor/tailor-steps/run-ai-structured";
+import { formatPlainEmailBody } from "@/lib/shared/email-body-format";
 import { normalizeTypography as nt } from "@/lib/shared/text-normalize";
 import { detectCompanyName } from "@/lib/server/cover-letter/cover-letter";
 import type { JobAnalysis } from "@/lib/schemas/tailoring";
@@ -83,6 +88,7 @@ function polishOutreachCopy(email: OutreachEmail): OutreachEmail {
     subject = subject.replace(/\b[-–—]\s*Hiring Team\b/gi, "").trim();
   }
   subject = subject.replace(/^(Application|Resume|Job application):?\s*/i, "");
+  body = formatPlainEmailBody(body);
   return { ...email, companyName, subject, body };
 }
 
@@ -93,7 +99,7 @@ Output JSON:
 - "companyName": employer from the JD when clear; otherwise "Unknown" (never use "Hiring Team" as a company name).
 - "roleTitle": title as written in the JD when possible.
 - "subject": under 50 characters when possible, max 60. Formula: exact role title, candidate full name, one proof anchor (core stack or years). Examples: "Full Stack Engineer: Alex Kim, React · Node" or "Backend Engineer: Sam Lee, 6 yrs Java". Never start with "Application", "Resume", or "Job application".
-- "body": 90–150 words, 5–7 sentences, ready to paste into Gmail. Mobile-friendly short paragraphs (1–2 sentences each). Optional: one line with 2 short hyphen bullets for verified wins (only if it stays under 150 words).
+- "body": 90–150 words, 5–7 sentences, ready to paste into Gmail. Use real newline characters in JSON: blank line after greeting, between each paragraph, and before the sign-off (e.g. "Hi Sarah,\\n\\nFirst paragraph...\\n\\nBest,\\nName"). Never one single unbroken line.
 
 Body structure:
 1) Greeting: "Hi {FirstName}," if recipient name provided; else "Hi {Company} team," if company known; else "Hello,".
@@ -107,7 +113,9 @@ Banned phrases (never use): "I am writing to express", "passionate", "team playe
 Rules:
 - English only. Ground only in verified resume evidence; never invent employers, metrics, or skills.
 - No em-dashes. Do not put the recipient's email in the body.
-- Never write "Hiring Team" or "Unknown" as an employer inside the body.`;
+- Never write "Hiring Team" or "Unknown" as an employer inside the body.
+- Never paste job-board URLs, GitHub paths, or text like "com/company/repo" — refer to the employer by plain name only (e.g. "Keygate"), not links.
+- Every paragraph must be complete sentences. The line after the greeting must be a full opener (not a URL fragment or parenthesis).`;
 }
 
 function outreachEmailUserPrompt(
@@ -242,7 +250,7 @@ export async function generateOutreachEmail(
       },
     ],
     jsonSchema: OUTREACH_EMAIL_JSON_SCHEMA,
-    maxTokens: 900,
+    maxTokens: 1200,
     validate: (raw) => {
       const parsed = OutreachEmailSchema.safeParse(raw);
       if (!parsed.success) {
@@ -257,8 +265,12 @@ export async function generateOutreachEmail(
         companyName: companyNameKnown(rawCompany) ? rawCompany : "Hiring Team",
         roleTitle: nt(d.roleTitle),
         subject: stripForbiddenTerms(nt(d.subject), analysis),
-        body: stripForbiddenTerms(nt(d.body), analysis),
+        body: sanitizeOutreachBody(nt(d.body)),
       });
+      const bodyIssues = outreachBodyQualityIssues(cleaned.body, resume.person.name);
+      if (bodyIssues.length) {
+        return { ok: false, issues: bodyIssues };
+      }
       return { ok: true, data: cleaned };
     },
   });
