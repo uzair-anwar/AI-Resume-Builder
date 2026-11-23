@@ -50,6 +50,7 @@ export async function sendOutreachViaSmtp(opts: {
   to: string;
   subject: string;
   body: string;
+  resumePdf?: { filename: string; base64: string };
 }): Promise<{ messageId?: string }> {
   const cfg = loadSmtpConfigFromEnv();
   if (!cfg) {
@@ -66,12 +67,23 @@ export async function sendOutreachViaSmtp(opts: {
     auth: { user: cfg.user, pass: cfg.pass },
   });
 
+  const attachments = opts.resumePdf
+    ? [
+        {
+          filename: opts.resumePdf.filename,
+          content: Buffer.from(opts.resumePdf.base64, "base64"),
+          contentType: "application/pdf",
+        },
+      ]
+    : undefined;
+
   const info = await transporter.sendMail({
     from: cfg.from,
     to: opts.to,
     subject: opts.subject.trim(),
     text,
     html: `<div style="font-family: Arial, sans-serif; font-size: 15px; line-height: 1.55; color: #222;">${plainToHtml(text)}</div>`,
+    attachments,
   });
 
   return { messageId: info.messageId };

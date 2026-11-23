@@ -31,7 +31,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const result = await sendOutreachViaSmtp(parsed.data);
+    const { to, subject, body, resumePdf } = parsed.data;
+    const result = await sendOutreachViaSmtp({ to, subject, body, resumePdf });
     return NextResponse.json({ ok: true, messageId: result.messageId }, { headers: PRIVATE_HEADERS });
   } catch (e) {
     return NextResponse.json(
